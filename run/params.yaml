@@ -1,17 +1,17 @@
 team_assignments:
-  "athena": "blue"
+  "zeus": "blue"
 
 quad_state_topics:
-  "athena": "/athena/state"
+  "zeus": "/zeus/state"
 
 proposed_trajectory_topics:
-  "athena": "/athena/proposed_trajectory"
+  "zeus": "/zeus/proposed_trajectory"
 
 updated_trajectory_topics:
-  "athena": "/athena/updated_trajectory"
+  "zeus": "/zeus/updated_trajectory"
 
 visualization_trajectory_topics:
-  "athena": "/athena/visualization_trajectory"
+  "zeus": "/zeus/visualization_trajectory"
 
 balloon_status_topics:
   "red": "/game_engine/red_balloon_status"
@@ -24,12 +24,12 @@ balloon_position_topics:
 goal_status_topics:
   "home": "/game_engine/home_status"
 
-map_file_path: "/home/shack/Workspace/game-engine/resources/maps/tournament.map"
-quad_mesh_file_path: "file:///home/shack/Workspace/game-engine/resources/meshes/quad.stl"
-balloon_mesh_file_path: "file:///home/shack/Workspace/game-engine/resources/meshes/balloon.stl"
-goal_mesh_file_path: "file:///home/shack/Workspace/game-engine/resources/meshes/torus.stl"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/tournament.map"
+quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
+balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
+goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
-blue_balloon_position: [-21.5, 15.3, -3.0]
+blue_balloon_position: [-21.5, 15.3, -3.32]
 red_balloon_position:  [-21.5, 16.5, -4.4]
 
 move_blue: false
@@ -37,14 +37,14 @@ blue_balloon_position_new: [-20.5, 15.5, -3.0]
 blue_balloon_max_move_time: 20.0
 
 move_red: true
-red_balloon_position_new:  [-26, 14.7, -2.65]
+red_balloon_position_new:  [-26, 14.7, -3.00]
 red_balloon_max_move_time: 20.0
 
 use_seed: true
 seed: 37
 
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
-wind_intensity: 0 
+wind_intensity: 0
 
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
@@ -63,6 +63,6 @@ camera_mode: false
 goal_position: [-12.4, 13.5, -4.0]
 
 initial_quad_positions:
-  "athena": "-12.4 13.5 -4.0"
+  "zeus": "-12.4 13.5 -4.0"
 
 
