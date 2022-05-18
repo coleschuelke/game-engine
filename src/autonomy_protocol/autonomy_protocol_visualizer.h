@@ -7,9 +7,11 @@
 #include "occupancy_grid3d.h"
 #include "trajectory.h"
 
-class Student_game_engine_visualizer {
+// This class supports visualizing paths, curves, points, and whole trajectories
+// in the RVIZ display of the arena to aid in autonomy protocol development.
+class AutonomyProtocolVisualizer {
   public:
-  Student_game_engine_visualizer() {}
+  AutonomyProtocolVisualizer() {}
   void startVisualizing(std::string msg_name);
   void spin();
   void drawPath(std::vector<Eigen::Vector3d> path, int id);

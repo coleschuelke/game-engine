@@ -8,7 +8,7 @@ set(SOURCE_FILES
   aerial_robotics/example_autonomy_protocol.cc
   aerial_robotics/student_autonomy_protocol.cc
   game_snapshot.cc
-  student_game_engine_visualizer.cc
+  autonomy_protocol_visualizer.cc
   )
 
 add_library(${TARGET} STATIC ${SOURCE_FILES})

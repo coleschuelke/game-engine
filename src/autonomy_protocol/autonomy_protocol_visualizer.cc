@@ -1,14 +1,14 @@
-#include "student_game_engine_visualizer.h"
+#include "autonomy_protocol_visualizer.h"
 
 #include <cmath>
 #include <thread>
 
-void Student_game_engine_visualizer::startVisualizing(std::string msg_name) {
+void AutonomyProtocolVisualizer::startVisualizing(std::string msg_name) {
   auto nodeHandle = ros::NodeHandle("/occupancy_visualizer/");
   publisher_ = nodeHandle.advertise<visualization_msgs::Marker>(msg_name, 100);
 }
 
-void Student_game_engine_visualizer::spin() {
+void AutonomyProtocolVisualizer::spin() {
   visualization_msgs::Marker msg;
   msg.header.frame_id = "world";
   msg.id = 12345;
@@ -27,8 +27,8 @@ void Student_game_engine_visualizer::spin() {
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
-void Student_game_engine_visualizer::drawPath(std::vector<Eigen::Vector3d> path,
-                                              int id) {
+void AutonomyProtocolVisualizer::drawPath(std::vector<Eigen::Vector3d> path,
+                                          int id) {
   visualization_msgs::Marker msg;
   msg.header.frame_id = "world";
   msg.id = 12347 + id;
@@ -64,7 +64,7 @@ void Student_game_engine_visualizer::drawPath(std::vector<Eigen::Vector3d> path,
   publisher_.publish(msg2);
 }
 
-void Student_game_engine_visualizer::drawTrajectory(
+void AutonomyProtocolVisualizer::drawTrajectory(
     game_engine::Trajectory trajectory, int id_offset) {
   // Draw position points as a LineStrip
   visualization_msgs::Marker msg;
@@ -107,8 +107,8 @@ void Student_game_engine_visualizer::drawTrajectory(
   publisher_.publish(msg);
 }
 
-void Student_game_engine_visualizer::drawDot(Eigen::Vector3d pt, int id,
-                                             bool good) {
+void AutonomyProtocolVisualizer::drawDot(Eigen::Vector3d pt, int id,
+                                         bool good) {
   visualization_msgs::Marker msg;
   msg.header.frame_id = "world";
   msg.id = id;
@@ -129,7 +129,7 @@ void Student_game_engine_visualizer::drawDot(Eigen::Vector3d pt, int id,
   publisher_.publish(msg);
 }
 
-void Student_game_engine_visualizer::drawBalloonPosition(
+void AutonomyProtocolVisualizer::drawBalloonPosition(
     Eigen::Vector3d pt, std::string balloon_color) {
   visualization_msgs::Marker msg;
   msg.header.frame_id = "world";
@@ -168,8 +168,8 @@ void Student_game_engine_visualizer::drawBalloonPosition(
   publisher_.publish(msg);
 }
 
-void Student_game_engine_visualizer::drawCurve(std::vector<Eigen::Vector3d> pts,
-                                               int id, Eigen::Vector3d rgb) {
+void AutonomyProtocolVisualizer::drawCurve(std::vector<Eigen::Vector3d> pts,
+                                           int id, Eigen::Vector3d rgb) {
   // Draw position points as a LineStrip
   visualization_msgs::Marker msg;
   msg.header.frame_id = "world";

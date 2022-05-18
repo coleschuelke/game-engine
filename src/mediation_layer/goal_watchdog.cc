@@ -74,7 +74,8 @@ void GoalWatchdog::Run(
             goal_reach_time = elapsed_sec;
             quad_scorer = quad_name;
             if (!red_balloon_status->popped && !blue_balloon_status->popped) {
-              ROS_INFO_STREAM("Goal Reached @ elapsed: " << goal_reach_time);
+              ROS_INFO_STREAM("Goal reached at elapsed time "
+                              << goal_reach_time << " seconds.");
             }
           } else {
             active = true;
