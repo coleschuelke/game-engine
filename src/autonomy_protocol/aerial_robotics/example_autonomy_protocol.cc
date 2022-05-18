@@ -6,13 +6,8 @@
 #include "occupancy_grid3d.h"
 #include "student_game_engine_visualizer.h"
 
-// The length of one side of a cubic cell, in meters, in the occupancy grid
-constexpr double DISCRETE_LENGTH = 0.2;
-// How big the "inflation" bubble around obstacles will be, in meters
-constexpr double SAFETY_BOUNDS = 0.34;
-
 namespace game_engine {
-std::chrono::milliseconds dt_chrono = std::chrono::milliseconds(40);
+
 
 // UpdateTrajectories creates and returns a proposed trajectory.  The proposed
 // trajectory gets submitted to the mediation_layer (ML), which responds by
@@ -28,10 +23,14 @@ std::chrono::milliseconds dt_chrono = std::chrono::milliseconds(40);
 // indicate the MediationLayerCode for the most recently submitted trajectory.
 std::unordered_map<std::string, Trajectory>
 ExampleAutonomyProtocol::UpdateTrajectories() {
+
   // Set the duration of the example trajectory
   constexpr int duration_sec = 30;
-  const std::chrono::milliseconds T_chrono = std::chrono::seconds(duration_sec);
-
+  const std::chrono::milliseconds duration_chrono =
+    std::chrono::seconds(duration_sec);
+  // Time between trajectory points
+  std::chrono::milliseconds dt_chrono = std::chrono::milliseconds(40);
+  
   // 'static' variables act like Matlab persistent variables, maintaining their
   // value between function calls. Their initializer is only called once, on the
   // first pass through the code.  If you prefer not to include static
@@ -40,16 +39,18 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   // pattern.
   //
   // The OccupancyGrid3D class, which has already been written for you, divides
-  // the arena space into cells of a size you specify (by DISCRETE_LENGTH).  It
+  // the arena space into cells of a size you specify (see cell_size below).  It
   // has convenient functions for determining whether a cell is occupied and for
-  // translating between a cell's 3d grid index and its 3d cell center position,
-  // in meters.  Have a look at game-engine/src/environment/occupancy_grid3d.h
-  // to see the functions this class offers.
+  // translating between a cell's grid index triple and its 3d cell center
+  // position, in meters.  Have a look at
+  // game-engine/src/environment/occupancy_grid3d.h to see the functions this
+  // class offers.
   static OccupancyGrid3D occupancy_grid;
   static Graph3D graph_of_arena;
   // Student_game_engine_visualizer is a class that supports visualizing paths,
   // curves, points, and whole trajectories in the RVIZ display of the arena to
-  // aid in your algorithm development.
+  // aid in your algorithm development.  Have a look at
+  // student_game_engine_visualizer.h for a list of functions.
   static Student_game_engine_visualizer visualizer;
   static bool first_time = true;
   static bool halt = false;
@@ -57,30 +58,21 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   static const std::chrono::time_point<std::chrono::system_clock>
       start_chrono_time = std::chrono::system_clock::now();
   static const std::chrono::time_point<std::chrono::system_clock>
-      end_chrono_time = start_chrono_time + T_chrono;
+      end_chrono_time = start_chrono_time + duration_chrono;
 
   // Load the current quad position
   const std::string& quad_name = friendly_names_[0];
   Eigen::Vector3d current_pos;
   snapshot_->Position(quad_name, current_pos);
 
-  // Set some static variables the first time this function is called
-  if (first_time) {
-    first_time = false;
-    occupancy_grid.LoadFromMap(map3d_, DISCRETE_LENGTH, SAFETY_BOUNDS);
-    // You can run A* on graph_of_arena once you created a 3D version of A*
-    graph_of_arena = occupancy_grid.AsGraph();
-    visualizer.startVisualizing("/game_engine/environment");
-    start_pos = current_pos;
-  }
+  // The length of one side of the occupancy grid's cubic cells, in meters
+  constexpr double cell_size = 0.2;
+  // Length by which obstacles are inflated to provide a safety margin, in
+  // meters
+  double safety_margin = 0.34;
 
-  // Obtain current balloon positions and popped states
-  const Eigen::Vector3d red_balloon_pos = *red_balloon_position_;
-  const Eigen::Vector3d blue_balloon_pos = *blue_balloon_position_;
-  const bool red_balloon_popped = red_balloon_status_->popped;
-  const bool blue_balloon_popped = blue_balloon_status_->popped;
-
-  // Condition actions or parameters on wind intensity
+  // Condition actions or parameters on wind intensity.  For example, you might
+  // consider increasing safety_margin with wind intensity.
   switch (wind_intensity_) {
     case WindIntensity::Zero:
       // Do something zero-ish
@@ -101,6 +93,29 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
       std::cerr << "Unrecognized WindIntensity value." << std::endl;
       std::exit(EXIT_FAILURE);
   }
+
+  // Set some static variables the first time this function is called
+  if (first_time) {
+    first_time = false;
+    occupancy_grid.LoadFromMap(map3d_, cell_size, safety_margin);
+    // You can run A* on graph_of_arena once you created a 3D version of A*.
+    // Important hint: graph_of_arena will be large (many nodes) if
+    // cell_size is small.  If you naively extend your AStar2D function to
+    // 3D, it will run slowly on a large graph_of_arena.  You can increase
+    // cell_size to reduce the number of nodes, but this will prevent you
+    // from finding paths through with a tight spacing between obstacles.  A
+    // better approach is to speed up A* by
+    // https://www.educative.io/edpresso/unordered-sets-in-cpp
+    graph_of_arena = occupancy_grid.AsGraph();
+    visualizer.startVisualizing("/game_engine/environment");
+    start_pos = current_pos;
+  }
+
+  // Obtain current balloon positions and popped states
+  const Eigen::Vector3d red_balloon_pos = *red_balloon_position_;
+  const Eigen::Vector3d blue_balloon_pos = *blue_balloon_position_;
+  const bool red_balloon_popped = red_balloon_status_->popped;
+  const bool blue_balloon_popped = blue_balloon_status_->popped;
 
   // You can fill out this switch statement with case statements tailored to
   // each MediationLayerCode.
