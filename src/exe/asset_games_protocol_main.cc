@@ -289,26 +289,103 @@ int main(int argc, char** argv) {
   goal_status_publisher_node->Publish(setStartStatusGoal);
 
   std::vector<ControlCode> control_codes(2, ControlCode::NashGame);
-  if (argc == 1) {
-    std::cout << "default controllers selected\n";
-  } else if (argc != 3) {
-    std::cout << "Usage: asset_games_protocol [pursuer controller] [evader "
-                 "controller]\n"
-              << "Pursuer Controllers: \n\t\tVelMatch \n\t\tNashGame\n"
-              << "Evader Controllers: \n\t\tVelMatch \n\t\tNashGame\n";
-    std::exit(EXIT_FAILURE);
-  } else {
-    for (int i = 1; i < argc; i++) {
-      if (strcmp(argv[i], "VelMatch") == 0) {
-        control_codes[i - 1] = ControlCode::VelMatch;
-      } else if (strcmp(argv[i], "NashGame") == 0) {
-        control_codes[i - 1] = ControlCode::NashGame;
-      } else {
-        std::cout << "invalid argument!\n";
-        std::exit(EXIT_FAILURE);
-      }
-    }
+  // if (argc == 1) {
+  //   std::cout << "default controllers selected\n";
+  // } else if (argc != 3) {
+  //   std::cout << "Usage: asset_games_protocol [pursuer controller] [evader "
+  //                "controller]\n"
+  //             << "Pursuer Controllers: \n\t\tVelMatch \n\t\tNashGame\n"
+  //             << "Evader Controllers: \n\t\tVelMatch \n\t\tNashGame\n";
+  //   std::exit(EXIT_FAILURE);
+  // } else {
+  //   for (int i = 1; i < argc; i++) {
+  //     if (strcmp(argv[i], "VelMatch") == 0) {
+  //       control_codes[i - 1] = ControlCode::VelMatch;
+  //     } else if (strcmp(argv[i], "NashGame") == 0) {
+  //       control_codes[i - 1] = ControlCode::NashGame;
+  //     } else {
+  //       std::cout << "invalid argument!\n";
+  //       std::exit(EXIT_FAILURE);
+  //     }
+  //   }
+  // }
+
+  // Initialize players with defaults. NashGame n=8 k=2
+  std::vector<player> players(2, player{});
+  switch(argc) {
+      case 1 : //no arguements
+          std::cout << "default controllers selected: NashGame n=8 k=2 for both.\n";
+          break;
+      case 2 : //help
+          if (argv[1] == std::string("-h") || argv[1] == std::string("--help")){
+            std::cout << "Syntax: ./asset_games_protocol TYPE_P [PARAMS_P] TYPE_E [PARAMS_E]" << std::endl;
+            std::cout << "        ./asset_games_protocol -h" << std::endl;
+            std::cout << "TYPES: " << std::endl;
+            std::cout << "VelMatch                : a proportional navigation based solution. No options should be passed for this type." << std::endl;
+            std::cout << "NashGame                : solves for a nash equilibrium or mixed nash solution based on the following parameters:" << std::endl;
+            std::cout << "OPTIONS: " << std::endl;
+            std::cout << "n k                     : integers representing the number of options for acceleration n, and the levels to look ahead k" << std::endl;
+            }
+          else{
+            std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+          break;
+      case 3 : // Both VelMarch
+          if (!((strcmp(argv[1], "VelMatch") == 0) && (strcmp(argv[2], "VelMatch") == 0))){
+            std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+          players[0] = player{ControlCode::VelMatch};
+          players[1] = player{ControlCode::VelMatch};
+          break;
+      case 5 : // 1 VelMarch and 1 NashGame
+          // VelMatch Pursuer & NashGame Evader
+          if ((strcmp(argv[1], "VelMatch") == 0) && (strcmp(argv[2], "NashGame") == 0)){
+              int n = atoi(argv[3]);
+              int k = atoi(argv[4]);
+              if (n == 0 || k == 0){
+                std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+                std::exit(EXIT_FAILURE);
+              }
+              players[0] = player{ControlCode::VelMatch};
+              players[1] = player{ControlCode::NashGame, n, k};
+          }
+          else if ((strcmp(argv[1], "NashGame") == 0) && (strcmp(argv[4], "VelMatch") == 0)){
+              int n = atoi(argv[2]);
+              int k = atoi(argv[3]);
+              if (n == 0 || k == 0){
+                std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+                std::exit(EXIT_FAILURE);
+              }
+              players[0] = player{ControlCode::NashGame, n, k};
+              players[1] = player{ControlCode::VelMatch};
+          }
+          else {
+              std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+              std::exit(EXIT_FAILURE);
+          }
+          break;
+      case 7 : // Both NashGame
+              if ((strcmp(argv[1], "NashGame") == 0) && (strcmp(argv[4], "NashGame") == 0)){
+                int n_p = atoi(argv[2]);
+                int k_p = atoi(argv[3]);
+                int n_e = atoi(argv[5]);
+                int k_e = atoi(argv[6]);
+                if (n_p == 0 || k_p == 0 || n_e == 0 || k_e == 0){
+                  std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+                  std::exit(EXIT_FAILURE);
+                }
+                players[0] = player{ControlCode::NashGame, n_p, k_p};
+                players[1] = player{ControlCode::NashGame, n_e, k_e};
+              }
+              break;
+        default: // No matching options
+              std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
+              std::exit(EXIT_FAILURE);
+              break;
   }
+
 
   // The AutonomyProtocol
   std::shared_ptr<AutonomyProtocol> asset_games_protocol =
@@ -316,7 +393,7 @@ int main(int argc, char** argv) {
           blue_quad_names, red_quad_names, game_snapshot,
           trajectory_warden_client, prevetter, map3d, red_balloon_status,
           red_balloon_position, blue_balloon_status, blue_balloon_position,
-          goal_position, wind_intensity, control_codes);
+          goal_position, wind_intensity, players);
 
   // Start the autonomy protocol
   std::thread ap_thread_asset_games(

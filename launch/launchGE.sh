@@ -33,17 +33,7 @@ while true ; do
     fi
     echo "$param is not in ./run"
 done
-#get autonomy protocol
-cd $filepath/bin
-prot=
-while true ; do
-    read -e -r -p "Autonomy Protocol file to use in ./bin (i.e. example_autonomy_protocol): " prot
-    FILE=$filepath/bin/$prot
-    if [ -f "$FILE" ] ; then
-        break
-    fi
-    echo "$prot is not in ./bin"
-done
+
 
 
 #==========Setup Process===============#
@@ -53,27 +43,27 @@ echo "Launching Roscore.."
 roscore > roscore.log 2>&1 &
 sleep 2
 echo "Success!"
-# load roscore params
-echo "Launching $param file.."
-cd $filepath/run
-rosparam load $param /game_engine/
-echo "Success!"
 # load visualizer (Optional)
 cd $filepath/run
 while true; do
-    read -p "Start visualizer?[y/n] " yn
-    case $yn in
-        [Yy]* ) rosrun rviz rviz -d config.rviz > $localdir/rviz.log 2>&1 &
-		echo "Success."
-		sleep 2
-		break;;
-        [Nn]* ) break;;
-        * ) echo "Please answer yes or no ([y/n]).";;
-    esac
+    	read -p "Start visualizer?[y/n] " yn
+    	case $yn in
+        	[Yy]* ) rosrun rviz rviz -d config.rviz > $localdir/rviz.log 2>&1 &
+			echo "Success."
+			sleep 2
+			break;;
+        	[Nn]* ) break;;
+        	* ) echo "Please answer yes or no ([y/n]).";;
+		    esac
 done
-sleep 1
 #==========Repeatable Process===============#
 while true; do
+	# load roscore params
+	echo "Launching $param file.."
+	cd $filepath/run
+	rosparam load $param /game_engine/
+	echo "Success!"
+	sleep 1
 	# Mediation Layer
 	echo "Launching Mediation Layer.."
 	cd $filepath/bin
@@ -92,14 +82,24 @@ while true; do
 	        [Yy]* ) ./visualizer &
 			read -p "Press enter to continue once objects are loaded in visualizer..";;
 	esac
-	# autonomy protocol
+	#get autonomy protocol
 	cd $filepath/bin
-	stdbuf -o0 $filepath/bin/$prot > $localdir/autonomy_protocol.log 2>&1 &
+	prot=
+	while true ; do
+    	read -e -r -p "Autonomy Protocol file to use in ./bin (i.e. example_autonomy_protocol): " prot
+		exe=${prot%% *}
+    	FILE=$filepath/bin/$exe
+   		if [ -f "$FILE" ] ; then
+        	break
+    	fi
+    	echo "$prot is not in ./bin"
+	done
+	$filepath/bin/$prot | tee $localdir/autonomy_protocol.log 
 	read -p "Press [Enter] to kill the Mediation layer, Physics Sim and protocol and re-run them. WARNING: Logs will be wiped!"
-	killall $prot
-	killall visualizer
-	killall physics_simulator
-	killall mediation_layer
+	killall $prot 2>/dev/null
+	killall visualizer 2>/dev/null
+	killall physics_simulator 2>/dev/null
+	killall mediation_layer 2>/dev/null
 done
 
 
