@@ -311,7 +311,8 @@ int main(int argc, char** argv) {
   // }
 
   // Initialize players with defaults. NashGame n=8 k=2
-  std::vector<player> players(2, player{});
+  std::vector<player> players(2, player());
+
   switch(argc) {
       case 1 : //no arguements
           std::cout << "default controllers selected: NashGame n=8 k=2 for both.\n";
@@ -336,8 +337,9 @@ int main(int argc, char** argv) {
             std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
             std::exit(EXIT_FAILURE);
           }
-          players[0] = player{ControlCode::VelMatch};
-          players[1] = player{ControlCode::VelMatch};
+          players[0] = player(ControlCode::VelMatch,0,0);
+          players[1] = player(ControlCode::VelMatch,0,0);
+          std::cout << "Running Pursuer: VelMatch & Evader:VelMatch." << std::endl;
           break;
       case 5 : // 1 VelMarch and 1 NashGame
           // VelMatch Pursuer & NashGame Evader
@@ -348,8 +350,9 @@ int main(int argc, char** argv) {
                 std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
                 std::exit(EXIT_FAILURE);
               }
-              players[0] = player{ControlCode::VelMatch};
-              players[1] = player{ControlCode::NashGame, n, k};
+              players[0] = player(ControlCode::VelMatch,0,0);
+              players[1] = player(ControlCode::NashGame, n, k);
+              std::cout << "Running Pursuer: VelMatch & Evader: NashGame with n=" << n << " and k=" << k << "." << std::endl;
           }
           else if ((strcmp(argv[1], "NashGame") == 0) && (strcmp(argv[4], "VelMatch") == 0)){
               int n = atoi(argv[2]);
@@ -358,8 +361,9 @@ int main(int argc, char** argv) {
                 std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
                 std::exit(EXIT_FAILURE);
               }
-              players[0] = player{ControlCode::NashGame, n, k};
-              players[1] = player{ControlCode::VelMatch};
+              players[0] = player(ControlCode::NashGame, n, k);
+              players[1] = player(ControlCode::VelMatch,0,0);
+              std::cout << "Running Pursuer: NashGame with n=" << n << " and k=" << k << " & Evader: VelMatch" << std::endl;
           }
           else {
               std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
@@ -376,8 +380,9 @@ int main(int argc, char** argv) {
                   std::cout << "Incorrect arguements. Use './asset_games_protocol -h' for help." << std::endl;
                   std::exit(EXIT_FAILURE);
                 }
-                players[0] = player{ControlCode::NashGame, n_p, k_p};
-                players[1] = player{ControlCode::NashGame, n_e, k_e};
+                players[0] = player(ControlCode::NashGame, n_p, k_p);
+                players[1] = player(ControlCode::NashGame, n_e, k_e);
+                std::cout << "Running Pursuer: NashGame with n=" << n_p << " and k=" << k_p << " & Evader: NashGame with n=" << n_e << " and k=" << k_e << "." << std::endl;
               }
               break;
         default: // No matching options
