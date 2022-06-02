@@ -27,7 +27,7 @@
 #include "goal_status_subscriber_node.h"
 #include "goal_status.h"
 
-#include "ta-autonomy-protocol/student_autonomy_protocol.h"
+#include "ta_autonomy_protocol.h"
 #include "game_snapshot.h"
 #include "map3d.h"
 #include "presubmission_trajectory_vetter.h"

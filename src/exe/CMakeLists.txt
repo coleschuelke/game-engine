@@ -184,6 +184,7 @@ target_link_libraries(manual_control_protocol
         yaml-cpp
         lib_joy
         ${catkin_LIBRARIES})
+
 set_target_properties(manual_control_protocol
         PROPERTIES
         CXX_STANDARD 14
@@ -216,6 +217,7 @@ add_executable(ta_autonomy_protocol ta_autonomy_protocol_main.cc)
 target_include_directories(ta_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
 target_link_libraries(ta_autonomy_protocol
         lib_ta_autonomy_protocol
+        lib_autonomy_protocol
         lib_geometry
         lib_environment
         lib_util
@@ -224,6 +226,7 @@ target_link_libraries(ta_autonomy_protocol
         lib_ros_view
         yaml-cpp
         ${catkin_LIBRARIES})
+
 set_target_properties(ta_autonomy_protocol
         PROPERTIES
         CXX_STANDARD 14
