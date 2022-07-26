@@ -8,3 +8,6 @@ src/autonomy_protocol/research-autonomy-protocols/
 src/autonomy_protocol/ta-autonomy-protocol
 labs/lab4/src/lab4-solution-aerial-robotics
 .idea/
+.vscode/
+cmake-build-debug/
+launch/*.log

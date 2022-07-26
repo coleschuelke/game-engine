@@ -73,5 +73,8 @@ camera_mode: false
 goal_position: [-26.6, 20, -4.5]
 
 initial_quad_positions:
-  "hermes": "-26 15 -4.5" #evader (opposite side of target)
+  "hermes": "-17 15 -4.5" #evader (opposite side of target)
   "apollo": "-17 19 -4.5" #pursuer - evader reaches target
+  # Grid is x: -26.7 to -10.37
+  #         y: 13.72 to  19.58
+
