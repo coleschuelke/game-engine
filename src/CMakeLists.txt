@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
 # Build pre-existing libraries
