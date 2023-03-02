@@ -4,10 +4,9 @@
 #include "graph.h"
 #include "occupancy_grid2d.h"
 
-/* This file contains example uses of the MediationLayer library. Examples
- * include: reading an occupancy grid file, constructing a graph, extracting
- * data from the graph, printing objects, and evaluating object equality.
- */
+// This file contains example uses of the MediationLayer library. Examples
+// include reading an occupancy grid file, constructing a graph, extracting data
+// from the graph, printing objects, and evaluating object equality.
 
 using namespace game_engine;
 
