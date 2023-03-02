@@ -34,7 +34,7 @@ class Graph {
   // Add a vector of edges to the graph
   void AddEdges(const std::vector<DirectedEdge<T>>& edges);
 
-  // Returns a vector of edges that are eminating from a given node
+  // Returns a vector of edges that are emanating from a given node
   const std::vector<DirectedEdge<T>> Edges(
       const std::shared_ptr<T>& node) const;
 
