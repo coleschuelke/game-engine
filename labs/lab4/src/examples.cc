@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   }
 
   // Load an occupancy grid from a file
-  // There are two example grids at: data/labs/grid2d_*
+  // There are two example grids at data/labs/grid2d_*
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromFile(argv[1]);
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
   const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2d(0,0));
   const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2d(4,4));
 
-  // Access directed edges eminating from a node
+  // Access all the directed edges emanating from a node
   const std::vector<DirectedEdge2D> edges = graph.Edges(start_node);
   
   // Iterate through the list of edges
@@ -64,8 +64,8 @@ int main(int argc, char** argv) {
   }
 
   // Check node equality
-  std::cout << "Are the start and end nodes equal: " << (*start_node == *end_node) << std::endl;
-  std::cout << "Is the start node equal to itself: " << (*start_node == *start_node) << std::endl;
+  std::cout << "Are the start and end nodes equal?: " << (*start_node == *end_node) << std::endl;
+  std::cout << "Is the start node equal to itself?: " << (*start_node == *start_node) << std::endl;
 
   return EXIT_SUCCESS;
 }
