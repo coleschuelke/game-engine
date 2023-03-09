@@ -69,8 +69,8 @@ namespace game_engine {
     std::vector<NodeWrapperPtr> explored;
 
     ///////////////////////////////////////////////////////////////////
-    // YOUR WORK GOES HERE
-    // SOME EXAMPLE CODE INCLUDED BELOW
+    // YOUR WORK GOES BELOW
+    // SOME EXAMPLE CODE PROVIDED
     ///////////////////////////////////////////////////////////////////
 
     // Create a NodeWrapperPtr
@@ -88,6 +88,12 @@ namespace game_engine {
     path_info.details.path_cost = 0;
     path_info.details.run_time = timer.Stop();
     path_info.path = {};
+
+    // Push an example node to PathInfo.path.  Note that in your implementation,
+    // path_info.path (which, as you can see in path_info.h, is just a vector of
+    // pointers to Node2D objects), should contain the sequence of nodes
+    // traversed from start_ptr to end_ptr.
+    path_info.path.push_back(nw_ptr->node_ptr);
 
     // You must return a PathInfo
     return path_info;
