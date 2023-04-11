@@ -12,7 +12,7 @@ For example, a team that pops both balloons within the time limit will be
 scored higher than a team that only pops one balloon even if the second team's
 round-trip time was shorter.
 
-The scoring reflects a law of software design: 
+The scoring reflects a maxim of software design: 
 1) get it working
 2) get it working right
 3) get it working right and fast
@@ -36,7 +36,7 @@ and the quadcopter will continue to follow the most recent, valid trajectory.
 
 2) If the Mediation Layer determines that a quadcopter has intersected or
 touched an obstacle during the flight as a result of disturbances, the
-quadcopter is frozen, forced to land, and the balloon-popping attempt is
+quadcopter is frozen and the balloon-popping attempt is
 forfeit. This constraint has a strict punishment because violations imperil
 the quadcopters. Teams should take care not to fly too close to obstacles in
 case the wind or another disturbance forces the quadcopter into the
