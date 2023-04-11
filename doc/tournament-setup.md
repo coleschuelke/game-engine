@@ -17,8 +17,8 @@ your opponents to see your secrets!
 
 In the repository settings/members, add your team members as Maintainer to
 your repository. This allows them to view and edit the code. Also add our
-superlative TAs Robert and Zacharias as Reporter so they can follow your
-progress. Their GitLab handles are @roberttenny and @zackkomo.
+superlative TA Alejandro as Reporter so he can follow your
+progress. His GitLab handle is @alemoreno991.
 
 ## Clone `game-engine`
 In the `~/Workspace` directory, either clone a fresh copy of the
@@ -115,7 +115,7 @@ git push origin master
 
 ## Pulling changes
 Suppose a change has been made to a remote repository (e.g., your teammate has
-pushed to `origin` or a TA has changed `source`), and suppose you want to pull
+pushed to `origin` or the TA has changed `source`), and suppose you want to pull
 in and merge these changes with `local`. First commit your local changes as
 described above.  Next, pull from the remote repository:
 
@@ -135,7 +135,7 @@ the tournament's Vision Test.  Name the remote repository `balloon-locator`.
 Rename your local `lab5-aerial-robotics` repository `balloon-locator`.
 
 As before,
-- Add your team members as Maintainer and the TAs as Reporter to the remote repository.
+- Add your team members as Maintainer and the TA as Reporter to the remote repository.
 - Rename `origin` as `source` and add your new remote repository as `origin`.
 - Push your local repository to `origin`.
 - Configure `balloon-locator` with your name and email.
