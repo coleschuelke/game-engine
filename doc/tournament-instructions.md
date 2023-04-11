@@ -7,16 +7,6 @@ cm based on a set of images and their corresponding metadata.
 Obstacle Course: Command a quadcopter to pop two balloons and return to the
 start position as quickly as possible.
 
-## Important Dates
-- April 27: Pre-tournament starts.
-- May 3: First pre-tournament evaluation date. `game-engine` code tagged `release` is
-  evaluated at 9 am. `release` code will be pulled and evaluated every week day
-  at 9 am thereafter until the end of the pre-tournament.
-- May 12: Final pre-tournament evaluation at 9 am. Final map of
-  arena released: this is the map that will be used on the day of the tournament.
-- May 14: Tournament code for both obstacle course (game-engine) and vision test must be tagged 'release' by 9 am.    
-- May 16, Tournament day. 2 to 5 pm.
-
 ## Obstacle Course Notes
 
 ### Interface
@@ -37,12 +27,12 @@ cluttered environment in the presence of disturbances is difficult.
 
 For lab 4, you planned paths through a cluttered 2D environment. For that lab,
 much of the 2D files were already written, tested, debugged, and vetted.  For
-this project, you are provided with little 3D support. It is completely up to
+this project, you are provided only modest 3D support. It is completely up to
 you to determine how you will tackle this problem.
 
 You are allowed to add any additional files, functions, or enhancements to
 your `game-engine` code base. However, you are not allowed to modify or delete
-current functionality without the written permission of one of the TAs.
+current functionality without the written permission of the TA.
 
 ### Code Restrictions
 1) Don't alter any code in the src/exe folder
@@ -88,18 +78,5 @@ git tag -a release -m "pre-tournament day 3"
 git push origin release
 ```
 
-A TA will pull your `release` tag every evaluation day at 9 am and evaluate
+The TA will pull your `release` tag every evaluation day at 9 am and evaluate
 your pre-tournament standing.
-
-
-## Availability of Binaries
-
-To allow teams to evaluate their standing with respect to the other teams, but
-prevent code-sharing, the TAs will post all teams' `student_autonomy_protocol`
-binaries.  To evaluate an opponent's strategy, launch all tournament
-executables as normal, but substitute an opponent's
-`student_autonomy_protocol` for yours.  Note that if your file paths are
-different from the ones other students are using, dynamic linking of libraries
-may fail.
-
-
