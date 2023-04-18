@@ -12,11 +12,10 @@ start position as quickly as possible.
 ### Interface
 Your team must complete the function
 `StudentAutonomyProtocol::UpdateTrajectories` located in the file
-`game-engine/src/autonomy_protocol/student_autonomy_protocol.h`. This function
-provides access to map data, balloon data, and the current state of the
-quadcopter.  It returns a specified quadcopter trajectory.
+`game-engine/src/autonomy_protocol/student_autonomy_protocol.cc`. This function is a member of the StudentAutonomyProtocol class, which inherits from the AutonomyProtocol parent class.  These classes provide access to map data, balloon data, and the current state of the
+quadcopter.  The function returns a specified quadcopter trajectory.
 
-Note that the interface only specifies the input and output (quad state ->
+Note that the function interface only specifies the input and output (quad state ->
 quad trajectory), but not how to accomplish the implied task. It is up to you
 to determine how best to complete the function.
 
@@ -27,11 +26,10 @@ cluttered environment in the presence of disturbances is difficult.
 
 For lab 4, you planned paths through a cluttered 2D environment. For that lab,
 much of the 2D files were already written, tested, debugged, and vetted.  For
-this project, you are provided only modest 3D support. It is completely up to
-you to determine how you will tackle this problem.
+this project, you are provided only modest 3D support. You have wide latitude to determine how you will tackle this problem.
 
-You are allowed to add any additional files, functions, or enhancements to
-your `game-engine` code base. However, you are not allowed to modify or delete
+You may add any additional files, functions, or enhancements to
+your `game-engine` code base. However, do not modify or delete
 current functionality without the written permission of the TA.
 
 ### Code Restrictions
