@@ -23,11 +23,11 @@ class GoalWatchdog {
     // reach a goal, in meters
     double reach_distance = 0.40;
 
-    // quad speed must be less than this amount to reach goal
+    // Quad speed must be less than this amount to declare goal reached
     double reach_speed = 0.1;
 
-    // time that must elapse before goal can be reached
-    double time_fuze = 20.0;
+    // Time that must elapse before goal can be reached
+    double time_fuze = 5.0;
 
     Options() {}
   };
