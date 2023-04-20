@@ -2,7 +2,7 @@
 
 #==========Warning===============#
 localdir=$(pwd)
-read -p "This script will run everything other than the autonomy protocol which you can run, after evetyhing has launched,
+read -p "This script will run everything other than the autonomy protocol which you can run, after everything has launched,
 manually with your debugger of choice.
 Before running the script:
 1) make sure no instance of ros is running
