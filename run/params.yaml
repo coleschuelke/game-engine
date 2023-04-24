@@ -30,21 +30,21 @@ balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/m
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 blue_balloon_position: [-23.5, 17.3, -3.32]
-red_balloon_position:  [-19.5, 17.9, -3.5]
+red_balloon_position:  [-12.7, 14.5, -2.0]
 
-move_blue: false
-blue_balloon_position_new: [-20.5, 15.5, -3.0]
+move_blue: true
+blue_balloon_position_new: [-18.5, 16.5, -3.0]
 blue_balloon_max_move_time: 20.0
 
 move_red: true
-red_balloon_position_new:  [-12.7, 18.5, -2.0]
-red_balloon_max_move_time: 20.0
+red_balloon_position_new:  [-24.5, 19.5, -3.5]
+red_balloon_max_move_time: 5.0
 
 use_seed: true
 seed: 37
 
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
-wind_intensity: 0
+wind_intensity: 1
 
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
@@ -60,9 +60,7 @@ joy_mode: false
 # change to true if using the camera
 camera_mode: false
 
-goal_position: [-12.7, 13.5, -2.0]
+goal_position: [-23.5, 17.3, -3.32]
 
 initial_quad_positions:
-  "zeus": "-12.4 14.0 -3.0"
-
-
+  "zeus": "-12.4 18.0 -3.0"
