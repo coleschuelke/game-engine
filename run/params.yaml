@@ -24,7 +24,7 @@ balloon_position_topics:
 goal_status_topics:
   "home": "/game_engine/home_status"
 
-map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/tournament2021.map"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/tournament.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
@@ -36,7 +36,7 @@ move_blue: true
 blue_balloon_position_new: [-18.5, 16.5, -3.0]
 blue_balloon_max_move_time: 20.0
 
-move_red: true
+move_red: false
 red_balloon_position_new:  [-24.5, 19.5, -3.5]
 red_balloon_max_move_time: 5.0
 
