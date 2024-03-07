@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   }
 
   // Load an occupancy grid from a file
-  // There are two example grids at data/labs/grid2d_*
+  // Example grids may be found at game-engine/labs/lab4/data
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromFile(argv[1]);
 
