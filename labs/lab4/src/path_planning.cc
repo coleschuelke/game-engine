@@ -1,5 +1,3 @@
-// Author: PUT YOUR NAME HERE
-
 #include <cstdlib>
 #include <iostream>
 
