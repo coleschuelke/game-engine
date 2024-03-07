@@ -4,9 +4,10 @@
 #include "graph.h"
 #include "occupancy_grid2d.h"
 
-// This file contains example uses of the MediationLayer library. Examples
-// include reading an occupancy grid file, constructing a graph, extracting data
-// from the graph, printing objects, and evaluating object equality.
+// This file contains example code for reading an occupancy grid file,
+// constructing a graph, extracting data from the graph, printing node contents,
+// accessing node neighbors, and evaluating node equality.  These are key
+// operations you'll need for Lab 4.  
 
 using namespace game_engine;
 
@@ -21,10 +22,10 @@ int main(int argc, char** argv) {
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromFile(argv[1]);
 
-  // Transform an occupancy grid into a graph
+  // Transform an occupancy grid into a 2D graph
   const Graph2D graph = occupancy_grid.AsGraph();
 
-  // Define the start and end points
+  // Define the start and end nodes
   // Create a node at (0,0) and a node at (4,4)
   const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2d(0,0));
   const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2d(4,4));
