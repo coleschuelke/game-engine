@@ -39,6 +39,11 @@ class Node {
     return this->f_equals_(other.data_);
   }
 
+  // Not equals operator.
+  bool operator!=(const Node& other) const {
+    return !this->f_equals_(other.data_);
+  }
+
   // Equals structure. Convience structure for STL containers
   struct Equals {
     bool operator()(const Node& lhs, const Node& rhs) const {
