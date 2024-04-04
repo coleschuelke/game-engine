@@ -28,15 +28,13 @@ For lab 4, you planned paths through a cluttered 2D environment. For that lab,
 much of the 2D files were already written, tested, debugged, and vetted.  For
 this project, you are provided only modest 3D support. You have wide latitude to determine how you will tackle this problem.
 
-You may add any additional files, functions, or enhancements to
-your `game-engine` code base. However, do not modify or delete
-current functionality without the written permission of the TA.
+You may add additional files, functions, or enhancements to
+your `game-engine` code base as necessary. However, do not modify existing classes and functions, except of course the function `StudentAutonomyProtocol::UpdateTrajectories`.
 
 ### Code Restrictions
 1) Don't alter any code in the src/exe folder
 2) Don't  alter any of the `AutonomyProtocol` interfaces
-3) Don't change or remove any core functionalities of `game-engine`
-without written permission of one of the TAs.
+3) Don't change or remove any core functionalities of `game-engine`.
 
 ### Running the Game Engine
 To run `game-engine`, follow the build/run instructions in `README.md` in the
