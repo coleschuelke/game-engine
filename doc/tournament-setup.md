@@ -21,7 +21,7 @@ superlative TAs Maxwell and Wenkai as Reporter so they can follow your
 progress. Their GitLab handles are @gippertexas (that's Maxwell!) and @wenkaiqin (Wenkai).
 
 ## Clone `game-engine`
-In the `~/Workspace` directory, either clone a fresh copy of the
+In the `~/Workspace` directory, either clone a fresh copy of the original
 `game-engine` repository (if you want to start with a clean slate), or
 update your existing local `game-engine` repository (if one already exists at
 that location and you want to keep it).
@@ -88,7 +88,6 @@ cd ~/Workspace/game-engine
 git push -u origin --all
 git push -u origin --tags
 ```
-
 After pushing, you should see that your `game-engine` repository on GitLab has
 the same contents as your local repository.  Remember, only one member of your
 team should create your team's remote repository and make this initial push;
