@@ -17,8 +17,8 @@ your opponents to see your secrets!
 
 In the repository settings/members, add your team members as Maintainer to
 your repository. This allows them to view and edit the code. Also add our
-superlative TA Alejandro as Reporter so he can follow your
-progress. His GitLab handle is @alemoreno991.
+superlative TAs Maxwell and Wenkai as Reporter so they can follow your
+progress. Their GitLab handles are @gippertexas (that's Maxwell!) and @wenkaiqin (Wenkai).
 
 ## Clone `game-engine`
 In the `~/Workspace` directory, either clone a fresh copy of the
