@@ -10,13 +10,13 @@ Each team member should already have created a GitLab account.  If not, then cre
 
 ## Create a remote GitLab repository
 Designate one of your team members to host your team's remote repository. This
-person should create a `game-engine` repository on his or her account in
-GitLab. Name both the repository and the slug `game-engine`. Make the
+person should create a blank project on his or her account in
+GitLab. Set both the project name and the project slug as `game-engine`. Make the
 repository private to ensure that only you may view this code. You don't want
-your opponents to see your secrets!
+your opponents to see your secrets!  Do not initialize the repository with a README.
 
-In the repository settings/members, add your team members as Maintainer to
-your repository. This allows them to view and edit the code. Also add our
+On the repository Manage/Members page, invite your team members, each one as Maintainer, to
+your repository. This allows them to view and edit the code. Also invite our
 superlative TAs Maxwell and Wenkai as Reporter so they can follow your
 progress. Their GitLab handles are @gippertexas (that's Maxwell!) and @wenkaiqin (Wenkai).
 
