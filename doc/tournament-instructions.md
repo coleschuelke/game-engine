@@ -32,8 +32,8 @@ You may add additional files, functions, or enhancements to
 your `game-engine` code base as necessary. However, do not modify existing classes and functions, except of course the function `StudentAutonomyProtocol::UpdateTrajectories`.
 
 ### Code Restrictions
-1) Don't alter any code in the src/exe folder
-2) Don't  alter any of the `AutonomyProtocol` interfaces
+1) Don't alter any code in the src/exe folder.
+2) Don't  alter any of the `AutonomyProtocol` interfaces.
 3) Don't change or remove any core functionalities of `game-engine`.
 
 ### Running the Game Engine
