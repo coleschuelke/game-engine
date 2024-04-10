@@ -1,0 +1,10 @@
+# Filepaths to be used with launchGE.sh 
+
+path_to_GE: /home/aeronaut/Workspace/game-engine
+
+
+# Files to use
+
+param_file: params.yaml
+
+protocol: example_autonomy_protocol

@@ -23,8 +23,11 @@ class BalloonStatusPublisherNode {
  public:
   // Constructor.
   BalloonStatusPublisherNode(const std::string& topic);
-
+ 
   // Publishes the message
   void Publish(const BalloonStatus& balloon_status);
+  
+  // Wait until all subscribers are connected to publisher
+  void WaitForConnection();
 };
 }  // namespace game_engine

@@ -77,7 +77,7 @@ void QuadStateWatchdog::Run(
           if (quad_state_watchdog_status->ReadExecution(quad_name)) {
             quad_state_watchdog_status->Write(quad_name,
                                               MediationLayerCode::Success);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1500));
           }
         }
       }
@@ -85,12 +85,12 @@ void QuadStateWatchdog::Run(
       else if (quad_state_watchdog_status->ReadExecution(quad_name)) {
         quad_state_watchdog_status->Write(quad_name,
                                           MediationLayerCode::Success);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(1500));
       }
 
       // Check if current quad too close to another quad
       else if (quad_names.size() > 1) {
-        //          inflated_map.ClearDynamicObstacles();
+        // inflated_map.ClearDynamicObstacles();
         for (const std::string& other_quad_name : quad_names) {
           if (other_quad_name != quad_name) {
             // Grab position of other quad
@@ -102,20 +102,21 @@ void QuadStateWatchdog::Run(
             quad_state_warden->Read(quad_name, current_state);
             // Get the current position of the quad
             current_position = current_state.Position();
-            //              inflated_map.AddInflatedDynamicObstacle(other_quad_name,
-            //              CreateQuad(other_quad_current_position),
-            //              this->options_.min_distance_btwn_quads);
+            //  inflated_map.AddInflatedDynamicObstacle(other_quad_name,
+            //  CreateQuad(other_quad_current_position),
+            //  this->options_.min_distance_btwn_quads);
             //
-            //              if(!inflated_map.IsFreeDynamicSpace(other_quad_name,
-            //              current_position)) {
-            //                quad_state_watchdog_status->Write(quad_name,
-            //                MediationLayerCode::QuadTooCloseToAnotherQuad);
-            //              } else {
-            //                quad_state_watchdog_status->Write(quad_name,
-            //                MediationLayerCode::Success);
-            //              }
-            //              // Check if distance between quads is less than the
-            //              limit
+            //  if(!inflated_map.IsFreeDynamicSpace(other_quad_name,
+            //  current_position)) {
+            //    quad_state_watchdog_status->Write(quad_name,
+            //    MediationLayerCode::QuadTooCloseToAnotherQuad);
+            //  } else {
+            //    quad_state_watchdog_status->Write(quad_name,
+            //    MediationLayerCode::Success);
+            //  }
+            //
+            // Check if distance between quads is less than the
+            //  limit
             if ((other_quad_current_position - current_position).norm() <
                 this->options_.min_distance_btwn_quads) {
               quad_state_watchdog_status->Write(

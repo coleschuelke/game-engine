@@ -10,6 +10,7 @@
 #include <thread>
 #include <vector>
 
+#include "autonomy_protocol_visualizer.h"
 #include "balloon_status.h"
 #include "game_snapshot.h"
 #include "map3d.h"
@@ -55,6 +56,7 @@ class AutonomyProtocol {
   std::shared_ptr<Eigen::Vector3d> blue_balloon_position_;
   Eigen::Vector3d goal_position_;
   WindIntensity wind_intensity_;
+  AutonomyProtocolVisualizer visualizer_;
 
   volatile std::atomic<bool> ok_{true};
   std::map<std::string, TrajectoryCode> trajectoryCodeMap_;
@@ -73,7 +75,8 @@ class AutonomyProtocol {
       const std::shared_ptr<Eigen::Vector3d> red_balloon_position,
       const std::shared_ptr<BalloonStatus> blue_balloon_status,
       const std::shared_ptr<Eigen::Vector3d> blue_balloon_position,
-      const Eigen::Vector3d& goal_position, const WindIntensity& wind_intensity)
+      const Eigen::Vector3d& goal_position, const WindIntensity& wind_intensity,
+      const AutonomyProtocolVisualizer visualizer)
       : friendly_names_(friendly_names),
         enemy_names_(enemy_names),
         snapshot_(snapshot),
@@ -85,7 +88,8 @@ class AutonomyProtocol {
         blue_balloon_status_(blue_balloon_status),
         blue_balloon_position_(blue_balloon_position),
         goal_position_(goal_position),
-        wind_intensity_(wind_intensity) {}
+        wind_intensity_(wind_intensity),
+        visualizer_(visualizer) {}
 
   virtual ~AutonomyProtocol() {}
 

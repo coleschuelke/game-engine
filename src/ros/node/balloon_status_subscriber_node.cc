@@ -1,5 +1,7 @@
 #include "balloon_status_subscriber_node.h"
 
+#include <thread>
+
 namespace game_engine {
 BalloonStatusSubscriberNode::BalloonStatusSubscriberNode(
     const std::string& topic, std::shared_ptr<BalloonStatus> balloon_status) {
@@ -17,5 +19,16 @@ void BalloonStatusSubscriberNode::SubscriberCallback(
       .pop_time = msg.pop_time.data,
       .set_start = static_cast<bool>(msg.set_start.data)};
   *(this->balloon_status_) = balloon_status;
+}
+
+void BalloonStatusSubscriberNode::WaitForConnection(){
+  std::cout << "Waiting until all publishers are connected to BalloonStatusSubscriberNode..." << std::endl;
+  // std::cout<<this->subscriber_.getNumPublishers()<<std::endl;
+  while(this->subscriber_.getNumPublishers() < 2){
+    std::cout << "Waiting..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // std::cout<<this->subscriber_.getNumPublishers()<<std::endl;
+  }
+  std::cout << "BalloonStatusSubscriberNode fully connected." << std::endl;
 }
 }  // namespace game_engine

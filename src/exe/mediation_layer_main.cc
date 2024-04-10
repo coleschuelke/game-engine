@@ -244,6 +244,18 @@ int main(int argc, char** argv) {
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  bool path_blue;
+  if (false == nh.getParam("path_blue", path_blue)) {
+    std::cerr << "No value for path_blue provided, set to default: false"
+              << std::endl;
+    path_blue = false;
+  }
+  bool curve_blue;
+  if (false == nh.getParam("curve_blue", curve_blue)) {
+    std::cerr << "No value for curve_blue provided, set to default: false"
+              << std::endl;
+    curve_blue = false;
+  }
 
   double blue_balloon_max_move_time;
   Eigen::Vector3d blue_balloon_position_new;
@@ -279,7 +291,18 @@ int main(int argc, char** argv) {
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-
+  bool path_red;
+  if (false == nh.getParam("path_red", path_red)) {
+    std::cerr << "No value for path_red provided, set to default: false"
+              << std::endl;
+    path_red = false;
+  }
+  bool curve_red;
+  if (false == nh.getParam("curve_red", curve_red)) {
+    std::cerr << "No value for curve_red provided, set to default: false"
+              << std::endl;
+    curve_red = false;
+  }
   double red_balloon_max_move_time;
   Eigen::Vector3d red_balloon_position_new;
   if (move_red) {
@@ -387,7 +410,7 @@ int main(int argc, char** argv) {
 
   std::thread red_balloon_watchdog_thread([&]() {
     red_balloon_watchdog->Run(
-        red_balloon_status_publisher_node, red_balloon_status_subscriber_node,
+        curve_red, path_red, red_balloon_status_publisher_node, red_balloon_status_subscriber_node,
         red_balloon_position_publisher_node, quad_state_warden, quad_names,
         red_balloon_position, red_balloon_position_new,
         red_balloon_max_move_time, gen, "manual_red_pop");
@@ -395,7 +418,7 @@ int main(int argc, char** argv) {
 
   std::thread blue_balloon_watchdog_thread([&]() {
     blue_balloon_watchdog->Run(
-        blue_balloon_status_publisher_node, blue_balloon_status_subscriber_node,
+        curve_blue, path_blue, blue_balloon_status_publisher_node, blue_balloon_status_subscriber_node,
         blue_balloon_position_publisher_node, quad_state_warden, quad_names,
         blue_balloon_position, blue_balloon_position_new,
         blue_balloon_max_move_time, gen, "manual_blue_pop");
@@ -508,3 +531,4 @@ int main(int argc, char** argv) {
 
   return EXIT_SUCCESS;
 }
+
