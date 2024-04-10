@@ -19,7 +19,8 @@ namespace game_engine {
           const std::shared_ptr<BalloonStatus> blue_balloon_status,
           const std::shared_ptr<Eigen::Vector3d> blue_balloon_position,
           const Eigen::Vector3d& goal_position,
-          const WindIntensity& wind_intensity)
+          const WindIntensity& wind_intensity,
+          const AutonomyProtocolVisualizer visualizer)
         : AutonomyProtocol(
             friendly_names,
             enemy_names,
@@ -32,7 +33,8 @@ namespace game_engine {
             blue_balloon_status,
             blue_balloon_position,
             goal_position,
-            wind_intensity) {}
+            wind_intensity,
+            visualizer) {}
             
       std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
   };

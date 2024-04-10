@@ -26,5 +26,8 @@ class GoalStatusPublisherNode {
 
   // Publishes the message
   void Publish(const GoalStatus& goal_status);
+  
+  // Wait until all subscribers are connected to publisher
+  void WaitForConnection();
 };
 }  // namespace game_engine

@@ -1,0 +1,20 @@
+stages: [build]
+
+compile:
+  stage: build
+  only:
+    - merge_requests 
+  variables:
+    GIT_STRATEGY: none
+    GIT_CHECKOUT: "false"
+  script:
+    - echo "Hello, $GITLAB_USER_LOGIN!"
+    - echo "Compiling game engine..."
+    - cd /home/aeronaut/Workspace/game-engine/
+    - git fetch
+    - git checkout $CI_COMMIT_SHA
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j
+

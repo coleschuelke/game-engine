@@ -3,6 +3,7 @@
 #include "goal_status_publisher_node.h"
 
 #include <chrono>
+#include <thread>
 
 namespace game_engine {
 GoalStatusPublisherNode::GoalStatusPublisherNode(const std::string& topic) {
@@ -25,5 +26,16 @@ void GoalStatusPublisherNode::Publish(const GoalStatus& goal_status) {
   msg.set_start.data = goal_status.set_start;
 
   this->publisher_guard_->Publish(msg);
+}
+
+void GoalStatusPublisherNode::WaitForConnection(){
+  std::cout << "Waiting until all subscribers are connected to GoalStatusPublisherNode..." << std::endl;
+  // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
+  while(((this->publisher_guard_->NodeConnect())) < 3){
+    std::cout << "Waiting..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
+  }
+  std::cout << "GoalStatusPublisherNode fully connected." << std::endl;
 }
 }  // namespace game_engine

@@ -28,7 +28,7 @@ class GameSnapshot {
         quad_state_warden_(quad_state_warden),
         options_(options) {}
 
-  // Returns the yaw of the quadcopter. If quad_name is invalid, returns
+  // Returns the position of the quadcopter. If quad_name is invalid, returns
   // false, else returns true. Stores the data in 'position'.
   //
   // If the quadcopter is friendly, the position returned is accurate.

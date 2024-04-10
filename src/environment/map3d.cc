@@ -1,5 +1,3 @@
-
-
 #include "map3d.h"
 
 namespace game_engine {
@@ -135,6 +133,10 @@ std::vector<std::pair<double, double>> Map3D::Extents() const {
 Point3D Map3D::ClosestPoint(const Point3D& point) const {
   std::vector<Eigen::Vector3d> candidate_points;
 
+  // Create lambda function to evaluate closeness of two points by infinity
+  // norm. Get all closest points for each polyhedron in the map. Then, use the
+  // lambda function to find the closest point of those overall.
+
   auto nearest = [&point](const Eigen::Vector3d& p1,
                           const Eigen::Vector3d& p2) {
     return (p1 - point).lpNorm<Eigen::Infinity>() <
@@ -150,4 +152,5 @@ Point3D Map3D::ClosestPoint(const Point3D& point) const {
   std::sort(candidate_points.begin(), candidate_points.end(), nearest);
   return candidate_points[0];
 }
+
 }  // namespace game_engine

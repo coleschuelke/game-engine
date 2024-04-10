@@ -29,15 +29,17 @@ class QuadStateWatchdog {
       : quad_safety_limits_(quad_safety_limits),
         joy_mode_(joy_mode),
         options_(options) {
+  
+    // Numbers should match those in mediation_layer.h.
     if (quad_safety_limits_ == 2) {
       // extreme mode
-      options_.min_distance = 1.25;
+      options_.min_distance = 1.25*0.5;
     } else if (quad_safety_limits_ == 1) {
       // sport mode
-      options_.min_distance = 1.0;
+      options_.min_distance = 1.0*0.75;
     } else {
       // leisure mode and default
-      options_.min_distance = 0.4;
+      options_.min_distance = 0.4*0.75;
     }
   }
 

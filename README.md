@@ -51,71 +51,24 @@ Then add this line to the bottom of the file:
 source ~/Workspace/game-engine/build/devel/setup.zsh
 ```
 
-## Running Game Engine
-Game Engine is composed of several interacting executables. After building, you
-may proceed to run each executable. You are encouraged to use a terminal
-multiplexer like `tmux` and start each program in a separate pane. See
-[here](tmux/README.md) for further information on tmux.    
+## Running Game Engine Launch Script
+A launch script has been provided that runs the desired autonomy protocol in game engine, without the need for a terminal multiplexer.  It is our reccomended way of running the game-engine as it is the best way to prevent unintended errors in ROS. You can run it as shown below.
 
-### ROS Core
 ```bash
-roscore
+cd ~/Workspace/launch
+./launchGE.sh -a launchConfigDefault.yaml
 ```
+After running this script, the terminal will walk you through the steps to run your autonomy protocol.
 
-### Load ROS params
-The ROS parameters found in `game-engine/run/params.yaml` must be loaded after
-`roscore` has been started or re-loaded if any of the parameters have changed
-since loading.
+Note: The file launchConfigDefault.yaml contains the path to game-engine on your computer and the name of the params file and the autonomy protocol that you wish to run. It should work by default, but you may need to change the game-engine path if game-engine is stored somewhere other than /home/aeronaut/Workspace/game-engine on your computer. You will also need to change the protocol value from example_autonomy_protocol to student_autonomy_protocol in order to run your APl
 
-First, check that the file paths in `/game-engine/run/params.yaml` (e.g.,
-`map_file_path`) are correct for your system.  Then load the parameters into the
-`game_engine` namespace:
+Note: When terminating this script, it is important to use ctrl-c. Using ctrl-z, or any other method, may keep parts of the game-engine running in the background which will cause some issues the next time you try to start up ROS. If you believe this has occured, then run the following script to completely shutdown game-engine.
+
 ```bash
-cd game-engine/run
-rosparam load params.yaml /game_engine/
+cd ~/Workspace/launch
+./killGE.sh
 ```
 
-### ROS Visualizer
-The ROS visualizer (RVIZ) manages a 3D visualization environment in which the
-arena, obstacles, balloons, and quadcopters are displayed. 
-```
-cd game-engine/run
-rosrun rviz rviz -d config.rviz
-```
-
-### Mediation Layer (ML)
-ML mediates proposed trajectories, ensuring safety.
-```
-cd game-engine/bin
-./mediation_layer
-```
-
-### Physics Simulator (PS)
-PS forward-integrates proposed quadcopter trajectories over
-a short interval into the future and publishes the resulting state.  It
-applies proportional-derivative control to track the trajectories.  It also
-introduces disturbance forces, e.g., due to wind.
-```
-cd game-engine/bin
-./physics_simulator
-```
-
-### Visualizer (VZ)
-VZ sends arena, obstacle, balloon, and quadcopter data to RVIZ for display.
-```
-cd game-engine/bin
-./visualizer
-```
-Note that it may take some time (a few tens of seconds) for all the elements of
-the arena to get populated into the RVIZ display.
-
-### Autonomy Protocol (AP)
-AP takes the current quadcopter state and publishes a proposed trajectory for
-the quadcopter to follow.
-```
-cd game-engine/bin
-./example_autonomy_protocol
-```
 
 ### Tests
 ```bash

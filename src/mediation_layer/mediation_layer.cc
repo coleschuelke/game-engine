@@ -9,7 +9,7 @@ namespace game_engine {
 TrajectoryVector3D MediationLayer::FreezeQuad(
     const std::string& key, const Eigen::Vector3d freeze_quad_position) {
   std::cout << key
-            << " has violated the obstacle/boundary constraints.  Freezing at "
+            << " has violated the obstacle/boundary constraints. Freezing at "
                "current position: "
             << freeze_quad_position.transpose() << std::endl;
 
@@ -125,16 +125,20 @@ void MediationLayer::TransferData(
   const Map3D inflated_map = map.Inflate(inflation_distance_);
 
   while (this->ok_) {
+
     // 1) Determine if trajectory has violated constraints
-    // 2) Grab lock
-    // 3) Check if modified
-    // 4) if true, grab trajectory, vet, and then publish
-    // 5) else continue
+    // 2) If it has, overwrite the currently existing trajectory with a new one, i.e. freeze if
+    //    obstacle touched
+    // 3) Grab lock
+    // 4) Check if trajectory has been modified
+    // 5) If so, grab trajectory, vet, and then publish
+    // 6) Else, continue
 
     // Determine if quad has violated state constraints. If it has, freeze it in
     // place
     QuadState current_state;
     quad_state_warden->Read(key, current_state);
+
     // Get the current position of the quad
     Eigen::Vector3d current_position = current_state.Position();
 

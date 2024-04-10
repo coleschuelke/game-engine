@@ -32,5 +32,8 @@ class GoalStatusSubscriberNode {
   // Note parameters are intentionally copied.
   GoalStatusSubscriberNode(const std::string& topic,
                            std::shared_ptr<GoalStatus> goal_status);
+  
+  // Wait until all publishers are connected to subscriber
+  void WaitForConnection();
 };
 }  // namespace game_engine

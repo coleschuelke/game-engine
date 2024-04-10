@@ -31,6 +31,9 @@ class PublisherGuard {
 
   // Publish the message after capturing the mutex
   void Publish(const T& msg);
+  
+  // Return the number of connected subscribers
+  int NodeConnect();
 };
 
 //  ******************
@@ -46,5 +49,10 @@ template <class T>
 inline void PublisherGuard<T>::Publish(const T& msg) {
   std::lock_guard<std::mutex> lock(this->mtx_);
   this->publisher_.publish(msg);
+}
+
+template <class T>
+inline int PublisherGuard<T>::NodeConnect(){
+  return this->publisher_.getNumSubscribers();
 }
 }  // namespace game_engine

@@ -26,6 +26,7 @@
 #include "trajectory_client.h"
 #include "warden.h"
 #include "yaml-cpp/yaml.h"
+#include "autonomy_protocol_visualizer.h"
 
 using namespace game_engine;
 
@@ -43,6 +44,10 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "student_autonomy_protocol",
             ros::init_options::NoSigintHandler);
   ros::NodeHandle nh("/game_engine/");
+
+  // Start Visualizer
+  static AutonomyProtocolVisualizer visualizer;
+  visualizer.startVisualizing("/game_engine/environment");
 
   // Read ROS data
   std::string map_file_path;
@@ -150,11 +155,12 @@ int main(int argc, char** argv) {
       std::string, Eigen::Vector3d, std::less<std::string>,
       Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>>
       initial_quad_positions;
+  double x, y, z;
+  std::string quad_name;
   for (const auto& kv : initial_quad_positions_string) {
-    const std::string& quad_name = kv.first;
+    quad_name = kv.first;
     const std::string& quad_position_string = kv.second;
     std::stringstream ss(quad_position_string);
-    double x, y, z;
     ss >> x >> y >> z;
     initial_quad_positions[quad_name] = Eigen::Vector3d(x, y, z);
   }
@@ -167,13 +173,11 @@ int main(int argc, char** argv) {
     const std::string& quad_name = kv.first;
     quad_state_warden->Register(quad_name);
 
-    Eigen::Vector3d initial_quad_pos;
-    ;
+    Eigen::Vector3d initial_quad_pos = initial_quad_positions[quad_name];
     const QuadState initial_quad_state(
         (Eigen::Matrix<double, 13, 1>() << initial_quad_pos(0),
          initial_quad_pos(1), initial_quad_pos(2), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
             .finished());
-
     quad_state_warden->Write(quad_name, initial_quad_state);
   }
 
@@ -304,8 +308,13 @@ int main(int argc, char** argv) {
   GoalStatus setStartStatusGoal = *(goal_status_subscriber_node->goal_status_);
   setStartStatusGoal.set_start = true;
 
-  // wait for .5 sec
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  // Check connections between publishers and subscribers of ROS
+  red_balloon_status_publisher_node  ->WaitForConnection();
+  red_balloon_status_subscriber_node ->WaitForConnection();
+  blue_balloon_status_publisher_node ->WaitForConnection();
+  blue_balloon_status_subscriber_node->WaitForConnection();
+  goal_status_publisher_node         ->WaitForConnection();
+  goal_status_subscriber_node        ->WaitForConnection();
 
   red_balloon_status_publisher_node->Publish(setStartStatusRed);
   blue_balloon_status_publisher_node->Publish(setStartStatusBlue);
@@ -319,10 +328,22 @@ int main(int argc, char** argv) {
           blue_quad_names, red_quad_names, game_snapshot,
           trajectory_warden_client, prevetter, map3d, red_balloon_status,
           red_balloon_position, blue_balloon_status, blue_balloon_position,
-          goal_position, wind_intensity);
+          goal_position, wind_intensity,visualizer);
 
+  
+  Eigen::Vector3d check_initial_pos, snap_initial_pos;
+  check_initial_pos << x,y,z;
+  bool first = true;
   // Start the autonomy protocol
   std::thread ap_thread_student([&]() {
+    // Check if snapshot has properly initialized
+    while(first == true){
+      game_snapshot->Position(quad_name,snap_initial_pos);
+      if(snap_initial_pos == check_initial_pos){
+        first = false;
+        break;
+      }
+    }
     student_autonomy_protocol->Run(proposed_trajectory_clients, joy_mode,
                                    camera_mode);
   });

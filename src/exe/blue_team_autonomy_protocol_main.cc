@@ -26,6 +26,7 @@
 #include "trajectory_client.h"
 #include "warden.h"
 #include "yaml-cpp/yaml.h"
+#include "autonomy_protocol_visualizer.h"
 
 using namespace game_engine;
 
@@ -43,6 +44,10 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "blue_team_autonomy_protocol",
             ros::init_options::NoSigintHandler);
   ros::NodeHandle nh("/game_engine/");
+
+  // Start Visualizer (Note, this change has not been tested on this autonomy protocol yet)
+  static AutonomyProtocolVisualizer visualizer;
+  visualizer.startVisualizing("/game_engine/environment");
 
   // Read ROS data
   std::string map_file_path;
@@ -150,11 +155,12 @@ int main(int argc, char** argv) {
       std::string, Eigen::Vector3d, std::less<std::string>,
       Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>>
       initial_quad_positions;
+  double x, y, z;
+  std::string quad_name;
   for (const auto& kv : initial_quad_positions_string) {
-    const std::string& quad_name = kv.first;
+    quad_name = kv.first;
     const std::string& quad_position_string = kv.second;
     std::stringstream ss(quad_position_string);
-    double x, y, z;
     ss >> x >> y >> z;
     initial_quad_positions[quad_name] = Eigen::Vector3d(x, y, z);
   }
@@ -323,10 +329,23 @@ int main(int argc, char** argv) {
           blue_quad_names, red_quad_names, game_snapshot,
           trajectory_warden_client, prevetter, map3d, red_balloon_status,
           red_balloon_position, blue_balloon_status, blue_balloon_position,
-          goal_position, wind_intensity);
+          goal_position, wind_intensity, visualizer);
 
+
+  Eigen::Vector3d check_initial_pos, snap_initial_pos;
+  check_initial_pos << x,y,z;
+  bool first = true;
   // Start the autonomy protocol
   std::thread ap_thread_blue_team([&]() {
+    // Check if snapshot has properly initialized
+    // Note this change was made on May 18th, 2023. Testing for this particular autonmy protocol has not been done yet.
+    while(first == true){
+      game_snapshot->Position(quad_name,snap_initial_pos);
+      if(snap_initial_pos == check_initial_pos){
+        first = false;
+        break;
+      }
+    }
     blue_team_autonomy_protocol->Run(proposed_trajectory_clients, joy_mode,
                                      camera_mode);
   });
