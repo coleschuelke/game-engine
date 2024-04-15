@@ -29,7 +29,7 @@ quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/mesh
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
-blue_balloon_position: [-24.5, 15.0, -3.43]
+blue_balloon_position: [-18.0, 14.3, -3.32]
 red_balloon_position:  [-21.0, 18.3, -3.43]
 
 red_balloon_position_new:  [-15.4, 18.0, -2.5]
