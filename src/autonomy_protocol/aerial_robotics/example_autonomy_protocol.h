@@ -6,22 +6,20 @@
 #include "autonomy_protocol_visualizer.h"
 #include "graph.h"
 #include "occupancy_grid3d.h"
-#include "polynomial_solver.h"
 #include "polynomial_sampler.h"
-
+#include "polynomial_solver.h"
 
 namespace game_engine {
 // The ExampleAutonomyProtocol is a class that demonstrates how to create a
-// trajectory for a quadcopter to follow. The example protocol instructs a
-// quadcopter to fly in a circle of radius two at an altitude of one meter.
-//
+// trajectory for a quadcopter to follow.
 class ExampleAutonomyProtocol : public AutonomyProtocol {
  public:
-  // This is the class constructor. This function runs when a new object of the class
-  // is created. It receives a set of input parameters (enclosed in the parentheses),
-  // and uses these input parameters to initialize some other objects. In our case,
-  // we initialize the ExampleAutonomyProtocol's parent class--AutonomyProtocol--as well
-  // as the occupancy grid and arena graph.
+  // This is the class constructor. This constructor runs when a new object of
+  // type ExampleAutonomyProtocol is created. It receives a set of input
+  // parameters (enclosed in the parentheses), and uses these input parameters
+  // to initialize some other objects. In our case, we initialize the
+  // ExampleAutonomyProtocol's parent class--AutonomyProtocol--as well as the
+  // occupancy grid and arena graph.
   ExampleAutonomyProtocol(
       const std::vector<std::string>& friendly_names,
       const std::vector<std::string>& enemy_names,
@@ -58,12 +56,13 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
 
   std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
 
-  void BuildHistoryVectors( std::vector<double>& x_hist,
-                            std::vector<double>& y_hist,
-                            std::vector<double>& z_hist,
-                            const std::vector<double>& timestamps,
-                            const p4::PolynomialSolver::Solution& trajectory,
-                            const p4::PolynomialSampler& sampler_options); 
+  void BuildHistoryVectors(std::vector<double>& x_hist,
+                           std::vector<double>& y_hist,
+                           std::vector<double>& z_hist,
+                           const std::vector<double>& timestamps,
+                           const p4::PolynomialSolver::Solution& trajectory,
+                           const p4::PolynomialSampler& sampler_options);
+
  private:
   // Set the duration of the example trajectory.
   static constexpr int duration_sec_ = 30;
@@ -73,7 +72,7 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
   // has convenient functions for determining whether a cell is occupied and for
   // translating between a cell's grid index triple and its 3d cell center
   // position, in meters.  Have a look at
-  // game-engine/src/environment/occupancy_grid3d.h to see the functions this
+  // game-engine/src/environment/occupancy_grid3d.h to see this class's API.
   // class offers.
   OccupancyGrid3D occupancy_grid_;
   Graph3D graph_of_arena_;
@@ -81,14 +80,15 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
   // AutonomyProtocolVisualizer is a class that supports visualizing paths,
   // curves, points, and whole trajectories in the RVIZ display of the arena to
   // aid in your algorithm development.  Have a look at
-  // autonomy_protocol_visualizer.h for a list of functions.
+  // autonomy_protocol_visualizer.h to see this class's API.
   bool first_time_ = true;
   bool halt_ = false;
   Eigen::Vector3d start_pos_;
 
   // The length of one side of the occupancy grid's cubic cells, in meters
   static constexpr double cell_size_ = 0.2;
-  // Length by which obstacles are inflated to provide a safety margin, in meters
+  // Length by which obstacles are inflated to provide a safety margin, in
+  // meters
   double safety_margin_ = 0.35;
 };
 }  // namespace game_engine
