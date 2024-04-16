@@ -7,4 +7,4 @@ path_to_GE: /home/aeronaut/Workspace/game-engine
 
 param_file: params.yaml
 
-protocol: example_autonomy_protocol
+protocol: student_autonomy_protocol
