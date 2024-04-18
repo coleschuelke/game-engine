@@ -129,9 +129,7 @@ git pull origin master
 ```
 
 ## Create a remote GitLab repository for the Vision Test
-Follow steps similar to the above to create your team's remote repository for
-the tournament's Vision Test.  Name the remote repository `balloon-locator`.
-Rename your local `lab5-aerial-robotics` repository `balloon-locator`.
+The Vision Test is not connected with the `game-engine` repository.  You will develop your code for the Vision Test in an entirely separate repository.  Follow steps similar to the above to create your team's remote repository for the tournament's Vision Test.  Name the remote repository `balloon-locator`. Rename your local `lab5-aerial-robotics` repository `balloon-locator`.
 
 As before,
 - Add your team members as Maintainer and the TA as Reporter to the remote repository.
@@ -139,9 +137,4 @@ As before,
 - Push your local repository to `origin`.
 - Configure `balloon-locator` with your name and email.
 
-## Accessing Other Teams' Binary Executables
-Clone the `tournament-binaries` repository as follows:
-```bash
-cd ~/Workspace
-git clone https://gitlab.com/todd.humphreys/tournament-binaries.git
 ```
