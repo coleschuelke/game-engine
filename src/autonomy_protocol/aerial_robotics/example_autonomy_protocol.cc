@@ -12,7 +12,7 @@ void BuildHistoryVectors(const std::vector<double>& timestamps,
                          std::vector<double>& z_hist) {
   // Use this object to sample the trajectory
   p4::PolynomialSampler sampler(sampler_options);
-  Eigen::MatrixXd samples = sampler.Run(timestamps, trajectory);
+  const Eigen::MatrixXd samples = sampler.Run(timestamps, trajectory);
 
   for (size_t i = 0; i < samples.cols(); ++i) {
     x_hist.push_back(samples(1, i));
