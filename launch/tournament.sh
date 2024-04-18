@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROTOCOL_TIMEOUT=10
+PROTOCOL_TIMEOUT=300
 
 #==========Warning===============#
 read -p "Before running the script:
@@ -162,20 +162,32 @@ do
     # load roscore params
     cd $GAME_ENGINE/run
     rosparam load $param /game_engine/
+    sleep 2
+    rosrun rviz rviz -d config.rviz > $GAME_ENGINE/rviz.log 2>&1 & echo "Success."
+	echo ""
+	sleep 2
     # Mediation Layer
     sleep 0.5
     cd $GAME_ENGINE/bin
     stdbuf -o0 ./mediation_layer > $CWD/med_layer.log 2>&1 &
     echo "Mediation Layer started. Terminal output in med_layer.log.."
+    sleep 1
     # Physics Symulator
     sleep 0.5
     cd $GAME_ENGINE/bin
-    ./physics_simulator > $CWD/phys_sim.log 2>&1 &
+    ./physics_simulator > $CWD/phys_sim.log 2>&1 & 
     echo "Physics sim started..."
+    sleep 1
+    # pass to visualizer
+	cd $GAME_ENGINE/bin
+	./visualizer & 
+    echo "Visualizer started..."
+    sleep 1
     # Run protocol
     echo "Running $TEAM_NAME's protocol"
     cd $GAME_ENGINE/bin
     ./student_autonomy_protocol > $CWD/protocol.log 2>&1 &
+
 
     # Wait for protocol to end
     cd $CWD
