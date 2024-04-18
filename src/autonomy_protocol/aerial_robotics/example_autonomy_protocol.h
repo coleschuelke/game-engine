@@ -56,13 +56,6 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
 
   std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
 
-  void BuildHistoryVectors(std::vector<double>& x_hist,
-                           std::vector<double>& y_hist,
-                           std::vector<double>& z_hist,
-                           const std::vector<double>& timestamps,
-                           const p4::PolynomialSolver::Solution& trajectory,
-                           const p4::PolynomialSampler& sampler_options);
-
  private:
   // Set the duration of the example trajectory.
   static constexpr int duration_sec_ = 30;
