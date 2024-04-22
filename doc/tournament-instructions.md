@@ -4,8 +4,7 @@
 Vision Test: Estimate the red and blue balloon center locations to within 10
 cm based on a set of images and their corresponding metadata.
 
-Obstacle Course: Command a quadcopter to pop two balloons and return to the
-start position as quickly as possible.
+Obstacle Course: Command a quadcopter to pop two balloons and arrive at the goal position as quickly as possible.
 
 ## Obstacle Course Notes
 
