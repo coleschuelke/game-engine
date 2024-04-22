@@ -5,7 +5,7 @@ Pre-tournament and tournament obstacle course scoring is as follows:
 1) Scores are first ordered by the number of balloons popped. The greater
 the number of balloons popped, the greater the score.
 2) Scores are next ordered by the time it took for both balloons to be
-popped and for the quadcopter to return to the start position. The shorter the
+popped and for the quadcopter to arrive at the goal position. The shorter the
 run time, the greater the score.
 
 For example, a team that pops both balloons within the time limit will be
