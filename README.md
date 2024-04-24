@@ -20,9 +20,7 @@ ROS's RVIZ program.
 ### Clone
 ```bash
 cd ~/Workspace
-git clone https://gitlab.com/radionavlab/public/game-engine.git
-cd game-engine
-git submodule update --init --recursive
+git clone https://gitlab.com/radionavlab/public/game-engine.git --recursive
 ```
 
 ### Build
@@ -68,7 +66,6 @@ Note: When terminating this script, it is important to use ctrl-c. Using ctrl-z,
 cd ~/Workspace/launch
 ./killGE.sh
 ```
-
 
 ### Tests
 ```bash
