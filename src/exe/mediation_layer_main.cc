@@ -408,20 +408,30 @@ int main(int argc, char** argv) {
   auto red_balloon_watchdog = std::make_shared<BalloonWatchdog>();
   auto blue_balloon_watchdog = std::make_shared<BalloonWatchdog>();
 
+  std::atomic<bool> blue_balloon_watchdog_thread_running{true};
+  std::atomic<bool> red_balloon_watchdog_thread_running{true};
+  std::atomic<bool> quad_state_watchdog_thread_running{true};
+  std::atomic<bool> trajectory_watchdog_thread_running{true};
+  std::atomic<bool> goal_watchdog_thread_running{true};
+
   std::thread red_balloon_watchdog_thread([&]() {
     red_balloon_watchdog->Run(
-        curve_red, path_red, red_balloon_status_publisher_node, red_balloon_status_subscriber_node,
-        red_balloon_position_publisher_node, quad_state_warden, quad_names,
-        red_balloon_position, red_balloon_position_new,
-        red_balloon_max_move_time, gen, "manual_red_pop");
+        curve_red, path_red, red_balloon_status_publisher_node,
+        red_balloon_status_subscriber_node, red_balloon_position_publisher_node,
+        quad_state_warden, quad_names, red_balloon_position,
+        red_balloon_position_new, red_balloon_max_move_time, gen,
+        "manual_red_pop");
+    red_balloon_watchdog_thread_running = false;
   });
 
   std::thread blue_balloon_watchdog_thread([&]() {
     blue_balloon_watchdog->Run(
-        curve_blue, path_blue, blue_balloon_status_publisher_node, blue_balloon_status_subscriber_node,
+        curve_blue, path_blue, blue_balloon_status_publisher_node,
+        blue_balloon_status_subscriber_node,
         blue_balloon_position_publisher_node, quad_state_warden, quad_names,
         blue_balloon_position, blue_balloon_position_new,
         blue_balloon_max_move_time, gen, "manual_blue_pop");
+    blue_balloon_watchdog_thread_running = false;
   });
 
   // Status watchdogs
@@ -440,6 +450,7 @@ int main(int argc, char** argv) {
   std::thread quad_state_watchdog_thread([&]() {
     quad_state_watchdog->Run(quad_state_warden, quad_names,
                              quad_state_watchdog_status, map);
+    quad_state_watchdog_thread_running = false;
   });
 
   auto trajectory_watchdog = std::make_shared<TrajectoryWatchdog>();
@@ -447,6 +458,7 @@ int main(int argc, char** argv) {
     trajectory_watchdog->Run(quad_names, quad_state_warden,
                              trajectory_warden_srv, trajectory_warden_pub,
                              trajectory_watchdog_status);
+    trajectory_watchdog_thread_running = false;
   });
 
   //  auto safety_monitor = std::make_shared<SafetyMonitor>(revision_mode);
@@ -474,7 +486,21 @@ int main(int argc, char** argv) {
   std::thread goal_watchdog_thread([&]() {
     goal_watchdog->Run(goal_status_publisher_node, goal_status_subscriber_node,
                        quad_state_warden, quad_names, goal_position);
+    goal_watchdog_thread_running = false;
   });
+
+  // Wait to ensure that all threads are running
+  while (true) {
+    if (blue_balloon_watchdog_thread_running &&
+        red_balloon_watchdog_thread_running &&
+        quad_state_watchdog_thread_running &&
+        trajectory_watchdog_thread_running &&
+        goal_watchdog_thread_running) {
+      break;
+    } else {
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+  }
 
   // Mediation layer thread. The mediation layer runs continuously, forward
   // integrating the proposed trajectories and modifying them so that the
@@ -490,7 +516,7 @@ int main(int argc, char** argv) {
   });
 
   // Kill program thread. This thread sleeps for a second and then checks if the
-  // 'kill_program' variable has been set. If it has, it shuts ros down and
+  // 'kill_program' variable has been set. If it has, it shuts ROS down and
   // sends stop signals to any other threads that might be running.
   std::thread kill_thread([&]() {
     while (true) {
@@ -511,7 +537,7 @@ int main(int argc, char** argv) {
     goal_watchdog->Stop();
     quad_state_watchdog->Stop();
     trajectory_watchdog->Stop();
-    //        safety_monitor->Stop();
+    // safety_monitor->Stop();
   });
 
   // Spin for ros subscribers
@@ -531,4 +557,3 @@ int main(int argc, char** argv) {
 
   return EXIT_SUCCESS;
 }
-

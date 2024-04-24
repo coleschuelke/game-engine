@@ -31,8 +31,7 @@ class BalloonWatchdog {
 
   // Main thread function
   void Run(
-      const bool curve_flag,
-      const bool polyFlag,
+      const bool curve_flag, const bool polyFlag,
       std::shared_ptr<BalloonStatusPublisherNode> balloon_status_publisher,
       std::shared_ptr<BalloonStatusSubscriberNode> balloon_status_subscriber,
       std::shared_ptr<BalloonPositionPublisherNode> balloon_position_publisher,
@@ -45,11 +44,10 @@ class BalloonWatchdog {
   void Stop();
 
   void ManualCallback(const std_msgs::Bool& msg);
-  
+
  private:
-  volatile bool manualPop = false;
+  volatile bool manualPop{false};
   volatile std::atomic_bool ok_{true};
   Options options_;
 };
 }  // namespace game_engine
-

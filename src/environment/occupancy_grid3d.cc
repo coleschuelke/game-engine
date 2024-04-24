@@ -177,7 +177,8 @@ bool OccupancyGrid3D::LoadFromBuffer(const bool** buffer, const size_t size_x,
 
 // Returns the minimum corner coordinates of the grid cell at index [x,y,z]
 Eigen::Vector3d OccupancyGrid3D::boxCorner(int x, int y, int z) {
-  return Eigen::Vector3d(x * gridsize_ + origin_.x(), y * gridsize_ + origin_.y(),
+  return Eigen::Vector3d(x * gridsize_ + origin_.x(),
+                         y * gridsize_ + origin_.y(),
                          z * gridsize_ + origin_.z());
 }
 
@@ -195,9 +196,15 @@ std::tuple<int, int, int> OccupancyGrid3D::mapToGridCoordinates(
 }
 
 Graph3D OccupancyGrid3D::AsGraph() const {
-  // Build a 3D array of nodes
-  std::shared_ptr<Node3D> node_grid[this->size_z_][this->size_y_]
-                                   [this->size_x_];
+  // Build a 3D array of nodes.  Note that memory for the array of pointers must
+  // be dynamically allocated rather than allocated to this functions's stack,
+  // which will be inadequate for large arrays. Use of std::vector ensures
+  // dynamic allocation without the need for explicit cleanup afterward.  The
+  // array, called node_grid, is indexed as node_grid[h][y][x].
+  using pn3d = std::shared_ptr<Node3D>;
+  std::vector<std::vector<std::vector<pn3d>>> node_grid(
+      size_z_,
+      std::vector<std::vector<pn3d>>(size_y_, std::vector<pn3d>(size_x_)));
   for (size_t height = 0; height < this->size_z_; ++height) {
     for (size_t row = 0; row < this->size_y_; ++row) {
       for (size_t col = 0; col < this->size_x_; ++col) {
