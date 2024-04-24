@@ -39,14 +39,14 @@ individual Game Engine submodules, as described [here](build_from_scratch.md).
 
 ### Configure for ROS
 After the first time you build Game Engine, you'll need to add a command
-to your your `.zshrc` configuration file so that whenever you open a terminal,
+to your `.zshrc` configuration file so that whenever you open a terminal
 the shell will run the necessary ROS setup scripts.
 
 First open `.zshrc` in your favorite editor; e.g., for VS Code:
 ```bash
 code ~/.zshrc
 ```
-Then add this line to the bottom of the file:
+Then add this line to the bottom of the file (if it's not already present):
 ```bash
 source ~/Workspace/game-engine/build/devel/setup.zsh
 ```
