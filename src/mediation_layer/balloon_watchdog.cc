@@ -46,10 +46,10 @@ void BalloonWatchdog::Run(
   Eigen::Vector3d long_axis = balloon_position - center;
   Eigen::Vector3d short_axis = {1, 1, 1};
 
-  // Set up subscriber for manual indicator of balloon pop state
+  // Set up subscriber for external indicator of balloon's pop state
   ros::NodeHandle node_handle_ = ros::NodeHandle("/game_engine/");
-  ros::Subscriber subscriber_ =
-      node_handle_.subscribe(topic, 1, &BalloonWatchdog::ManualCallback, this);
+  ros::Subscriber subscriber_ = node_handle_.subscribe(
+      topic, 1, &BalloonWatchdog::ExternalPopIndicatorCallback, this);
 
   // Wait for connections
   balloon_status_publisher->WaitForConnection();
@@ -57,15 +57,14 @@ void BalloonWatchdog::Run(
 
   // Main loop
   while (ok_) {
-    // read start time from existing balloon_status
+    // Read start time from existing balloon_status
     const bool set_start =
         balloon_status_subscriber->balloon_status_->set_start;
     if (set_start && !started) {
-      // resets clock after SAP starts
+      // Reset clock after autonomy protocol starts
       start_time = std::chrono::system_clock::now();
       started = true;
     }
-    // started = true;
     if (started) {
       auto now = std::chrono::system_clock::now();
       const std::chrono::duration<double> difference = now - start_time;
@@ -97,7 +96,8 @@ void BalloonWatchdog::Run(
         const Eigen::Vector3d quad_pos = quad_state.Position();
         const double distance_to_balloon = (quad_pos - position).norm();
 
-        if (manualPop || this->options_.pop_distance >= distance_to_balloon) {
+        if (external_pop_indicator_ ||
+            options_.pop_distance >= distance_to_balloon) {
           if (balloon_popped == false) {
             ROS_INFO_STREAM("Balloon popped at " << elapsed_sec << " seconds.");
             balloon_popped = true;
@@ -117,17 +117,16 @@ void BalloonWatchdog::Run(
     balloon_status_publisher->Publish(balloon_status);
     balloon_position_publisher->Publish(position);
 
-    // 5 Hz
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
 }
 
-void BalloonWatchdog::Stop() { this->ok_ = false; }
+void BalloonWatchdog::Stop() { ok_ = false; }
 
-void BalloonWatchdog::ManualCallback(const std_msgs::Bool& msg) {
+void BalloonWatchdog::ExternalPopIndicatorCallback(const std_msgs::Bool& msg) {
   if (msg.data) {
-    this->manualPop = true;
-    ROS_WARN("Received manual pop request");
+    external_pop_indicator_ = true;
+    ROS_WARN("Received external pop request");
   }
 }
 }  // namespace game_engine
