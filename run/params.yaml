@@ -29,14 +29,14 @@ quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/mesh
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
-blue_balloon_position: [-18.0, 14.3, -3.32]
-red_balloon_position:  [-21.0, 18.3, -3.43]
+blue_balloon_position: [-23.5, 17.3, -3.32]
+red_balloon_position:  [-12.7, 14.5, -2.0]
 
-red_balloon_position_new:  [-15.4, 18.0, -2.5]
-red_balloon_max_move_time: 3.0
+red_balloon_position_new:  [-25.5, 19.5, -3.5]
+red_balloon_max_move_time: 2.0
 
-blue_balloon_position_new: [-21.0, 15.3, -3.32]
-blue_balloon_max_move_time: 40.0
+blue_balloon_position_new: [-20.0, 17.8, -3.32]
+blue_balloon_max_move_time: 10.0
 
 # Balloon Behaviour Booleans
 # For teleportation        move:true, path:false, curve:either   (max_move_time describes the maximum amount of time it will take before teleportation)
@@ -44,11 +44,11 @@ blue_balloon_max_move_time: 40.0
 # For ellipse path         move:true, path:true,  curve:true     (max move time describes the period of the ellipse the balloon will take)
 # If move is false, balloon will remain motionless
 
-move_red: false 
+move_red: true 
 path_red: false
 curve_red: false
 
-move_blue: false
+move_blue: true
 path_blue: false
 curve_blue: false
 
