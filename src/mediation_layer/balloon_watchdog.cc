@@ -30,8 +30,8 @@ void BalloonWatchdog::Run(
   double balloon_pop_time = -1.0;  // initial (invalid) time before popping
   std::string quad_popper = "null";
 
-  bool set_start;
-  bool started = false;  // set to true after SAP starts
+  // Gets set to true after the autonomy protocol starts
+  bool started = false;
 
   Eigen::Vector3d slope =
       (new_balloon_position - balloon_position) / max_move_time;
@@ -46,16 +46,21 @@ void BalloonWatchdog::Run(
   Eigen::Vector3d long_axis = balloon_position - center;
   Eigen::Vector3d short_axis = {1, 1, 1};
 
-  // Set up subscriber for manual pop of balloon
+  // Set up subscriber for manual indicator of balloon pop state
   ros::NodeHandle node_handle_ = ros::NodeHandle("/game_engine/");
   ros::Subscriber subscriber_ =
       node_handle_.subscribe(topic, 1, &BalloonWatchdog::ManualCallback, this);
 
+  // RRR
+  balloon_status_publisher->WaitForConnection();
+  balloon_status_subscriber->WaitForConnection();
+  ROS_INFO_STREAM("Entered BalloonWatchdog::Run");
+
   // Main loop
   while (ok_) {
-    // balloon_status_subscriber->WaitUntilConnect_s();
     // read start time from existing balloon_status
-    set_start = balloon_status_subscriber->balloon_status_->set_start;
+    const bool set_start =
+        balloon_status_subscriber->balloon_status_->set_start;
     if (set_start && !started) {
       // resets clock after SAP starts
       start_time = std::chrono::system_clock::now();
@@ -64,8 +69,8 @@ void BalloonWatchdog::Run(
     // started = true;
     if (started) {
       auto now = std::chrono::system_clock::now();
-      std::chrono::duration<double> difference = now - start_time;
-      double elapsed_sec = difference.count();
+      const std::chrono::duration<double> difference = now - start_time;
+      const double elapsed_sec = difference.count();
 
       // Decide between balloon teleportation or balloon uniform movement
       if ((poly_flag == true) && (curve_flag == false)) {
@@ -80,7 +85,7 @@ void BalloonWatchdog::Run(
                    sin(2 * M_PI * elapsed_sec / max_move_time) * short_axis;
 
       }
-      // move balloon if enough time has passed
+      // Move balloon if elapsed time is beyond move_time
       else {
         if (elapsed_sec >= move_time) {
           position = new_balloon_position;
@@ -93,10 +98,10 @@ void BalloonWatchdog::Run(
         const Eigen::Vector3d quad_pos = quad_state.Position();
         const double distance_to_balloon = (quad_pos - position).norm();
 
-        /*// RRR
+        // RRR
         if (balloon_popped == false && position(0) == -21.0) {
           ROS_INFO_STREAM("Distance to balloon [m]:" << distance_to_balloon);
-          }*/
+        }
 
         if (manualPop || this->options_.pop_distance >= distance_to_balloon) {
           if (balloon_popped == false) {
@@ -110,12 +115,10 @@ void BalloonWatchdog::Run(
     }
 
     // Publish
-    BalloonStatus balloon_status{
-        .popped = balloon_popped,
-        .popper = quad_popper,
-        .pop_time = balloon_pop_time,
-        .set_start = set_start  // only set to true from SAP
-    };
+    BalloonStatus balloon_status{.popped = balloon_popped,
+                                 .popper = quad_popper,
+                                 .pop_time = balloon_pop_time,
+                                 .set_start = set_start};
 
     balloon_status_publisher->Publish(balloon_status);
     balloon_position_publisher->Publish(position);

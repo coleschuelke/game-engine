@@ -1,5 +1,3 @@
-
-
 #include "quad_state_subscriber_node.h"
 
 namespace game_engine {

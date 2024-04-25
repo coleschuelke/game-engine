@@ -1,5 +1,3 @@
-
-
 #include "quad_state_publisher_node.h"
 
 namespace game_engine {

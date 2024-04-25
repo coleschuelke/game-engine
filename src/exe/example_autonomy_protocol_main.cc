@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "aerial_robotics/example_autonomy_protocol.h"
+#include "autonomy_protocol_visualizer.h"
 #include "balloon_position_publisher_node.h"
 #include "balloon_position_subscriber_node.h"
 #include "balloon_status.h"
@@ -26,7 +27,6 @@
 #include "trajectory_client.h"
 #include "warden.h"
 #include "yaml-cpp/yaml.h"
-#include "autonomy_protocol_visualizer.h"
 
 using namespace game_engine;
 
@@ -310,12 +310,12 @@ int main(int argc, char** argv) {
   setStartStatusGoal.set_start = true;
 
   // Check connections between publishers and subscribers of ROS
-  red_balloon_status_publisher_node  ->WaitForConnection();
-  red_balloon_status_subscriber_node ->WaitForConnection();
-  blue_balloon_status_publisher_node ->WaitForConnection();
+  red_balloon_status_publisher_node->WaitForConnection();
+  red_balloon_status_subscriber_node->WaitForConnection();
+  blue_balloon_status_publisher_node->WaitForConnection();
   blue_balloon_status_subscriber_node->WaitForConnection();
-  goal_status_publisher_node         ->WaitForConnection();
-  goal_status_subscriber_node        ->WaitForConnection();
+  goal_status_publisher_node->WaitForConnection();
+  goal_status_subscriber_node->WaitForConnection();
 
   red_balloon_status_publisher_node->Publish(setStartStatusRed);
   blue_balloon_status_publisher_node->Publish(setStartStatusBlue);
@@ -331,16 +331,15 @@ int main(int argc, char** argv) {
           red_balloon_position, blue_balloon_status, blue_balloon_position,
           goal_position, wind_intensity, visualizer);
 
-
   Eigen::Vector3d check_initial_pos, snap_initial_pos;
-  check_initial_pos << x,y,z;
+  check_initial_pos << x, y, z;
   bool first = true;
   // Start the autonomy protocol
   std::thread ap_thread_example([&]() {
     // Check if snapshot has properly initialized
-    while(first == true){
-      game_snapshot->Position(quad_name,snap_initial_pos);
-      if(snap_initial_pos == check_initial_pos){
+    while (first == true) {
+      game_snapshot->Position(quad_name, snap_initial_pos);
+      if (snap_initial_pos == check_initial_pos) {
         first = false;
         break;
       }

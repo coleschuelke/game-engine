@@ -27,13 +27,13 @@ void GoalStatusSubscriberNode::SubscriberCallback(
   *(this->goal_status_) = goal_status;
 }
 
-void GoalStatusSubscriberNode::WaitForConnection(){
-  std::cout << "Waiting until all publishers are connected to GoalStatusSubscriberNode..." << std::endl;
-  // std::cout<<this->subscriber_.getNumPublishers()<<std::endl;
-  while(this->subscriber_.getNumPublishers() < 2){
+void GoalStatusSubscriberNode::WaitForConnection() {
+  std::cout << "Waiting until all publishers are connected to "
+               "GoalStatusSubscriberNode..."
+            << std::endl;
+  while (this->subscriber_.getNumPublishers() < 2) {
     std::cout << "Waiting..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // std::cout<<this->subscriber_.getNumPublishers()<<std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "GoalStatusSubscriberNode fully connected." << std::endl;
 }
