@@ -51,10 +51,9 @@ void BalloonWatchdog::Run(
   ros::Subscriber subscriber_ =
       node_handle_.subscribe(topic, 1, &BalloonWatchdog::ManualCallback, this);
 
-  // RRR
+  // Wait for connections
   balloon_status_publisher->WaitForConnection();
   balloon_status_subscriber->WaitForConnection();
-  ROS_INFO_STREAM("Entered BalloonWatchdog::Run");
 
   // Main loop
   while (ok_) {
@@ -98,14 +97,9 @@ void BalloonWatchdog::Run(
         const Eigen::Vector3d quad_pos = quad_state.Position();
         const double distance_to_balloon = (quad_pos - position).norm();
 
-        // RRR
-        if (balloon_popped == false && position(0) == -21.0) {
-          ROS_INFO_STREAM("Distance to balloon [m]:" << distance_to_balloon);
-        }
-
         if (manualPop || this->options_.pop_distance >= distance_to_balloon) {
           if (balloon_popped == false) {
-            ROS_INFO_STREAM("Balloon popped @ elapsed: " << elapsed_sec);
+            ROS_INFO_STREAM("Balloon popped at " << elapsed_sec << " seconds.");
             balloon_popped = true;
             balloon_pop_time = elapsed_sec;
             quad_popper = quad_name;

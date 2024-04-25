@@ -24,11 +24,7 @@ void BalloonStatusPublisherNode::Publish(const BalloonStatus& balloon_status) {
 }
 
 void BalloonStatusPublisherNode::WaitForConnection() {
-  std::cout << "Waiting until all subscribers are connected to "
-               "BalloonStatusPublisherNode..."
-            << std::endl;
-  while (((this->publisher_guard_->NodeConnect())) < 3) {
-    std::cout << "Waiting..." << std::endl;
+  while (publisher_guard_->NodeConnect() < 3) {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "BalloonStatusPublisherNode fully connected." << std::endl;

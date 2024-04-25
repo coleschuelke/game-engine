@@ -28,11 +28,7 @@ void GoalStatusSubscriberNode::SubscriberCallback(
 }
 
 void GoalStatusSubscriberNode::WaitForConnection() {
-  std::cout << "Waiting until all publishers are connected to "
-               "GoalStatusSubscriberNode..."
-            << std::endl;
-  while (this->subscriber_.getNumPublishers() < 2) {
-    std::cout << "Waiting..." << std::endl;
+  while (subscriber_.getNumPublishers() < 2) {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "GoalStatusSubscriberNode fully connected." << std::endl;

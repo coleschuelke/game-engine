@@ -22,11 +22,7 @@ void BalloonStatusSubscriberNode::SubscriberCallback(
 }
 
 void BalloonStatusSubscriberNode::WaitForConnection() {
-  std::cout << "Waiting until all publishers are connected to "
-               "BalloonStatusSubscriberNode..."
-            << std::endl;
-  while (this->subscriber_.getNumPublishers() < 2) {
-    std::cout << "Waiting..." << std::endl;
+  while (subscriber_.getNumPublishers() < 2) {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "BalloonStatusSubscriberNode fully connected." << std::endl;

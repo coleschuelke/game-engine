@@ -27,11 +27,7 @@ void GoalStatusPublisherNode::Publish(const GoalStatus& goal_status) {
 }
 
 void GoalStatusPublisherNode::WaitForConnection() {
-  std::cout << "Waiting until all subscribers are connected to "
-               "GoalStatusPublisherNode..."
-            << std::endl;
-  while (((this->publisher_guard_->NodeConnect())) < 3) {
-    std::cout << "Waiting..." << std::endl;
+  while (publisher_guard_->NodeConnect() < 3) {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "GoalStatusPublisherNode fully connected." << std::endl;
