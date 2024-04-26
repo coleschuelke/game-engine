@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include <ros/ros.h>
@@ -27,13 +25,13 @@ class BalloonStatusSubscriberNode {
  public:
   // Pointer to balloon status. No guarantees on read/write threading access
   std::shared_ptr<BalloonStatus> balloon_status_;
-   
+
   // Constructor.
   //
   // Note parameters are intentionally copied.
   BalloonStatusSubscriberNode(const std::string& topic,
                               std::shared_ptr<BalloonStatus> balloon_status);
-                              
+
   // Wait until all publishers are connected to subscriber
   void WaitForConnection();
 };

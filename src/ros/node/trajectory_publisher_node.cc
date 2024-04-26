@@ -1,5 +1,3 @@
-
-
 #include "trajectory_publisher_node.h"
 
 namespace game_engine {

@@ -408,13 +408,14 @@ int main(int argc, char** argv) {
   auto red_balloon_watchdog = std::make_shared<BalloonWatchdog>();
   auto blue_balloon_watchdog = std::make_shared<BalloonWatchdog>();
 
-  std::atomic<bool> blue_balloon_watchdog_thread_running{true};
-  std::atomic<bool> red_balloon_watchdog_thread_running{true};
-  std::atomic<bool> quad_state_watchdog_thread_running{true};
-  std::atomic<bool> trajectory_watchdog_thread_running{true};
-  std::atomic<bool> goal_watchdog_thread_running{true};
+  std::atomic<bool> blue_balloon_watchdog_thread_running{false};
+  std::atomic<bool> red_balloon_watchdog_thread_running{false};
+  std::atomic<bool> quad_state_watchdog_thread_running{false};
+  std::atomic<bool> trajectory_watchdog_thread_running{false};
+  std::atomic<bool> goal_watchdog_thread_running{false};
 
   std::thread red_balloon_watchdog_thread([&]() {
+    red_balloon_watchdog_thread_running = true;
     red_balloon_watchdog->Run(
         curve_red, path_red, red_balloon_status_publisher_node,
         red_balloon_status_subscriber_node, red_balloon_position_publisher_node,
@@ -425,6 +426,7 @@ int main(int argc, char** argv) {
   });
 
   std::thread blue_balloon_watchdog_thread([&]() {
+    blue_balloon_watchdog_thread_running = true;
     blue_balloon_watchdog->Run(
         curve_blue, path_blue, blue_balloon_status_publisher_node,
         blue_balloon_status_subscriber_node,
@@ -434,7 +436,7 @@ int main(int argc, char** argv) {
     blue_balloon_watchdog_thread_running = false;
   });
 
-  // Status watchdogs
+  // Configure status watchdogs
   auto quad_state_watchdog_status = std::make_shared<QuadStateWatchdogStatus>();
   auto trajectory_watchdog_status =
       std::make_shared<TrajectoryWatchdogStatus>();
@@ -448,6 +450,7 @@ int main(int argc, char** argv) {
   auto quad_state_watchdog =
       std::make_shared<QuadStateWatchdog>(quad_safety_limits, joy_mode);
   std::thread quad_state_watchdog_thread([&]() {
+    quad_state_watchdog_thread_running = true;
     quad_state_watchdog->Run(quad_state_warden, quad_names,
                              quad_state_watchdog_status, map);
     quad_state_watchdog_thread_running = false;
@@ -455,6 +458,7 @@ int main(int argc, char** argv) {
 
   auto trajectory_watchdog = std::make_shared<TrajectoryWatchdog>();
   std::thread trajectory_watchdog_thread([&]() {
+    trajectory_watchdog_thread_running = true;
     trajectory_watchdog->Run(quad_names, quad_state_warden,
                              trajectory_warden_srv, trajectory_warden_pub,
                              trajectory_watchdog_status);
@@ -484,6 +488,7 @@ int main(int argc, char** argv) {
   auto goal_watchdog = std::make_shared<GoalWatchdog>();
 
   std::thread goal_watchdog_thread([&]() {
+    goal_watchdog_thread_running = true;
     goal_watchdog->Run(goal_status_publisher_node, goal_status_subscriber_node,
                        quad_state_warden, quad_names, goal_position);
     goal_watchdog_thread_running = false;
@@ -494,18 +499,14 @@ int main(int argc, char** argv) {
     if (blue_balloon_watchdog_thread_running &&
         red_balloon_watchdog_thread_running &&
         quad_state_watchdog_thread_running &&
-        trajectory_watchdog_thread_running &&
-        goal_watchdog_thread_running) {
+        trajectory_watchdog_thread_running && goal_watchdog_thread_running) {
       break;
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
   }
 
-  // Mediation layer thread. The mediation layer runs continuously, forward
-  // integrating the proposed trajectories and modifying them so that the
-  // various agents will not crash into each other. Data is asynchonously read
-  // and written from the TrajectoryWardens
+  // Start Mediation Layer thread
   auto mediation_layer =
       std::make_shared<MediationLayer>(quad_safety_limits, joy_mode);
   std::thread mediation_layer_thread([&]() {
@@ -515,15 +516,15 @@ int main(int argc, char** argv) {
                          trajectory_publishers);
   });
 
-  // Kill program thread. This thread sleeps for a second and then checks if the
-  // 'kill_program' variable has been set. If it has, it shuts ROS down and
-  // sends stop signals to any other threads that might be running.
+  // Start the kill thread.  This thread sleeps for a short while, then checks
+  // whether the 'kill_program' variable has been set. If so, it shuts ROS down
+  // and sends stop signals to all other threads that may still be running.
   std::thread kill_thread([&]() {
     while (true) {
-      if (true == kill_program) {
+      if (kill_program) {
         break;
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
       }
     }
     ros::shutdown();

@@ -11,18 +11,8 @@ BalloonStatusPublisherNode::BalloonStatusPublisherNode(
 }
 
 void BalloonStatusPublisherNode::Publish(const BalloonStatus& balloon_status) {
-  // const auto t_seconds
-  //   =
-  //   std::chrono::duration_cast<std::chrono::seconds>(balloon_status.pop_time.time_since_epoch());
-  // const auto t_nanoseconds
-  //   =
-  //   std::chrono::duration_cast<std::chrono::nanoseconds>(balloon_status.pop_time.time_since_epoch())
-  //   - t_seconds;
-
   mg_msgs::BalloonStatus msg;
   msg.header.frame_id = "world";
-  // msg.header.stamp.sec = t_seconds.count();
-  // msg.header.stamp.nsec = t_nanoseconds.count();
   msg.header.stamp.sec = 0;
   msg.header.stamp.nsec = 0;
   msg.popped.data = balloon_status.popped;
@@ -33,13 +23,9 @@ void BalloonStatusPublisherNode::Publish(const BalloonStatus& balloon_status) {
   this->publisher_guard_->Publish(msg);
 }
 
-void BalloonStatusPublisherNode::WaitForConnection(){
-  std::cout << "Waiting until all subscribers are connected to BalloonStatusPublisherNode..." << std::endl;
-  // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
-  while(((this->publisher_guard_->NodeConnect())) < 3){
-    std::cout << "Waiting..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
+void BalloonStatusPublisherNode::WaitForConnection() {
+  while (publisher_guard_->NodeConnect() < 3) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "BalloonStatusPublisherNode fully connected." << std::endl;
 }

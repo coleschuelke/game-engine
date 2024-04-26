@@ -1,5 +1,3 @@
-// Author: Dan LaChapelle
-
 #include "goal_status_publisher_node.h"
 
 #include <chrono>
@@ -28,13 +26,9 @@ void GoalStatusPublisherNode::Publish(const GoalStatus& goal_status) {
   this->publisher_guard_->Publish(msg);
 }
 
-void GoalStatusPublisherNode::WaitForConnection(){
-  std::cout << "Waiting until all subscribers are connected to GoalStatusPublisherNode..." << std::endl;
-  // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
-  while(((this->publisher_guard_->NodeConnect())) < 3){
-    std::cout << "Waiting..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // std::cout<<this->publisher_guard_->NodeConnect()<<std::endl;
+void GoalStatusPublisherNode::WaitForConnection() {
+  while (publisher_guard_->NodeConnect() < 3) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   std::cout << "GoalStatusPublisherNode fully connected." << std::endl;
 }
