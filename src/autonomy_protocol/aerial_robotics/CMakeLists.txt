@@ -1,22 +1,25 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-set(TARGET lib_autonomy_protocol)
+set(TARGET lib_student_autonomy_protocol)
 
 find_package (Eigen3 3.3 NO_MODULE)
 
+# Add to this list any other source files you create to support your
+# StudentAutonomyProtocol class
 set(SOURCE_FILES
-  game_snapshot.cc
-  autonomy_protocol_visualizer.cc
+  example_autonomy_protocol.cc
+  student_autonomy_protocol.cc
 )
 
 add_library(${TARGET} STATIC ${SOURCE_FILES})
 
 target_include_directories(${TARGET} PUBLIC
-  ${PROJECT_SOURCE_DIR}/src/dependencies/P4/src
+  ${PROJECT_SOURCE_DIR}/src/autonomy_protocol
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(${TARGET} PUBLIC 
+target_link_libraries(${TARGET} PUBLIC
+  lib_autonomy_protocol           
   lib_mediation_layer
   lib_environment
   lib_util
@@ -35,12 +38,3 @@ target_compile_options(${TARGET} PRIVATE
   -Wfatal-errors
 )
 
-add_subdirectory(aerial_robotics)
-
-if (TA_PROTOCOL)
-  add_subdirectory(ta-autonomy-protocol)
-endif()      
-
-if (RESEARCH)
-  add_subdirectory(research-autonomy-protocols)
-endif()

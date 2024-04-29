@@ -33,7 +33,7 @@ blue_balloon_position: [-23.5, 17.3, -3.32]
 red_balloon_position:  [-12.7, 14.5, -2.0]
 
 red_balloon_position_new:  [-25.5, 19.5, -3.5]
-red_balloon_max_move_time: 2.0
+red_balloon_max_move_time: 15
 
 blue_balloon_position_new: [-20.0, 17.8, -3.32]
 blue_balloon_max_move_time: 10.0

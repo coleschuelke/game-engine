@@ -55,9 +55,10 @@ target_link_libraries(physics_simulator
   lib_mediation_layer
   lib_ros_node
   lib_ros_view
-  lib_autonomy_protocol
   yaml-cpp
-  ${catkin_LIBRARIES})
+  ${catkin_LIBRARIES}
+)
+  
 set_target_properties(physics_simulator
   PROPERTIES
   CXX_STANDARD 14
@@ -75,9 +76,11 @@ target_link_libraries(example_autonomy_protocol
   lib_mediation_layer
   lib_ros_node
   lib_ros_view
-  lib_autonomy_protocol
+  lib_student_autonomy_protocol
   yaml-cpp
-  ${catkin_LIBRARIES})
+  ${catkin_LIBRARIES}
+)
+
 set_target_properties(example_autonomy_protocol
   PROPERTIES
   CXX_STANDARD 14
@@ -95,9 +98,11 @@ target_link_libraries(student_autonomy_protocol
   lib_mediation_layer
   lib_ros_node
   lib_ros_view
-  lib_autonomy_protocol
+  lib_student_autonomy_protocol
   yaml-cpp
-  ${catkin_LIBRARIES})
+  ${catkin_LIBRARIES}
+)
+  
 set_target_properties(student_autonomy_protocol
   PROPERTIES
   CXX_STANDARD 14
@@ -106,8 +111,31 @@ set_target_properties(student_autonomy_protocol
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
-if(RESEARCH)
+if (TA_PROTOCOL)
+add_executable(ta_autonomy_protocol ta_autonomy_protocol_main.cc)
+target_include_directories(ta_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(ta_autonomy_protocol
+        lib_ta_autonomy_protocol
+        lib_geometry
+        lib_environment
+        lib_util
+        lib_mediation_layer
+        lib_ros_node
+        lib_ros_view
+        yaml-cpp
+        ${catkin_LIBRARIES}
+)
 
+set_target_properties(ta_autonomy_protocol
+        PROPERTIES
+        CXX_STANDARD 14
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO
+        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)
+endif()
+
+if(RESEARCH)
 add_executable(multi_quad_autonomy_protocol multi_quad_autonomy_protocol_main.cc)
 target_include_directories(multi_quad_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
 target_link_libraries(multi_quad_autonomy_protocol
@@ -206,28 +234,6 @@ target_link_libraries(asset_games_protocol_simple
         yaml-cpp
         ${catkin_LIBRARIES})
 set_target_properties(asset_games_protocol_simple
-        PROPERTIES
-        CXX_STANDARD 14
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO
-        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-        )
-
-add_executable(ta_autonomy_protocol ta_autonomy_protocol_main.cc)
-target_include_directories(ta_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
-target_link_libraries(ta_autonomy_protocol
-        lib_ta_autonomy_protocol
-        lib_autonomy_protocol
-        lib_geometry
-        lib_environment
-        lib_util
-        lib_mediation_layer
-        lib_ros_node
-        lib_ros_view
-        yaml-cpp
-        ${catkin_LIBRARIES})
-
-set_target_properties(ta_autonomy_protocol
         PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED YES

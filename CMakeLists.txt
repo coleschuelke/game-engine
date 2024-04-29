@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5.0)
 project(GameEngine)
 
 option(RESEARCH "Build Game Engine with research extensions." OFF)
+option(TA_PROTOCOL "Build Game Engine with TA autonomy protocol." OFF)
 
 set(default_build_type "RelWithDebInfo")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

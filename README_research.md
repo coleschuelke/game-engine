@@ -4,11 +4,8 @@
 Before building Game Engine, clone additional research- and TA-related directories:
 ```bash
 cd ~/Workspace/game-engine/src/autonomy_protocol
-git clone git@gitlab.com:radionavlab/machine-games/research-autonomy-protocols.git
-cd ~/Workspace/game-engine/src/autonomy_protocol/research-autonomy-protocols
-git submodule update --init --recursive
-cd ~/Workspace/game-engine/src/autonomy_protocol
-git clone git@gitlab.com:radionavlab/machine-games/ta-autonomy-protocol.git
+git clone git@gitlab.com:radionavlab/machine-games/research-autonomy-protocols.git --recursive
+git clone git@gitlab.com:radionavlab/machine-games/ta-autonomy-protocol.git --recursive
 ```
 
 ## Build with Research/TA Extensions
