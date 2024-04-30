@@ -15,19 +15,14 @@
 
 namespace game_engine {
 class BalloonStatusPublisherNode {
- private:
-  // A publisher guard ensures that the Publish() function may be called in
-  // a thread-safe manner
-  std::shared_ptr<PublisherGuard<mg_msgs::BalloonStatus>> publisher_guard_;
-
  public:
-  // Constructor.
   BalloonStatusPublisherNode(const std::string& topic);
- 
-  // Publishes the message
   void Publish(const BalloonStatus& balloon_status);
-  
-  // Wait until all subscribers are connected to publisher
-  void WaitForConnection();
+  size_t GetNumConnections() const { return publisher_guard_->NodeConnect(); }
+
+ private:
+  // A publisher guard ensures that the Publish() function may be called in a
+  // thread-safe manner
+  std::shared_ptr<PublisherGuard<mg_msgs::BalloonStatus>> publisher_guard_;
 };
 }  // namespace game_engine

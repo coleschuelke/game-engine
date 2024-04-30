@@ -14,17 +14,14 @@
 
 namespace game_engine {
 class BalloonPositionPublisherNode {
- private:
-  // A publisher guard ensures that the Publish() function may be called in
-  // a thread-safe manner
-  std::shared_ptr<PublisherGuard<geometry_msgs::Point>> publisher_guard_;
-
  public:
-  // Constructor.
   BalloonPositionPublisherNode(const std::string& topic);
-
-  // Publishes the message
   void Publish(const Eigen::Vector3d& balloon_position);
+
+ private:
+  // A publisher guard ensures that the Publish() function may be called in a
+  // thread-safe manner
+  std::shared_ptr<PublisherGuard<geometry_msgs::Point>> publisher_guard_;
 };
 }  // namespace game_engine
 

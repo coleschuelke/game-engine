@@ -26,10 +26,4 @@ void GoalStatusPublisherNode::Publish(const GoalStatus& goal_status) {
   this->publisher_guard_->Publish(msg);
 }
 
-void GoalStatusPublisherNode::WaitForConnection() {
-  while (publisher_guard_->NodeConnect() < 3) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  }
-  std::cout << "GoalStatusPublisherNode fully connected." << std::endl;
-}
 }  // namespace game_engine

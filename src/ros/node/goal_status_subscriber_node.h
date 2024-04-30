@@ -1,5 +1,3 @@
-// Author: Dan LaChapelle
-
 #pragma once
 
 #include <ros/ros.h>
@@ -13,27 +11,15 @@
 
 namespace game_engine {
 class GoalStatusSubscriberNode {
- private:
-  // ROS node handle
-  ros::NodeHandle node_handle_;
-
-  // ROS subscriber
-  ros::Subscriber subscriber_;
-
-  // Subscriber callback function. Converts ROS message into local
-  // GoalStatus message
-  void SubscriberCallback(const mg_msgs::GoalStatus& msg);
-
  public:
-  // Pointer to goal status. No guarantees on read/write threading access
   std::shared_ptr<GoalStatus> goal_status_;
-  // Constructor.
-  //
-  // Note parameters are intentionally copied.
   GoalStatusSubscriberNode(const std::string& topic,
                            std::shared_ptr<GoalStatus> goal_status);
-  
-  // Wait until all publishers are connected to subscriber
-  void WaitForConnection();
+  size_t GetNumConnections() const { return subscriber_.getNumPublishers(); }
+
+ private:
+  ros::NodeHandle node_handle_;
+  ros::Subscriber subscriber_;
+  void SubscriberCallback(const mg_msgs::GoalStatus& msg);
 };
 }  // namespace game_engine

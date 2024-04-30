@@ -1,5 +1,3 @@
-// Author: Dan LaChapelle
-
 #pragma once
 
 #include <ros/ros.h>
@@ -15,19 +13,14 @@
 
 namespace game_engine {
 class GoalStatusPublisherNode {
+ public:
+  GoalStatusPublisherNode(const std::string& topic);
+  void Publish(const GoalStatus& goal_status);
+  size_t GetNumConnections() const { return publisher_guard_->NodeConnect(); }
+
  private:
   // A publisher guard ensures that the Publish() function may be called in
   // a thread-safe manner
   std::shared_ptr<PublisherGuard<mg_msgs::GoalStatus>> publisher_guard_;
-
- public:
-  // Constructor.
-  GoalStatusPublisherNode(const std::string& topic);
-
-  // Publishes the message
-  void Publish(const GoalStatus& goal_status);
-  
-  // Wait until all subscribers are connected to publisher
-  void WaitForConnection();
 };
 }  // namespace game_engine

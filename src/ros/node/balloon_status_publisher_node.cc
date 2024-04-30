@@ -6,7 +6,7 @@
 namespace game_engine {
 BalloonStatusPublisherNode::BalloonStatusPublisherNode(
     const std::string& topic) {
-  this->publisher_guard_ =
+  publisher_guard_ =
       std::make_shared<PublisherGuard<mg_msgs::BalloonStatus>>(topic);
 }
 
@@ -20,13 +20,7 @@ void BalloonStatusPublisherNode::Publish(const BalloonStatus& balloon_status) {
   msg.pop_time.data = balloon_status.pop_time;
   msg.set_start.data = balloon_status.set_start;
 
-  this->publisher_guard_->Publish(msg);
+  publisher_guard_->Publish(msg);
 }
 
-void BalloonStatusPublisherNode::WaitForConnection() {
-  while (publisher_guard_->NodeConnect() < 3) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  }
-  std::cout << "BalloonStatusPublisherNode fully connected." << std::endl;
-}
 }  // namespace game_engine

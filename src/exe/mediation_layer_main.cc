@@ -158,7 +158,6 @@ int main(int argc, char** argv) {
   for (const auto& kv : quad_state_topics) {
     const std::string& quad_name = kv.first;
     quad_state_warden->Register(quad_name);
-
     const Eigen::Vector3d& initial_quad_position =
         initial_quad_positions[quad_name];
     quad_state_warden->Write(
@@ -405,42 +404,48 @@ int main(int argc, char** argv) {
       std::make_shared<BalloonPositionPublisherNode>(
           balloon_position_topics["blue"]);
 
+  // Wait for connections
+  std::cout << "Waiting for connections ... " << std::flush;
+  while (true) {
+    if (red_balloon_status_publisher_node->GetNumConnections() >= 3 &&
+        red_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
+        blue_balloon_status_publisher_node->GetNumConnections() >= 3 &&
+        blue_balloon_status_subscriber_node->GetNumConnections() >= 2) {
+      std::cout << "connected.\n";
+      break;
+    } else if (kill_program) {
+      ros::shutdown();
+      return EXIT_FAILURE;
+    } else {
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+  }
+
   auto red_balloon_watchdog = std::make_shared<BalloonWatchdog>();
-  auto blue_balloon_watchdog = std::make_shared<BalloonWatchdog>();
-
-  std::atomic<bool> blue_balloon_watchdog_thread_running{false};
-  std::atomic<bool> red_balloon_watchdog_thread_running{false};
-  std::atomic<bool> quad_state_watchdog_thread_running{false};
-  std::atomic<bool> trajectory_watchdog_thread_running{false};
-  std::atomic<bool> goal_watchdog_thread_running{false};
-
   std::thread red_balloon_watchdog_thread([&]() {
-    red_balloon_watchdog_thread_running = true;
     red_balloon_watchdog->Run(
         curve_red, path_red, red_balloon_status_publisher_node,
         red_balloon_status_subscriber_node, red_balloon_position_publisher_node,
         quad_state_warden, quad_names, red_balloon_position,
         red_balloon_position_new, red_balloon_max_move_time, gen,
         "manual_red_pop");
-    red_balloon_watchdog_thread_running = false;
   });
 
+  auto blue_balloon_watchdog = std::make_shared<BalloonWatchdog>();
   std::thread blue_balloon_watchdog_thread([&]() {
-    blue_balloon_watchdog_thread_running = true;
     blue_balloon_watchdog->Run(
         curve_blue, path_blue, blue_balloon_status_publisher_node,
         blue_balloon_status_subscriber_node,
         blue_balloon_position_publisher_node, quad_state_warden, quad_names,
         blue_balloon_position, blue_balloon_position_new,
         blue_balloon_max_move_time, gen, "manual_blue_pop");
-    blue_balloon_watchdog_thread_running = false;
   });
 
   // Configure status watchdogs
   auto quad_state_watchdog_status = std::make_shared<QuadStateWatchdogStatus>();
+  auto safety_monitor_status = std::make_shared<SafetyMonitorStatus>();
   auto trajectory_watchdog_status =
       std::make_shared<TrajectoryWatchdogStatus>();
-  auto safety_monitor_status = std::make_shared<SafetyMonitorStatus>();
   for (const std::string& quad_name : quad_names) {
     quad_state_watchdog_status->Register(quad_name);
     trajectory_watchdog_status->Register(quad_name);
@@ -450,19 +455,15 @@ int main(int argc, char** argv) {
   auto quad_state_watchdog =
       std::make_shared<QuadStateWatchdog>(quad_safety_limits, joy_mode);
   std::thread quad_state_watchdog_thread([&]() {
-    quad_state_watchdog_thread_running = true;
     quad_state_watchdog->Run(quad_state_warden, quad_names,
                              quad_state_watchdog_status, map);
-    quad_state_watchdog_thread_running = false;
   });
 
   auto trajectory_watchdog = std::make_shared<TrajectoryWatchdog>();
   std::thread trajectory_watchdog_thread([&]() {
-    trajectory_watchdog_thread_running = true;
     trajectory_watchdog->Run(quad_names, quad_state_warden,
                              trajectory_warden_srv, trajectory_warden_pub,
                              trajectory_watchdog_status);
-    trajectory_watchdog_thread_running = false;
   });
 
   //  auto safety_monitor = std::make_shared<SafetyMonitor>(revision_mode);
@@ -480,31 +481,15 @@ int main(int argc, char** argv) {
   //  );
 
   auto goal_status = std::make_shared<GoalStatus>();
-
   auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
       goal_status_topics["home"], goal_status);
   auto goal_status_publisher_node =
       std::make_shared<GoalStatusPublisherNode>(goal_status_topics["home"]);
   auto goal_watchdog = std::make_shared<GoalWatchdog>();
-
   std::thread goal_watchdog_thread([&]() {
-    goal_watchdog_thread_running = true;
     goal_watchdog->Run(goal_status_publisher_node, goal_status_subscriber_node,
                        quad_state_warden, quad_names, goal_position);
-    goal_watchdog_thread_running = false;
   });
-
-  /*// Wait to ensure that all threads are running
-  while (true) {
-    if (blue_balloon_watchdog_thread_running &&
-        red_balloon_watchdog_thread_running &&
-        quad_state_watchdog_thread_running &&
-        trajectory_watchdog_thread_running && goal_watchdog_thread_running) {
-      break;
-    } else {
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-    }*/ // RRR
 
   // Start Mediation Layer thread
   auto mediation_layer =
@@ -516,18 +501,15 @@ int main(int argc, char** argv) {
                          trajectory_publishers);
   });
 
-  // Start the kill thread.  This thread sleeps for a short while, then checks
-  // whether the 'kill_program' variable has been set. If so, it shuts ROS down
-  // and sends stop signals to all other threads that may still be running.
+  // Start the kill thread
   std::thread kill_thread([&]() {
     while (true) {
       if (kill_program) {
         break;
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
     }
-    ros::shutdown();
 
     mediation_layer->Stop();
     trajectory_warden_srv->Stop();
@@ -539,12 +521,13 @@ int main(int argc, char** argv) {
     quad_state_watchdog->Stop();
     trajectory_watchdog->Stop();
     // safety_monitor->Stop();
+    ros::shutdown();
   });
 
   // Spin for ros subscribers
   ros::spin();
 
-  // Wait for program termination via ctl-c
+  // Wait for program termination via Ctrl-C
   kill_thread.join();
 
   // Wait for other threads to die

@@ -5,9 +5,9 @@
 namespace game_engine {
 GoalStatusSubscriberNode::GoalStatusSubscriberNode(
     const std::string& topic, std::shared_ptr<GoalStatus> goal_status) {
-  this->goal_status_ = goal_status;
-  this->node_handle_ = ros::NodeHandle("/game_engine/");
-  this->subscriber_ = node_handle_.subscribe(
+  goal_status_ = goal_status;
+  node_handle_ = ros::NodeHandle("/game_engine/");
+  subscriber_ = node_handle_.subscribe(
       topic, 1, &GoalStatusSubscriberNode::SubscriberCallback, this);
 }
 
@@ -24,13 +24,7 @@ void GoalStatusSubscriberNode::SubscriberCallback(
                          .reach_time = msg.reach_time.data,
                          .position = position,
                          .set_start = static_cast<bool>(msg.set_start.data)};
-  *(this->goal_status_) = goal_status;
+  *(goal_status_) = goal_status;
 }
 
-void GoalStatusSubscriberNode::WaitForConnection() {
-  while (subscriber_.getNumPublishers() < 2) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  }
-  std::cout << "GoalStatusSubscriberNode fully connected." << std::endl;
-}
 }  // namespace game_engine

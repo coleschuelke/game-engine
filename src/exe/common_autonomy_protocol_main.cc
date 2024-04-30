@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  // Team Assignments
+  // Make team assignments
   std::vector<std::string> red_quad_names;
   std::vector<std::string> blue_quad_names;
   for (const auto& kv : team_assignments) {
@@ -189,7 +189,6 @@ int main(int argc, char** argv) {
         topic, quad_name, quad_state_warden));
   }
 
-  // Initialize the GameSnapshot
   auto game_snapshot = std::make_shared<GameSnapshot>(
       blue_quad_names, red_quad_names, quad_state_warden,
       GameSnapshot::Options());
@@ -197,7 +196,6 @@ int main(int argc, char** argv) {
   auto prevetter = std::make_shared<PreSubmissionTrajectoryVetter>(
       quad_safety_limits, quad_state_warden);
 
-  // Initialize the Trajectory Client
   std::unordered_map<std::string, std::shared_ptr<TrajectoryClientNode>>
       proposed_trajectory_clients;
   for (const auto& kv : proposed_trajectory_topics) {
@@ -207,14 +205,12 @@ int main(int argc, char** argv) {
         std::make_shared<TrajectoryClientNode>(topic);
   }
 
-  // Initialize the TrajectoryWarden
   auto trajectory_warden_client = std::make_shared<TrajectoryWardenClient>();
   for (const auto& kv : proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;
     trajectory_warden_client->Register(quad_name);
   }
 
-  // Balloon Status
   std::map<std::string, std::string> balloon_status_topics;
   if (false == nh.getParam("balloon_status_topics", balloon_status_topics)) {
     std::cerr << "Required parameter not found on server: balloon_status_topics"
@@ -222,7 +218,6 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  // Balloon Position
   std::map<std::string, std::string> balloon_position_topics;
   if (false ==
       nh.getParam("balloon_position_topics", balloon_position_topics)) {
@@ -241,7 +236,6 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Goal Status
   std::map<std::string, std::string> goal_status_topics;
   if (false == nh.getParam("goal_status_topics", goal_status_topics)) {
     std::cerr << "Required parameter not found on server: goal_status_topics"
@@ -259,7 +253,6 @@ int main(int argc, char** argv) {
       std::make_shared<BalloonStatusSubscriberNode>(
           balloon_status_topics["blue"], blue_balloon_status);
 
-  // start balloon status clock
   auto red_balloon_status_publisher_node =
       std::make_shared<BalloonStatusPublisherNode>(
           balloon_status_topics["red"]);
@@ -276,7 +269,6 @@ int main(int argc, char** argv) {
   setStartStatusBlue.set_start = true;
   extern bool connection;
 
-  // balloon position
   auto red_balloon_position = std::make_shared<Eigen::Vector3d>();
   auto blue_balloon_position = std::make_shared<Eigen::Vector3d>();
 
@@ -299,7 +291,6 @@ int main(int argc, char** argv) {
   Eigen::Vector3d setStartPositionBlue =
       *(blue_balloon_position_subscriber_node->balloon_position_);
 
-  // goal status
   auto goal_status = std::make_shared<GoalStatus>();
   auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
       goal_status_topics["home"], goal_status);
@@ -308,21 +299,30 @@ int main(int argc, char** argv) {
   GoalStatus setStartStatusGoal = *(goal_status_subscriber_node->goal_status_);
   setStartStatusGoal.set_start = true;
 
-  // Check connections between publishers and subscribers of ROS
-  red_balloon_status_publisher_node->WaitForConnection();
-  red_balloon_status_subscriber_node->WaitForConnection();
-  blue_balloon_status_publisher_node->WaitForConnection();
-  blue_balloon_status_subscriber_node->WaitForConnection();
-  goal_status_publisher_node->WaitForConnection();
-  goal_status_subscriber_node->WaitForConnection();
+  // Wait for connections
+  std::cout << "Waiting for connections ... " << std::flush;
+  while (true) {
+    if (red_balloon_status_publisher_node->GetNumConnections() >= 3 &&
+        red_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
+        blue_balloon_status_publisher_node->GetNumConnections() >= 3 &&
+        blue_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
+        goal_status_publisher_node->GetNumConnections() >= 3 &&
+        goal_status_subscriber_node->GetNumConnections() >= 2) {
+      std::cout << "connected.\n";
+      break;
+    } else if (kill_program) {
+      ros::shutdown();
+      return EXIT_FAILURE;
+    } else {
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+  }
 
   red_balloon_status_publisher_node->Publish(setStartStatusRed);
   blue_balloon_status_publisher_node->Publish(setStartStatusBlue);
-  //  red_balloon_position_publisher_node->Publish(setStartPositionRed);
-  //  blue_balloon_position_publisher_node->Publish(setStartPositionBlue);
   goal_status_publisher_node->Publish(setStartStatusGoal);
 
-  // The AutonomyProtocol
+  // Initialize the Autonomy Protocol
   std::shared_ptr<AutonomyProtocol> autonomy_protocol =
       std::make_shared<DerivedAutonomyProtocol>(
           blue_quad_names, red_quad_names, game_snapshot,
@@ -352,21 +352,19 @@ int main(int argc, char** argv) {
       if (true == kill_program) {
         break;
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
     }
-
-    ros::shutdown();
-
     autonomy_protocol->Stop();
     quad_state_warden->Stop();
     trajectory_warden_client->Stop();
+    ros::shutdown();
   });
 
-  // Spin for ros subscribers
+  // Spin for ROS subscribers
   ros::spin();
 
-  // Wait for program termination via ctl-c
+  // Wait for program termination via Ctrl-C
   kill_thread.join();
   autonomy_protocol_thread.join();
 

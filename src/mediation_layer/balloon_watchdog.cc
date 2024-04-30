@@ -50,11 +50,7 @@ void BalloonWatchdog::Run(
   ros::NodeHandle node_handle_ = ros::NodeHandle("/game_engine/");
   ros::Subscriber subscriber_ = node_handle_.subscribe(
       topic, 1, &BalloonWatchdog::ExternalPopIndicatorCallback, this);
-
-  // Wait for connections
-  balloon_status_publisher->WaitForConnection();
-  balloon_status_subscriber->WaitForConnection();
-
+  
   // Main loop
   while (ok_) {
     // Read start time from existing balloon_status

@@ -5,7 +5,7 @@
 namespace game_engine {
 BalloonPositionPublisherNode::BalloonPositionPublisherNode(
     const std::string& topic) {
-  this->publisher_guard_ =
+  publisher_guard_ =
       std::make_shared<PublisherGuard<geometry_msgs::Point>>(topic);
 }
 
@@ -16,6 +16,6 @@ void BalloonPositionPublisherNode::Publish(
   msg.y = balloon_position.y();
   msg.z = balloon_position.z();
 
-  this->publisher_guard_->Publish(msg);
+  publisher_guard_->Publish(msg);
 }
 }  // namespace game_engine
