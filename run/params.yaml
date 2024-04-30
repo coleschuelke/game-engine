@@ -30,9 +30,9 @@ balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/m
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 blue_balloon_position: [-24.5, 15.0, -3.43]
-red_balloon_position:  [-21.0, 18.3, -3.43]
+red_balloon_position:  [-16.0, 15.3, -3.43]
 
-red_balloon_position_new:  [-24.5, 19.5, -3.5]
+red_balloon_position_new:  [-21.5, 15.5, -3.15]
 red_balloon_max_move_time: 5.0
 
 blue_balloon_position_new: [-26.0, 14.75, -3.0]
@@ -44,7 +44,7 @@ blue_balloon_max_move_time: 5.0
 # For ellipse path         move:true, path:true,  curve:true     (max move time describes the period of the ellipse the balloon will take)
 # If move is false, balloon will remain motionless
 
-move_red: false 
+move_red: true 
 path_red: false
 curve_red: false
 
@@ -56,7 +56,7 @@ use_seed: true
 seed: 37
 
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
-wind_intensity: 1
+wind_intensity: 2
 
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
