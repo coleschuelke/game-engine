@@ -404,14 +404,22 @@ int main(int argc, char** argv) {
       std::make_shared<BalloonPositionPublisherNode>(
           balloon_position_topics["blue"]);
 
+  auto goal_status = std::make_shared<GoalStatus>();
+  auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
+      goal_status_topics["home"], goal_status);
+  auto goal_status_publisher_node =
+      std::make_shared<GoalStatusPublisherNode>(goal_status_topics["home"]);
+
   // Wait for connections
   std::cout << "Waiting for connections ... " << std::flush;
   while (true) {
     if (red_balloon_status_publisher_node->GetNumConnections() >= 3 &&
         red_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
         blue_balloon_status_publisher_node->GetNumConnections() >= 3 &&
-        blue_balloon_status_subscriber_node->GetNumConnections() >= 2) {
-      std::cout << "connected.\n";
+        blue_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
+        goal_status_publisher_node->GetNumConnections() >= 3 &&
+        goal_status_subscriber_node->GetNumConnections() >= 2) {
+      std::cout << "connected.\n" << std::flush;
       break;
     } else if (kill_program) {
       ros::shutdown();
@@ -480,11 +488,6 @@ int main(int argc, char** argv) {
   //      }
   //  );
 
-  auto goal_status = std::make_shared<GoalStatus>();
-  auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
-      goal_status_topics["home"], goal_status);
-  auto goal_status_publisher_node =
-      std::make_shared<GoalStatusPublisherNode>(goal_status_topics["home"]);
   auto goal_watchdog = std::make_shared<GoalWatchdog>();
   std::thread goal_watchdog_thread([&]() {
     goal_watchdog->Run(goal_status_publisher_node, goal_status_subscriber_node,

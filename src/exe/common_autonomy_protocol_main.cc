@@ -308,7 +308,7 @@ int main(int argc, char** argv) {
         blue_balloon_status_subscriber_node->GetNumConnections() >= 2 &&
         goal_status_publisher_node->GetNumConnections() >= 3 &&
         goal_status_subscriber_node->GetNumConnections() >= 2) {
-      std::cout << "connected.\n";
+      std::cout << "connected.\n" << std::flush;
       break;
     } else if (kill_program) {
       ros::shutdown();
