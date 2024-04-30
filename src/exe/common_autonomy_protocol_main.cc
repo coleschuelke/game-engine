@@ -31,8 +31,8 @@ using namespace game_engine;
 
 namespace {
 // Signal variable and handler
-volatile std::sig_atomic_t kill_program;
-void SigIntHandler(int sig) { kill_program = 1; }
+volatile std::sig_atomic_t kill_program = false;
+void SigIntHandler(int sig) { kill_program = true; }
 }  // namespace
 
 int main(int argc, char** argv) {

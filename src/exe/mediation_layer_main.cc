@@ -32,8 +32,8 @@ using namespace game_engine;
 
 namespace {
 // Signal variable and handler
-volatile std::sig_atomic_t kill_program;
-void SigIntHandler(int sig) { kill_program = 1; }
+volatile std::sig_atomic_t kill_program = false;
+void SigIntHandler(int sig) { kill_program = true; }
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -494,7 +494,7 @@ int main(int argc, char** argv) {
     goal_watchdog_thread_running = false;
   });
 
-  // Wait to ensure that all threads are running
+  /*// Wait to ensure that all threads are running
   while (true) {
     if (blue_balloon_watchdog_thread_running &&
         red_balloon_watchdog_thread_running &&
@@ -504,7 +504,7 @@ int main(int argc, char** argv) {
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-  }
+    }*/ // RRR
 
   // Start Mediation Layer thread
   auto mediation_layer =
@@ -524,7 +524,7 @@ int main(int argc, char** argv) {
       if (kill_program) {
         break;
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
     }
     ros::shutdown();
