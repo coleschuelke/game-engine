@@ -132,16 +132,14 @@ inline void AutonomyProtocol::Run(
         continue;
       }
     }
-    // Sleep for 200 ms is the default. This essentially creates a loop that
-    // runs at 5 Hz.
+    // Default sleep time
     int sleep_time = 200;
     if (camera_mode) {
       // TBD: need to test with how fast camera values come in
       sleep_time = 200;
     }
     if (joy_mode) {
-      // Sleep for 100 ms. This creates a loop that runs at 10 Hz for the joy
-      // mode.
+      // Shorter sleep time for joy mode
       sleep_time = 100;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));

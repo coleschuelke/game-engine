@@ -42,11 +42,11 @@ void GoalWatchdog::Run(
           balloon_status_topics["blue"], blue_balloon_status);
 
   // Main loop
-  while (true == this->ok_) {
-    // read start time from existing goal status
+  while (true == ok_) {
+    // Read start time from existing goal status
     set_start = goal_status_subscriber->goal_status_->set_start;
     if (set_start && !started) {
-      // reset clock after SAP starts
+      // Reset clock after autonomy protocol starts
       start_time = std::chrono::system_clock::now();
       started = true;
     }
@@ -64,18 +64,17 @@ void GoalWatchdog::Run(
         const double quad_speed = (quad_state.Velocity()).norm();
         const double distance_to_goal = (quad_pos - goal_position).norm();
 
-        if (this->options_.reach_distance >= distance_to_goal &&
-            quad_speed <= this->options_.reach_speed) {
-          if (false == goal_reached &&
-              elapsed_sec >= this->options_.time_fuze) {
+        if (options_.reach_distance >= distance_to_goal &&
+            quad_speed <= options_.reach_speed) {
+          if (false == goal_reached && elapsed_sec >= options_.time_fuze) {
             goal_reached = true;
             active = true;
 
             goal_reach_time = elapsed_sec;
             quad_scorer = quad_name;
             if (!red_balloon_status->popped && !blue_balloon_status->popped) {
-              ROS_INFO_STREAM("Goal reached at elapsed time "
-                              << goal_reach_time << " seconds.");
+              ROS_INFO_STREAM("Goal reached at elapsed time " << goal_reach_time
+                                                              << " seconds.");
             }
           } else {
             active = true;
@@ -86,23 +85,18 @@ void GoalWatchdog::Run(
       }
     }
 
-    // Publish
-    GoalStatus goal_status{
-        .active = active,
-        .reached = goal_reached,
-        .scorer = quad_scorer,
-        .reach_time = goal_reach_time,
-        .position = goal_position,
-        .set_start = set_start  // only set to true from SAP
-    };
+    GoalStatus goal_status{.active = active,
+                           .reached = goal_reached,
+                           .scorer = quad_scorer,
+                           .reach_time = goal_reach_time,
+                           .position = goal_position,
+                           .set_start = set_start};
 
     goal_status_publisher->Publish(goal_status);
-
-    // 50 Hz
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
 }
 
-void GoalWatchdog::Stop() { this->ok_ = false; }
+void GoalWatchdog::Stop() { ok_ = false; }
 
 }  // namespace game_engine

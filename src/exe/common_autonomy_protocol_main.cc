@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "autonomy_protocol_visualizer.h"
-#include "balloon_position_publisher_node.h"
 #include "balloon_position_subscriber_node.h"
 #include "balloon_status.h"
 #include "balloon_status_publisher_node.h"
@@ -279,13 +278,6 @@ int main(int argc, char** argv) {
       std::make_shared<BalloonPositionSubscriberNode>(
           balloon_position_topics["blue"], blue_balloon_position);
 
-  auto red_balloon_position_publisher_node =
-      std::make_shared<BalloonPositionPublisherNode>(
-          balloon_position_topics["red"]);
-  auto blue_balloon_position_publisher_node =
-      std::make_shared<BalloonPositionPublisherNode>(
-          balloon_position_topics["blue"]);
-
   Eigen::Vector3d setStartPositionRed =
       *(red_balloon_position_subscriber_node->balloon_position_);
   Eigen::Vector3d setStartPositionBlue =
@@ -312,7 +304,7 @@ int main(int argc, char** argv) {
       break;
     } else if (kill_program) {
       ros::shutdown();
-      return EXIT_FAILURE;
+      std::exit(EXIT_SUCCESS);
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

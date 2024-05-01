@@ -18,18 +18,16 @@ void SafetyMonitor::Run(
     trajectory_warden_pub->Read(key, trajectory);
 
     if (revision_mode_ == 0) {
-      // do nothing
+      // Do nothing
     } else if (revision_mode_ == 1) {
       TimeRevision();
-
     } else if (revision_mode_ == 2) {
       ShapeRevision();
-
     } else if (revision_mode_ == 3) {
       // Waypoint mode
       WaypointRevision();
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 

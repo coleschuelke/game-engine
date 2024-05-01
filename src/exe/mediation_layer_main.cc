@@ -423,7 +423,7 @@ int main(int argc, char** argv) {
       break;
     } else if (kill_program) {
       ros::shutdown();
-      return EXIT_FAILURE;
+      std::exit(EXIT_SUCCESS);
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

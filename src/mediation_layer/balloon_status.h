@@ -8,16 +8,14 @@ namespace game_engine {
 // Plain-old-data structure containing information regarding a balloon's
 // status
 struct BalloonStatus {
-  // Indicates whether the balloon has been popped
+  // Whether the balloon has been popped
   bool popped = false;
-
-  // Indicates which quad popped the balloon
+  // Which quad popped the balloon
   std::string popper = "null";
-
-  // The time at which the balloon was popped
+  // The time at which the balloon was popped, in seconds since initialization
+  // in response to an asserted set_start.
   double pop_time;
-
-  // When asserted, endicates that the timer governing balloon teleportation
+  // When asserted, indicates that the timer governing balloon teleportation
   // should be started if not already started.
   bool set_start;
 };

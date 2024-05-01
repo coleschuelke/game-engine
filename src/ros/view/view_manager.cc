@@ -29,16 +29,15 @@ void ViewManager::Run(const QuadViewOptions quad_view_options,
 }
 
 void ViewManager::RunQuadPublisher(const QuadViewOptions quad_view_options) {
-  // Setup
   std::vector<QuadView> quad_views;
 
   for (const auto p : quad_view_options.quads) {
     if (p.first.first == "red") {
       QuadView::Options view_options;
       view_options.mesh_resource = quad_view_options.quad_mesh_file_path;
-      // burnt orange
+      // Burnt orange
       view_options.r = 0.75f;
-      view_options.g = 0.34;
+      view_options.g = 0.34f;
       view_options.b = 0.0f;
       quad_views.emplace_back(p.first.second, p.second, view_options);
     } else if (p.first.first == "blue") {
@@ -53,22 +52,18 @@ void ViewManager::RunQuadPublisher(const QuadViewOptions quad_view_options) {
   }
 
   auto quads_publisher = std::make_shared<MarkerPublisherNode>("quads");
-
-  // Main loop
-  // 50 Hz. The quads move quickly and update often
   while (this->ok_) {
     for (const auto& view : quad_views) {
       for (const visualization_msgs::Marker& marker : view.Markers()) {
         quads_publisher->Publish(marker);
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
 void ViewManager::RunBalloonPublisher(
     const BalloonViewOptions balloon_view_options) {
-  // Setup
   std::vector<BalloonView> balloon_views;
 
   for (auto p : balloon_view_options.balloons) {
@@ -91,7 +86,6 @@ void ViewManager::RunBalloonPublisher(
 
   auto balloons_publisher = std::make_shared<MarkerPublisherNode>("balloons");
 
-  // Code to get balloons to "pop" in visualizer
   // Balloon Status
   ros::NodeHandle nh("/game_engine/");
   std::map<std::string, std::string> balloon_status_topics;
@@ -120,7 +114,6 @@ void ViewManager::RunBalloonPublisher(
     std::exit(EXIT_FAILURE);
   }
   for (auto& kv : balloon_position_topics) {
-    // always want to grab the real position of the balloons to visualize
     std::string& balloon_position_topic = kv.second;
     balloon_position_topic += "/true";
   }
@@ -135,13 +128,11 @@ void ViewManager::RunBalloonPublisher(
       std::make_shared<BalloonPositionSubscriberNode>(
           balloon_position_topics["blue"], blue_balloon_position);
 
-  // Main loop
-  // 50 Hz.
   while (this->ok_) {
     for (auto& view : balloon_views) {
-      // check for balloon motion
-      // if balloon view position is not approx equal to balloon status
-      // position, set balloon view position to balloon status position
+      // Check for balloon motion. If balloon view position is not approx equal
+      // to balloon status position, set balloon view position to balloon status
+      // position.
       if (view.options_.r == 1.0f) {  // red balloon
         if (!view.balloon_position_.isApprox(
                 *(red_balloon_position_subscriber_node->balloon_position_))) {
@@ -180,21 +171,20 @@ void ViewManager::RunBalloonPublisher(
         }
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
 void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
-  // Setup
   std::vector<GoalView> goal_views;
 
   for (auto p : goal_view_options.goals) {
     if (p.first == "home") {
       GoalView::Options view_options;
       view_options.mesh_resource = goal_view_options.goal_mesh_file_path;
-      view_options.r = 1.0f;
+      view_options.r = 0.8f;
       view_options.g = 0.0f;
-      view_options.b = 1.0f;
+      view_options.b = 0.8f;
       goal_views.emplace_back(p.second, view_options);
     }
   }
@@ -214,8 +204,6 @@ void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
   auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
       goal_status_topics["home"], goal_status);
 
-  // Main loop
-  // 50 Hz.
   while (this->ok_) {
     for (auto& view : goal_views) {
       for (visualization_msgs::Marker& marker : view.Markers()) {
@@ -227,7 +215,6 @@ void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
           goal_publisher->Publish(marker);
         } else if (reached && !active) {
           marker.color.a = 0.3;
-          // marker.action = visualization_msgs::Marker::ADD;
           marker.action = visualization_msgs::Marker::DELETE;
           goal_publisher->Publish(marker);
         } else {
@@ -236,20 +223,18 @@ void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
         }
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
 void ViewManager::RunEnvironmentPublisher(
     const EnvironmentViewOptions environment_view_options) {
-  // Setup
   std::vector<Plane3DView> plane_views;
   for (const Plane3D& wall : environment_view_options.map.Walls()) {
     plane_views.emplace_back(wall, environment_view_options.wall_view_options);
   }
   plane_views.emplace_back(environment_view_options.map.Ground(),
                            environment_view_options.ground_view_options);
-
   std::vector<PolyhedronView> obstacle_views;
   for (const Polyhedron& obstacle : environment_view_options.map.Obstacles()) {
     obstacle_views.emplace_back(obstacle,
@@ -258,9 +243,6 @@ void ViewManager::RunEnvironmentPublisher(
 
   auto environment_publisher =
       std::make_shared<MarkerPublisherNode>("environment");
-
-  // Main loop
-  // 2 Hz. Environment does not change often
   while (this->ok_) {
     for (const Plane3DView& view : plane_views) {
       for (const visualization_msgs::Marker& marker : view.Markers()) {
@@ -273,13 +255,12 @@ void ViewManager::RunEnvironmentPublisher(
         environment_publisher->Publish(marker);
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
 }
 
 void ViewManager::RunTrajectoryPublisher(
     const TrajectoryViewOptions trajectory_view_options) {
-  // Main loop @ 5 Hz to keep up with quickly-updating trajectories
   while (this->ok_) {
     for (const auto& tr : trajectory_view_options.trajectories) {
       tr.second->Publish();

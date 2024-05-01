@@ -73,14 +73,15 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
   // curves, points, and whole trajectories in the RVIZ display of the arena to
   // aid in your algorithm development.  Have a look at
   // autonomy_protocol_visualizer.h to see this class's API.
-  bool first_time_ = true;
-  bool halt_ = false;
-  Eigen::Vector3d start_pos_;
-
+  AutonomyProtocolVisualizer visualizer_;
+  
   // The length of one side of the occupancy grid's cubic cells, in meters
   static constexpr double cell_size_ = 0.2;
   // Length by which obstacles are inflated to provide a safety margin, in
   // meters
   double safety_margin_ = 0.35;
+  bool first_time_ = true;
+  bool halt_ = false;
+  Eigen::Vector3d start_pos_;
 };
 }  // namespace game_engine

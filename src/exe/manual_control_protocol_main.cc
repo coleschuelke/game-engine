@@ -36,8 +36,8 @@ using namespace game_engine;
 
 namespace {
 // Signal variable and handler
-volatile std::sig_atomic_t kill_program;
-void SigIntHandler(int sig) { kill_program = 1; }
+volatile std::sig_atomic_t kill_program = false;
+void SigIntHandler(int sig) { kill_program = true; }
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -322,13 +322,11 @@ int main(int argc, char** argv) {
   auto joy_subscriber_node =
       std::make_shared<JoySubscriberNode>("/joy", joy_input);
 
-  // wait for .5 seconds
+  // Wait for 500 ms
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   red_balloon_status_publisher_node->Publish(setStartStatusRed);
   blue_balloon_status_publisher_node->Publish(setStartStatusBlue);
-  //  red_balloon_position_publisher_node->Publish(setStartPositionRed);
-  //  blue_balloon_position_publisher_node->Publish(setStartPositionBlue);
   goal_status_publisher_node->Publish(setStartStatusGoal);
 
   // The AutonomyProtocol

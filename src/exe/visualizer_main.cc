@@ -25,8 +25,8 @@ using namespace game_engine;
 
 namespace {
 // Signal variable and handler
-volatile std::sig_atomic_t kill_program;
-void SigIntHandler(int sig) { kill_program = 1; }
+volatile std::sig_atomic_t kill_program = false;
+void SigIntHandler(int sig) { kill_program = true; }
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -249,9 +249,7 @@ int main(int argc, char** argv) {
                       trajectory_view_options);
   });
 
-  // Kill program thread. This thread sleeps for a second and then checks if the
-  // 'kill_program' variable has been set. If it has, it shuts ros down and
-  // sends stop signals to any other threads that might be running.
+  // Kill program thread
   std::thread kill_thread([&]() {
     while (true) {
       if (true == kill_program) {

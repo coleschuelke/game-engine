@@ -125,17 +125,15 @@ void MediationLayer::TransferData(
   const Map3D inflated_map = map.Inflate(inflation_distance_);
 
   while (this->ok_) {
-
     // 1) Determine if trajectory has violated constraints
-    // 2) If it has, overwrite the currently existing trajectory with a new one, i.e. freeze if
-    //    obstacle touched
+    // 2) If it has, overwrite the current trajectory with a new one
     // 3) Grab lock
     // 4) Check if trajectory has been modified
     // 5) If so, grab trajectory, vet, and then publish
     // 6) Else, continue
 
     // Determine if quad has violated state constraints. If it has, freeze it in
-    // place
+    // place.
     QuadState current_state;
     quad_state_warden->Read(key, current_state);
 
@@ -144,7 +142,6 @@ void MediationLayer::TransferData(
 
     if ((quad_state_watchdog_status->Read(key)).code ==
         MediationLayerCode::QuadViolatesMapBoundaries) {
-      //          std::cout << key << " Outside boundaries." << std::endl;
       TrajectoryCode trajectoryCode;
       trajectoryCode.code = MediationLayerCode::QuadViolatesMapBoundaries;
       trajectory_warden_srv->SetTrajectoryStatus(key, trajectoryCode);
@@ -155,9 +152,9 @@ void MediationLayer::TransferData(
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
       if (joy_mode_) {
-        // if joy mode is true we want the walls of the arena to act as "padded
+        // If joy mode is true we want the walls of the arena to act as "padded
         // walls", meaning we don't have a permanent game over freeze as we do
-        // with regular autonomy protocols
+        // with regular autonomy protocols.
         if (trajectory_warden_srv->ModifiedStatus(key)) {
           Trajectory trajectory;
           trajectory_warden_srv->Await(key, trajectory);
@@ -182,8 +179,6 @@ void MediationLayer::TransferData(
       }
     } else if ((quad_state_watchdog_status->Read(key)).code ==
                MediationLayerCode::QuadTooCloseToAnotherQuad) {
-      //          std::cout << key << " Quad too close to another quad." <<
-      //          std::endl;
       TrajectoryCode trajectoryCode;
       trajectoryCode.code = MediationLayerCode::QuadTooCloseToAnotherQuad;
       trajectory_warden_srv->SetTrajectoryStatus(key, trajectoryCode);
@@ -256,7 +251,7 @@ void MediationLayer::TransferData(
       }
       trajectory_warden_pub->Write(key, trajectory, publisher);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 

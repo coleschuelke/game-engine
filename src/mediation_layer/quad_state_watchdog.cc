@@ -77,7 +77,6 @@ void QuadStateWatchdog::Run(
           if (quad_state_watchdog_status->ReadExecution(quad_name)) {
             quad_state_watchdog_status->Write(quad_name,
                                               MediationLayerCode::Success);
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1500));
           }
         }
       }
@@ -85,7 +84,6 @@ void QuadStateWatchdog::Run(
       else if (quad_state_watchdog_status->ReadExecution(quad_name)) {
         quad_state_watchdog_status->Write(quad_name,
                                           MediationLayerCode::Success);
-        // std::this_thread::sleep_for(std::chrono::milliseconds(1500));
       }
 
       // Check if current quad too close to another quad
@@ -132,7 +130,7 @@ void QuadStateWatchdog::Run(
                                           MediationLayerCode::Success);
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
