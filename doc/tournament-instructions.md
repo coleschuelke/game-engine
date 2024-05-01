@@ -9,12 +9,12 @@ Obstacle Course: Command a quadcopter to pop two balloons and arrive at the goal
 ## Obstacle Course Notes
 
 ### Interface
-Your team must complete the function
+Your team will complete the function
 `StudentAutonomyProtocol::UpdateTrajectories` located in the file
-`game-engine/src/autonomy_protocol/aerial_robotics/student_autonomy_protocol.cc`. This function is a member of the StudentAutonomyProtocol class, which inherits from the AutonomyProtocol parent class.  These classes provide access to map data, balloon data, the current state of the quadcopter, etc.  The function `UpdateTrajectories` returns a proposed quadcopter trajectory.
+`game-engine/src/autonomy_protocol/aerial_robotics/student_autonomy_protocol.cc`. This function is a member of the `StudentAutonomyProtocol` class, which inherits from the `AutonomyProtocol` parent class.  These classes provide access to map data, balloon data, the current state of the quadcopter, etc.  The function `UpdateTrajectories` returns a proposed quadcopter trajectory.
 
 Note that the function interface only specifies the input and output (quad state ->
-quad trajectory), but not how to accomplish the path planning task. It is up to you
+quad trajectory), but not how to accomplish the path planning task. It is up to your team
 to determine how best to complete the function.
 
 The entire obstacle course challenge boils down to writing a single
@@ -23,7 +23,7 @@ trivial. The problem of prescribing a time-optimal trajectory through a
 cluttered environment in the presence of disturbances is difficult.
 
 ### Code Modifications
-You may add any additional header (*.h) or source (*.cc) files you wish to the `game-engine/src/autonomy_protocol/aerial_robotics` directory, and you may add any data members or member functions you'd like to the `StudentAutonomyProtocol` class.  But do not alter the code or add files in any directory other than `aerial_robotics`, and do not _remove_ any of the existing functions and data members of the `StudentAutonomyProtocol` class.  
+You may add any additional header (*.h) or source (*.cc) files you wish to the `game-engine/src/autonomy_protocol/aerial_robotics` directory, and you may add any data members or member functions you'd like to the `StudentAutonomyProtocol` class.  But do not alter the code or add files in any directory other than `aerial_robotics`, and do not remove any of the existing functions and data members of the `StudentAutonomyProtocol` class.  
 
 Source (*.cc) files that you add to `aerial_robotics` are not compiled by default in the code building process.  You'll need to add them to the list of source files [here](https://gitlab.com/radionavlab/public/game-engine/-/blob/master/src/autonomy_protocol/aerial_robotics/CMakeLists.txt?ref_type=heads#L9).
 
