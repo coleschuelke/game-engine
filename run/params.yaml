@@ -29,10 +29,10 @@ quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/mesh
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
-blue_balloon_position: [-24.5, 15.0, -3.43]
-red_balloon_position:  [-16.0, 15.3, -3.43]
+blue_balloon_position: [-26.0, 14.65, -3.0]
+red_balloon_position:  [-21.5, 15.25, -3.15]
 
-red_balloon_position_new:  [-21.5, 15.5, -3.15]
+red_balloon_position_new:  [-21.5, 15.25, -3.15]
 red_balloon_max_move_time: 5.0
 
 blue_balloon_position_new: [-26.0, 14.75, -3.0]
@@ -44,11 +44,11 @@ blue_balloon_max_move_time: 5.0
 # For ellipse path         move:true, path:true,  curve:true     (max move time describes the period of the ellipse the balloon will take)
 # If move is false, balloon will remain motionless
 
-move_red: true 
+move_red: false 
 path_red: false
 curve_red: false
 
-move_blue: true
+move_blue: false
 path_blue: false
 curve_blue: false
 
@@ -56,7 +56,7 @@ use_seed: true
 seed: 37
 
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
-wind_intensity: 2
+wind_intensity: 0
 
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
@@ -72,7 +72,7 @@ joy_mode: false
 # change to true if using the camera
 camera_mode: false
 
-goal_position: [-12.4, 15, -4.5]
+goal_position: [-12.4, 13.5, -4.5]
 
 initial_quad_positions:
   "zeus": "-12.4 18.0 -3.5"
