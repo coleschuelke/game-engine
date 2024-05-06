@@ -3,19 +3,18 @@
 #include <queue>
 
 namespace game_engine {
-// Anonymous namespace. Put any file-local functions or variables in here
+// Anonymous namespace. Put any file-local functions and variables within this
+// scope
 namespace {
-// Helper struct that functions as a linked list with data. The linked
-// list represents a path. Data members are a node, a cost to reach that
-// node, and a heuristic cost from the current node to the destination.
+// The NodeWrapper object can be used to form a linked list representing a path.
 struct NodeWrapper {
-  std::shared_ptr<struct NodeWrapper> parent;
+  // Pointer to Node2D object
   std::shared_ptr<Node2D> node_ptr;
-
-  // True cost to this node
+  // Cost to reach the node pointed to by node_ptr
   double cost;
-
-  // Heuristic to end node
+  // Parent NodeWrapper object
+  std::shared_ptr<struct NodeWrapper> parent;
+  // Heuristic value from this node to end node
   double heuristic;
 
   // Equality operator
@@ -24,8 +23,8 @@ struct NodeWrapper {
   }
 };
 
-// Helper function. Compares the values of two NodeWrapper pointers.
-// Necessary for the priority queue.
+// Compares the values of two NodeWrapper pointers.  Necessary for the priority
+// queue.
 bool NodeWrapperPtrCompare(const std::shared_ptr<NodeWrapper>& lhs,
                            const std::shared_ptr<NodeWrapper>& rhs) {
   return lhs->cost + lhs->heuristic > rhs->cost + rhs->heuristic;
@@ -39,7 +38,6 @@ double Heuristic(const std::shared_ptr<Node2D>& current_ptr,
                  const std::shared_ptr<Node2D>& end_ptr) {
   return 0;
 }
-
 }  // namespace
 
 PathInfo AStar2D::Run(const Graph2D& graph,

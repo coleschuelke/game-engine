@@ -3,17 +3,19 @@
 #include <stack>
 
 namespace game_engine {
-// Anonymous namespace. Put any file-local functions or variables in here
+// Anonymous namespace. Put any file-local functions and variables within this
+// scope
 namespace {
-// Helper struct that functions as a linked list with data. The linked
-// list represents a path. Data members are a node and a cost to reach
-// that node.
+// The NodeWrapper object can be used to form a linked list representing a path.
 struct NodeWrapper {
-  std::shared_ptr<struct NodeWrapper> parent;
+  // Pointer to Node2D object
   std::shared_ptr<Node2D> node_ptr;
+  // Cost to reach the node pointed to by node_ptr
   double cost;
+  // Parent NodeWrapper object
+  std::shared_ptr<struct NodeWrapper> parent;
 
-  // Equality operator
+  // Equality operator function
   bool operator==(const NodeWrapper& other) const {
     return *(this->node_ptr) == *(other.node_ptr);
   }
