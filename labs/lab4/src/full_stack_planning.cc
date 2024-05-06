@@ -2,27 +2,29 @@
 #include <vector>
 
 #include "a_star2d.h"
-#include "occupancy_grid2d.h"
-#include "path_info.h"
-#include "polynomial_solver.h"
-#include "polynomial_sampler.h"
 #include "gnuplot-iostream.h"
 #include "gui2d.h"
+#include "occupancy_grid2d.h"
+#include "path_info.h"
+#include "polynomial_sampler.h"
+#include "polynomial_solver.h"
 
 using namespace game_engine;
 
 int main(int argc, char** argv) {
-  if(argc != 6) {
-    std::cerr << "Usage: ./full_stack_planning occupancy_grid_file row1 col1 row2 col2" << std::endl;
+  if (argc != 6) {
+    std::cerr << "Usage: ./full_stack_planning occupancy_grid_file row1 col1 "
+                 "row2 col2"
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   // Parsing input
   const std::string occupancy_grid_file = argv[1];
   const std::shared_ptr<Node2D> start_ptr = std::make_shared<Node2D>(
-      Eigen::Vector2d(std::stoi(argv[2]),std::stoi(argv[3])));
+      Eigen::Vector2d(std::stoi(argv[2]), std::stoi(argv[3])));
   const std::shared_ptr<Node2D> end_ptr = std::make_shared<Node2D>(
-      Eigen::Vector2d(std::stoi(argv[4]),std::stoi(argv[5])));
+      Eigen::Vector2d(std::stoi(argv[4]), std::stoi(argv[5])));
 
   // Load an occupancy grid from a file
   OccupancyGrid2D occupancy_grid;

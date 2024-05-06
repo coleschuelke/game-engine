@@ -1,70 +1,69 @@
-#include <stack>
-
 #include "depth_first_search2d.h"
 
+#include <stack>
+
 namespace game_engine {
-  // Anonymous namespace. Put any file-local functions or variables in here
-  namespace {
-    // Helper struct that functions as a linked list with data. The linked
-    // list represents a path. Data members are a node and a cost to reach
-    // that node.
-    struct NodeWrapper {
-      std::shared_ptr<struct NodeWrapper> parent;
-      std::shared_ptr<Node2D> node_ptr;
-      double cost;
+// Anonymous namespace. Put any file-local functions or variables in here
+namespace {
+// Helper struct that functions as a linked list with data. The linked
+// list represents a path. Data members are a node and a cost to reach
+// that node.
+struct NodeWrapper {
+  std::shared_ptr<struct NodeWrapper> parent;
+  std::shared_ptr<Node2D> node_ptr;
+  double cost;
 
-      // Equality operator
-      bool operator==(const NodeWrapper& other) const {
-        return *(this->node_ptr) == *(other.node_ptr);
-      }
-    };
+  // Equality operator
+  bool operator==(const NodeWrapper& other) const {
+    return *(this->node_ptr) == *(other.node_ptr);
   }
+};
+}  // namespace
 
-  PathInfo DepthFirstSearch2D::Run(
-      const Graph2D& graph, 
-      const std::shared_ptr<Node2D> start_ptr, 
-      const std::shared_ptr<Node2D> end_ptr) {
-    using NodeWrapperPtr = std::shared_ptr<NodeWrapper>;
+PathInfo DepthFirstSearch2D::Run(const Graph2D& graph,
+                                 const std::shared_ptr<Node2D> start_ptr,
+                                 const std::shared_ptr<Node2D> end_ptr) {
+  using NodeWrapperPtr = std::shared_ptr<NodeWrapper>;
 
-    ///////////////////////////////////////////////////////////////////
-    // SETUP
-    // DO NOT MODIFY THIS
-    ///////////////////////////////////////////////////////////////////
-    Timer timer;
-    timer.Start();
+  ///////////////////////////////////////////////////////////////////
+  // SETUP
+  // DO NOT MODIFY THIS
+  ///////////////////////////////////////////////////////////////////
+  Timer timer;
+  timer.Start();
 
-    // Use these data structures
-    std::stack<NodeWrapperPtr> to_explore;
-    std::vector<NodeWrapperPtr> explored;
+  // Use these data structures
+  std::stack<NodeWrapperPtr> to_explore;
+  std::vector<NodeWrapperPtr> explored;
 
-    ///////////////////////////////////////////////////////////////////
-    // YOUR WORK GOES BELOW
-    // SOME EXAMPLE CODE PROVIDED
-    ///////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////
+  // YOUR WORK GOES BELOW
+  // SOME EXAMPLE CODE PROVIDED
+  ///////////////////////////////////////////////////////////////////
 
-    // Create a NodeWrapperPtr
-    NodeWrapperPtr nw_ptr = std::make_shared<NodeWrapper>();
-    nw_ptr->parent = nullptr;
-    nw_ptr->node_ptr = start_ptr;
-    nw_ptr->cost = 0;
-    to_explore.push(nw_ptr);
+  // Create a NodeWrapperPtr
+  NodeWrapperPtr nw_ptr = std::make_shared<NodeWrapper>();
+  nw_ptr->parent = nullptr;
+  nw_ptr->node_ptr = start_ptr;
+  nw_ptr->cost = 0;
+  to_explore.push(nw_ptr);
 
-    // Create a PathInfo
-    PathInfo path_info;
-    path_info.details.num_nodes_explored = 0;
-    path_info.details.path_length = 0;
-    path_info.details.path_cost = 0;
-    path_info.details.run_time = timer.Stop();
-    path_info.path = {};
+  // Create a PathInfo
+  PathInfo path_info;
+  path_info.details.num_nodes_explored = 0;
+  path_info.details.path_length = 0;
+  path_info.details.path_cost = 0;
+  path_info.details.run_time = timer.Stop();
+  path_info.path = {};
 
-    // Push an example node to PathInfo.path.  Note that in your implementation,
-    // path_info.path (which, as you can see in path_info.h, is just a vector of
-    // pointers to Node2D objects), should contain the sequence of nodes
-    // traversed from start_ptr to end_ptr.
-    path_info.path.push_back(nw_ptr->node_ptr);
+  // Push an example node to PathInfo.path.  Note that in your implementation,
+  // path_info.path (which, as you can see in path_info.h, is just a vector of
+  // pointers to Node2D objects), should contain the sequence of nodes
+  // traversed from start_ptr to end_ptr.
+  path_info.path.push_back(nw_ptr->node_ptr);
 
-    // You must return a PathInfo
-    return path_info;
-  }
-  
+  // You must return a PathInfo
+  return path_info;
 }
+
+}  // namespace game_engine
