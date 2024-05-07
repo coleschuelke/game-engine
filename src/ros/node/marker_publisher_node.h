@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include <ros/ros.h>
@@ -10,9 +8,7 @@
 #include "publisher_guard.h"
 
 namespace game_engine {
-// ROS node that publishers marker messages. Wraps the publisher in a
-// publisher guard to ensure that instances of this class may be used in
-// across multiple threads
+// ROS node that publishes marker messages
 class MarkerPublisherNode {
  private:
   // A publisher guard ensures that the Publish() function may be called in
@@ -20,10 +16,7 @@ class MarkerPublisherNode {
   std::shared_ptr<PublisherGuard<visualization_msgs::Marker>> publisher_guard_;
 
  public:
-  // Constructor
   MarkerPublisherNode(const std::string& topic);
-
-  // Publish the message
   void Publish(const visualization_msgs::Marker& msg);
 };
 }  // namespace game_engine

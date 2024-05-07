@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include <geometry_msgs/Point.h>
@@ -27,16 +25,20 @@ class BalloonView : public MarkerView {
     float b;
     // RGB alpha value [0,1]
     float a;
+    // Identifier (e.g., "red")
+    std::string identifier;
 
     Options(const std::string& frame_id_ = "world",
             const std::string& mesh_resource_ = "", const float r_ = 1.0f,
-            const float g_ = 1.0f, const float b_ = 1.0f, const float a_ = 1.0f)
+            const float g_ = 1.0f, const float b_ = 1.0f, const float a_ = 1.0f,
+            const std::string& identifier_ = "")
         : frame_id(frame_id_),
           mesh_resource(mesh_resource_),
           r(r_),
           g(g_),
           b(b_),
-          a(a_) {}
+          a(a_),
+          identifier(identifier_) {}
   };
 
   BalloonView(Eigen::Vector3d& balloon_position,
@@ -48,6 +50,8 @@ class BalloonView : public MarkerView {
   std::vector<visualization_msgs::Marker> Markers() const override;
 
   Eigen::Vector3d balloon_position_;
+
+  unsigned char action_ = visualization_msgs::Marker::ADD;
 
   Options options_;
 

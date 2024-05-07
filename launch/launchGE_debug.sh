@@ -2,18 +2,22 @@
 
 #==========Warning===============#
 localdir=$(pwd)
-read -p "This script will run everything other than the autonomy protocol which you can run, after everything has launched,
-manually with your debugger of choice.
-Before running the script:
-1) make sure no instance of ros is running
-2) have a working clone of game-engine already built with your protocol. Make sure the protocol is in the ./bin folder.
-3) if issues arise (i.e ballons are not popping) then CTRL+C and try again, or try manually running the commands.
-4) when you CTRL+C make sure all the processes have stopped (use htop or ps -a to get the process id and kill to kill it)
+echo -e "This script will run everything other than the autonomy protocol which
+you can run, after everything has launched, within your debugger of choice.
 
-All log files for mediation layer, physics layer, autonomy protocol are unbuffered and logged and the ros output is logged in:
-${localdir}
+read -p "Before proceeding with the script ...
+1) Ensure no instance of roscore is running.
+2) Have a working clone of game-engine already built with your target protocol
+   in the ./bin folder.
+3) If problems arise (i.e., ballons are not popping), then hit Ctrl+C and try again, 
+   or try manually running the Game Engine modules.
+4) After you apply Ctrl-C, make sure no game-engine-related processes remain running 
+  (use htop or ps -a to see running processes); if so, run killGE.sh.
 
-Press [Enter] key to continue..."
+Note that log files for mediation layer, physics layer, autonomy protocol will
+be logged together with all ROS output in ${localdir}
+
+Press [Enter] to continue."
 
 #==========Get info from user===============#
 # get game-engine working directory

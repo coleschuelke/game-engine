@@ -4,12 +4,12 @@ PROTOCOL_TIMEOUT=300
 
 #==========Warning===============#
 read -p "Before running the script:
-1) have a valid .csv like the README states
-2) have a working clone of game-engine already built to save time. Make sure the build folder is called build.
+1) Ensure a valid .csv file is present as described in README
+2) Have a working clone of game-engine already built. Make sure the build folder is called build.
 
 This will remove the previous leaderboard.
 
-Press [Enter] key to continue..."
+Press [Enter] to continue ..."
 
 #==========Get info from user===============#
 # Get Current Working Directory and CSV paths
@@ -120,9 +120,6 @@ do
 
     cp -R "$aerial_robotics_dir/"* "$GAME_ENGINE"/src/autonomy_protocol/aerial_robotics/
     
-    cd $aerial_robotics_dir
-    cd ..
-    cp CMakeLists.txt $GAME_ENGINE/src/autonomy_protocol
     echo "Copying successful!"
     # Delete repo
     cd $CWD
@@ -153,7 +150,7 @@ do
         continue
     fi
       
-    # launch roscroe in background
+    # launch roscore in background
     cd $CWD
     echo "launching Roscore"
     roscore > roscore.log 2>&1 &

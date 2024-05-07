@@ -5,7 +5,7 @@
 
 namespace game_engine {
 GoalStatusPublisherNode::GoalStatusPublisherNode(const std::string& topic) {
-  this->publisher_guard_ =
+  publisher_guard_ =
       std::make_shared<PublisherGuard<mg_msgs::GoalStatus>>(topic);
 }
 
@@ -23,7 +23,7 @@ void GoalStatusPublisherNode::Publish(const GoalStatus& goal_status) {
   msg.pos.z = goal_status.position.z();
   msg.set_start.data = goal_status.set_start;
 
-  this->publisher_guard_->Publish(msg);
+  publisher_guard_->Publish(msg);
 }
 
 }  // namespace game_engine

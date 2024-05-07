@@ -52,7 +52,7 @@ void ViewManager::RunQuadPublisher(const QuadViewOptions quad_view_options) {
   }
 
   auto quads_publisher = std::make_shared<MarkerPublisherNode>("quads");
-  while (this->ok_) {
+  while (ok_) {
     for (const auto& view : quad_views) {
       for (const visualization_msgs::Marker& marker : view.Markers()) {
         quads_publisher->Publish(marker);
@@ -73,6 +73,7 @@ void ViewManager::RunBalloonPublisher(
       view_options.r = 1.0f;
       view_options.g = 0.0f;
       view_options.b = 0.0f;
+      view_options.identifier = p.first;
       balloon_views.emplace_back(p.second, view_options);
     } else if (p.first == "blue") {
       BalloonView::Options view_options;
@@ -80,6 +81,7 @@ void ViewManager::RunBalloonPublisher(
       view_options.r = 0.0f;
       view_options.g = 0.0f;
       view_options.b = 1.0f;
+      view_options.identifier = p.first;
       balloon_views.emplace_back(p.second, view_options);
     }
   }
@@ -120,7 +122,6 @@ void ViewManager::RunBalloonPublisher(
 
   auto red_balloon_position = std::make_shared<Eigen::Vector3d>();
   auto blue_balloon_position = std::make_shared<Eigen::Vector3d>();
-
   auto red_balloon_position_subscriber_node =
       std::make_shared<BalloonPositionSubscriberNode>(
           balloon_position_topics["red"], red_balloon_position);
@@ -128,47 +129,35 @@ void ViewManager::RunBalloonPublisher(
       std::make_shared<BalloonPositionSubscriberNode>(
           balloon_position_topics["blue"], blue_balloon_position);
 
-  while (this->ok_) {
+  while (ok_) {
     for (auto& view : balloon_views) {
-      // Check for balloon motion. If balloon view position is not approx equal
-      // to balloon status position, set balloon view position to balloon status
-      // position.
-      if (view.options_.r == 1.0f) {  // red balloon
+      // Update balloon position and popped status
+      if (view.options_.identifier == "red") {
         if (!view.balloon_position_.isApprox(
                 *(red_balloon_position_subscriber_node->balloon_position_))) {
           view.balloon_position_ =
               *(red_balloon_position_subscriber_node->balloon_position_);
         }
-      } else if (view.options_.b == 1.0f) {  // blue balloon{
+        if (red_balloon_status_subscriber_node->balloon_status_->popped) {
+          view.action_ = visualization_msgs::Marker::DELETE;
+        } else {
+          view.action_ = visualization_msgs::Marker::ADD;
+        }
+      } else if (view.options_.identifier == "blue") {
         if (!view.balloon_position_.isApprox(
                 *(blue_balloon_position_subscriber_node->balloon_position_))) {
           view.balloon_position_ =
               *(blue_balloon_position_subscriber_node->balloon_position_);
         }
+        if (blue_balloon_status_subscriber_node->balloon_status_->popped) {
+          view.action_ = visualization_msgs::Marker::DELETE;
+        } else {
+          view.action_ = visualization_msgs::Marker::ADD;
+        }
       }
 
       for (visualization_msgs::Marker& marker : view.Markers()) {
-        if (marker.color.r == 1.0f) {
-          if (red_balloon_status_subscriber_node->balloon_status_->popped) {
-            // "pop" red balloon
-            marker.action = visualization_msgs::Marker::DELETE;
-            balloons_publisher->Publish(marker);
-          } else {
-            marker.action = visualization_msgs::Marker::ADD;
-            balloons_publisher->Publish(marker);
-          }
-        } else if (marker.color.b == 1.0f) {
-          if (blue_balloon_status_subscriber_node->balloon_status_->popped) {
-            // "pop" blue balloon
-            marker.action = visualization_msgs::Marker::DELETE;
-            balloons_publisher->Publish(marker);
-          } else {
-            marker.action = visualization_msgs::Marker::ADD;
-            balloons_publisher->Publish(marker);
-          }
-        } else {
-          balloons_publisher->Publish(marker);
-        }
+        balloons_publisher->Publish(marker);
       }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -190,7 +179,6 @@ void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
   }
 
   auto goal_publisher = std::make_shared<MarkerPublisherNode>("goal");
-
   ros::NodeHandle nh("/game_engine/");
   std::map<std::string, std::string> goal_status_topics;
   if (false == nh.getParam("goal_status_topics", goal_status_topics)) {
@@ -200,11 +188,10 @@ void ViewManager::RunGoalPublisher(const GoalViewOptions goal_view_options) {
   }
 
   auto goal_status = std::make_shared<GoalStatus>();
-
   auto goal_status_subscriber_node = std::make_shared<GoalStatusSubscriberNode>(
       goal_status_topics["home"], goal_status);
 
-  while (this->ok_) {
+  while (ok_) {
     for (auto& view : goal_views) {
       for (visualization_msgs::Marker& marker : view.Markers()) {
         bool active = goal_status_subscriber_node->goal_status_->active;
@@ -243,7 +230,7 @@ void ViewManager::RunEnvironmentPublisher(
 
   auto environment_publisher =
       std::make_shared<MarkerPublisherNode>("environment");
-  while (this->ok_) {
+  while (ok_) {
     for (const Plane3DView& view : plane_views) {
       for (const visualization_msgs::Marker& marker : view.Markers()) {
         environment_publisher->Publish(marker);
@@ -261,7 +248,7 @@ void ViewManager::RunEnvironmentPublisher(
 
 void ViewManager::RunTrajectoryPublisher(
     const TrajectoryViewOptions trajectory_view_options) {
-  while (this->ok_) {
+  while (ok_) {
     for (const auto& tr : trajectory_view_options.trajectories) {
       tr.second->Publish();
     }
@@ -269,5 +256,5 @@ void ViewManager::RunTrajectoryPublisher(
   }
 }
 
-void ViewManager::Stop() { this->ok_ = false; }
+void ViewManager::Stop() { ok_ = false; }
 }  // namespace game_engine

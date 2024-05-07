@@ -1,25 +1,27 @@
-
-
 #include "plane3d_view.h"
 
 namespace game_engine {
 std::vector<visualization_msgs::Marker> Plane3DView::Markers() const {
   visualization_msgs::Marker marker;
-  marker.header.frame_id = this->options_.frame_id;
+  marker.header.frame_id = options_.frame_id;
   marker.ns = "Plane3d";
-  marker.id = this->unique_id_;
+  marker.id = unique_id_;
   marker.type = visualization_msgs::Marker::TRIANGLE_LIST;
   marker.action = visualization_msgs::Marker::ADD;
   marker.scale.x = 1.0f;
   marker.scale.y = 1.0f;
   marker.scale.z = 1.0f;
-  marker.color.r = this->options_.r;
-  marker.color.g = this->options_.g;
-  marker.color.b = this->options_.b;
-  marker.color.a = this->options_.a;
-
-  const Point3D interior_point = this->plane_.Edges()[0].Start();
-  for (const Line3D& edge : this->plane_.Edges()) {
+  marker.color.r = options_.r;
+  marker.color.g = options_.g;
+  marker.color.b = options_.b;
+  marker.color.a = options_.a;
+  marker.pose.orientation.w = 1.0f;
+  marker.pose.orientation.x = 0.0f;
+  marker.pose.orientation.y = 0.0f;
+  marker.pose.orientation.z = 0.0f;
+  
+  const Point3D interior_point = plane_.Edges()[0].Start();
+  for (const Line3D& edge : plane_.Edges()) {
     geometry_msgs::Point p1;
     p1.x = interior_point.x();
     p1.y = interior_point.y();

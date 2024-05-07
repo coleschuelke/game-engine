@@ -1,27 +1,29 @@
-
-
 #include "polyhedron_view.h"
 
 namespace game_engine {
 std::vector<visualization_msgs::Marker> PolyhedronView::Markers() const {
   visualization_msgs::Marker marker;
-  marker.header.frame_id = this->options_.frame_id;
-  marker.id = this->unique_id_;
+  marker.header.frame_id = options_.frame_id;
+  marker.id = unique_id_;
   marker.ns = "Polyhedron";
   marker.type = visualization_msgs::Marker::TRIANGLE_LIST;
   marker.action = visualization_msgs::Marker::ADD;
   marker.scale.x = 1.0f;
   marker.scale.y = 1.0f;
   marker.scale.z = 1.0f;
-  marker.color.r = this->options_.r;
-  marker.color.g = this->options_.g;
-  marker.color.b = this->options_.b;
-  marker.color.a = this->options_.a;
+  marker.color.r = options_.r;
+  marker.color.g = options_.g;
+  marker.color.b = options_.b;
+  marker.color.a = options_.a;
+  marker.pose.orientation.w = 1.0f;
+  marker.pose.orientation.x = 0.0f;
+  marker.pose.orientation.y = 0.0f;
+  marker.pose.orientation.z = 0.0f;
 
   // Iterate through all of the faces on the polyhedron and draw triangles
   // between the vertices and some point on the interior of the face. The
   // interior point is arbitrarily selected as the first vertex.
-  for (const Plane3D& face : this->polyhedron_.Faces()) {
+  for (const Plane3D& face : polyhedron_.Faces()) {
     const Point3D interior_point = face.Edges()[0].Start();
     for (const Line3D& edge : face.Edges()) {
       geometry_msgs::Point p1;
