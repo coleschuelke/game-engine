@@ -14,14 +14,14 @@ namespace game_engine {
 // NodeEigen is templated and may contain different sizes of data.  Convenient
 // aliases for 2D and 3D Eigen data are defined at the bottom of this file.
 template <int D>
-class NodeEigen : public Node<Eigen::Matrix<double, D, 1>> {
+class NodeEigen : public Node<Eigen::Matrix<int, D, 1>> {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // Constructor
+  // Constructors
   NodeEigen(
-      const Eigen::Matrix<double, D, 1>& data = Eigen::Matrix<double, D, 1>())
-      : Node<Eigen::Matrix<double, D, 1>>(
+      const Eigen::Matrix<int, D, 1>& data = Eigen::Matrix<int, D, 1>())
+      : Node<Eigen::Matrix<int, D, 1>>(
             data,
             std::bind(&NodeEigen::operator==, this, std::placeholders::_1),
             std::bind(&NodeEigen::Hash, this)) {}
@@ -35,7 +35,7 @@ class NodeEigen : public Node<Eigen::Matrix<double, D, 1>> {
   // Hash function. Hash functions for floating point numbers are
   // complicated due to numerical errors. 3.0 != 3.0 always. To solve this,
   // when computing the hash, floating point numbers are multiplied by 10^4
-  // and truncated to the nearest integer. Determining the hash of a tuple
+  // and truncated to the nearest integer. Determining the hash of a vector
   // of integers is easy. Thus, NodeEigen should not be used if the data
   // required more than 3 decimal points of precision.
   size_t Hash() const;

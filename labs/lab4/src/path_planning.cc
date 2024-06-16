@@ -45,9 +45,9 @@ int main(int argc, char** argv) {
   // Parsing input
   const std::string occupancy_grid_file = argv[1];
   const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(
-      Eigen::Vector2d(std::stoi(argv[2]),std::stoi(argv[3])));
+      Eigen::Vector2i(std::stoi(argv[2]),std::stoi(argv[3])));
   const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(
-      Eigen::Vector2d(std::stoi(argv[4]),std::stoi(argv[5])));
+      Eigen::Vector2i(std::stoi(argv[4]),std::stoi(argv[5])));
 
   // Load an occupancy grid from a file
   OccupancyGrid2D occupancy_grid;

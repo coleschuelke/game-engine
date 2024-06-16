@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
 
   // Define the start and end nodes
   // Create a node at (0,0) and a node at (4,4)
-  const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2d(0,0));
-  const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2d(4,4));
+  const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2i(0,0));
+  const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2i(4,4));
 
   // Access all the directed edges emanating from a node
   const std::vector<DirectedEdge2D> edges = graph.Edges(start_node);
@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
     const double cost = edge.Cost();
 
     // Print relevant data
-    // std::shared_ptr<Node2D>->Data() is an Eigen::Vector2d. If you want to use
-    // functions/accessors other than x() and y(), google Eigen::Vector2d
+    // std::shared_ptr<Node2D>->Data() is an Eigen::Vector2i. If you want to use
+    // functions/accessors other than x() and y(), google Eigen::Vector2i
     std::cout 
       << "DirectedEdge2D from " 
       << "[" << source_ptr->Data().x() << ", " << source_ptr->Data().y() << "]"

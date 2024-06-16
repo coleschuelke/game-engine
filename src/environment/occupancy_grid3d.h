@@ -53,10 +53,10 @@ class OccupancyGrid3D {
   Eigen::Vector3d boxCenter(int x, int y, int z);
   // Returns the 3D grid indices of the cell that contains the input point,
   // which is expressed in meters.
-  std::tuple<int, int, int> mapToGridCoordinates(Eigen::Vector3d pt);
+  Eigen::Vector3i mapToGridCoordinates(Eigen::Vector3d pt);
   // Indicates whether (true) or not (false) the cell at index [x,y,z] is
   // occupied.
-  bool IsOccupied(const size_t z, const size_t y, const size_t x) const;
+  bool IsOccupied(const size_t x, const size_t y, const size_t z) const;
   // The 3D grid as stored in memory is addressed as a pointer to a pointer to a
   // pointer to a bool.  This function gives you direct access to the occupancy
   // data, should you need it.
