@@ -45,7 +45,7 @@ class OccupancyGrid2D {
   size_t SizeX() const;
   size_t SizeY() const;
 
-  bool IsOccupied(const size_t y, const size_t x) const;
+  bool IsOccupied(const size_t x, const size_t y) const;
 
   const bool** Data() const;
 };

@@ -1,5 +1,3 @@
-
-
 #include "occupancy_grid2d.h"
 
 namespace game_engine {
@@ -19,7 +17,7 @@ size_t OccupancyGrid2D::SizeX() const { return this->size_x_; }
 
 size_t OccupancyGrid2D::SizeY() const { return this->size_y_; }
 
-bool OccupancyGrid2D::IsOccupied(const size_t y, const size_t x) const {
+bool OccupancyGrid2D::IsOccupied(const size_t x, const size_t y) const {
   return this->data_[y][x];
 }
 
@@ -131,7 +129,7 @@ Graph2D OccupancyGrid2D::AsGraph() const {
   for (size_t row = 0; row < this->size_y_; ++row) {
     for (size_t col = 0; col < this->size_x_; ++col) {
       node_grid[row][col] =
-          std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(row, col));
+          std::make_shared<Node2D>(Eigen::Matrix<int, 2, 1>(row, col));
     }
   }
 
@@ -140,7 +138,7 @@ Graph2D OccupancyGrid2D::AsGraph() const {
   for (int row = 0; row < this->size_y_; ++row) {
     for (int col = 0; col < this->size_x_; ++col) {
       // If current node is unreachable, pass
-      if (true == this->IsOccupied(row, col)) {
+      if (true == this->IsOccupied(col, row)) {
         continue;
       }
 

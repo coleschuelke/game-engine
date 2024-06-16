@@ -18,8 +18,8 @@ OccupancyGrid3D::~OccupancyGrid3D() {
   std::free(this->data_);
 }
 
-bool OccupancyGrid3D::IsOccupied(const size_t z, const size_t y,
-                                 const size_t x) const {
+bool OccupancyGrid3D::IsOccupied(const size_t x, const size_t y,
+                                 const size_t z) const {
   if (x < 0 || y < 0 || z < 0 || x >= size_x_ || y >= size_y_ || z >= size_z_) {
     return true;
   }
@@ -188,11 +188,11 @@ Eigen::Vector3d OccupancyGrid3D::boxCenter(int x, int y, int z) {
          Eigen::Vector3d(gridsize_ * 0.5, gridsize_ * 0.5, gridsize_ * 0.5);
 }
 
-std::tuple<int, int, int> OccupancyGrid3D::mapToGridCoordinates(
+Eigen::Vector3i OccupancyGrid3D::mapToGridCoordinates(
     Eigen::Vector3d pt) {
-  return std::tuple<int, int, int>(floor((pt[0] - origin_.x()) / gridsize_),
-                                   floor((pt[1] - origin_.y()) / gridsize_),
-                                   floor((pt[2] - origin_.z()) / gridsize_));
+  return Eigen::Vector3i(floor((pt[0] - origin_.x()) / gridsize_),
+                         floor((pt[1] - origin_.y()) / gridsize_),
+                         floor((pt[2] - origin_.z()) / gridsize_));
 }
 
 Graph3D OccupancyGrid3D::AsGraph() const {
@@ -209,7 +209,7 @@ Graph3D OccupancyGrid3D::AsGraph() const {
     for (size_t row = 0; row < this->size_y_; ++row) {
       for (size_t col = 0; col < this->size_x_; ++col) {
         node_grid[height][row][col] = std::make_shared<Node3D>(
-            Eigen::Matrix<double, 3, 1>(col, row, height));
+            Eigen::Matrix<int, 3, 1>(col, row, height));
       }
     }
   }
@@ -218,7 +218,7 @@ Graph3D OccupancyGrid3D::AsGraph() const {
   for (int height = 0; height < this->size_z_; ++height) {
     for (int row = 0; row < this->size_y_; ++row) {
       for (int col = 0; col < this->size_x_; ++col) {
-        if (true == this->IsOccupied(height, row, col)) continue;
+        if (true == this->IsOccupied(col, row, height)) continue;
 
         constexpr double ADJACENT_COST = 1.0;
         constexpr double DIAGONAL_COST = std::sqrt(2);
