@@ -47,12 +47,9 @@ classdef rect_prism
       % put the vertices of the object in the right order for the template
       [~,sortidx] = sort(rpvert(3,:));
       rpvert = rpvert(:,sortidx);
-      rpvert = rpvert(:,[2 1 3 4 6 5 7 8]); % [A B C D E F G H] 
+      rpvert = rpvert(:,[4 2 1 3 8 6 5 7]); % [A B C D E F G H] 
       % rotate and translate the vertices to match the arena
-      RAI = [-0.9965 -0.0832 0;0.0832 -0.9965 0;0 0 1.0000];
-      arena_translation = [10.37 -19.58 5.15]';
-      rpvert = pagemtimes(rpvert',RAI')';
-      rpvert = rpvert - arena_translation;
+      rpvert = q1ToArena(rpvert);
       % create a string that is the template replaced with the values in rpvert
       if last
         fid  = fopen('last_obstacle_template.txt','r');
