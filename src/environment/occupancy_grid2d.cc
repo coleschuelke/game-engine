@@ -2,27 +2,27 @@
 
 namespace game_engine {
 OccupancyGrid2D::~OccupancyGrid2D() {
-  if (false == this->heap_allocated_) {
+  if (false == heap_allocated_) {
     return;
   }
 
   // Deallocate memory on heap
-  for (size_t idx = 0; idx < this->size_y_; ++idx) {
-    std::free(this->data_[idx]);
+  for (size_t idx = 0; idx < size_y_; ++idx) {
+    std::free(data_[idx]);
   }
-  std::free(this->data_);
+  std::free(data_);
 }
 
-size_t OccupancyGrid2D::SizeX() const { return this->size_x_; }
+size_t OccupancyGrid2D::SizeX() const { return size_x_; }
 
-size_t OccupancyGrid2D::SizeY() const { return this->size_y_; }
+size_t OccupancyGrid2D::SizeY() const { return size_y_; }
 
 bool OccupancyGrid2D::IsOccupied(const size_t x, const size_t y) const {
-  return this->data_[y][x];
+  return data_[y][x];
 }
 
 const bool** OccupancyGrid2D::Data() const {
-  return const_cast<const bool**>(this->data_);
+  return const_cast<const bool**>(data_);
 }
 
 bool OccupancyGrid2D::LoadFromFile(const std::string& file_path) {
@@ -33,22 +33,20 @@ bool OccupancyGrid2D::LoadFromFile(const std::string& file_path) {
     return false;
   }
 
-  f >> this->size_y_;
-  f >> this->size_x_;
+  f >> size_y_;
+  f >> size_x_;
 
   // Allocate memory on the heap for the file
-  this->data_ =
-      reinterpret_cast<bool**>(std::malloc(this->size_y_ * sizeof(bool*)));
-  for (size_t idx = 0; idx < this->size_y_; ++idx) {
-    this->data_[idx] =
-        reinterpret_cast<bool*>(std::malloc(this->size_x_ * sizeof(bool)));
+  data_ = reinterpret_cast<bool**>(std::malloc(size_y_ * sizeof(bool*)));
+  for (size_t idx = 0; idx < size_y_; ++idx) {
+    data_[idx] = reinterpret_cast<bool*>(std::malloc(size_x_ * sizeof(bool)));
   }
-  this->heap_allocated_ = true;
+  heap_allocated_ = true;
 
   // Read in file
-  for (size_t row = 0; row < this->size_y_; ++row) {
-    for (size_t col = 0; col < this->size_x_; ++col) {
-      f >> this->data_[row][col];
+  for (size_t row = 0; row < size_y_; ++row) {
+    for (size_t col = 0; col < size_x_; ++col) {
+      f >> data_[row][col];
     }
   }
 
@@ -78,26 +76,24 @@ bool OccupancyGrid2D::LoadFromMap(const Map2D& map, const double sample_delta,
     }
   }
 
-  this->size_y_ = std::ceil((max_y - min_y) / sample_delta) + 1;
-  this->size_x_ = std::ceil((max_x - min_x) / sample_delta) + 1;
+  size_y_ = std::ceil((max_y - min_y) / sample_delta) + 1;
+  size_x_ = std::ceil((max_x - min_x) / sample_delta) + 1;
 
   // Allocate memory on the heap for the file
-  this->data_ =
-      reinterpret_cast<bool**>(std::malloc(this->size_y_ * sizeof(bool*)));
-  for (size_t idx = 0; idx < this->size_y_; ++idx) {
-    this->data_[idx] =
-        reinterpret_cast<bool*>(std::malloc(this->size_x_ * sizeof(bool)));
+  data_ = reinterpret_cast<bool**>(std::malloc(size_y_ * sizeof(bool*)));
+  for (size_t idx = 0; idx < size_y_; ++idx) {
+    data_[idx] = reinterpret_cast<bool*>(std::malloc(size_x_ * sizeof(bool)));
   }
-  this->heap_allocated_ = true;
+  heap_allocated_ = true;
 
   const Map2D inflated_map = map.Inflate(safety_bound);
 
   // Read in file
-  for (size_t row = 0; row < this->size_y_; ++row) {
-    for (size_t col = 0; col < this->size_x_; ++col) {
+  for (size_t row = 0; row < size_y_; ++row) {
+    for (size_t col = 0; col < size_x_; ++col) {
       const Point2D p(min_x + col * sample_delta, min_y + row * sample_delta);
       // True indicates occupied, false indicates free
-      this->data_[row][col] =
+      data_[row][col] =
           !inflated_map.Contains(p) || !inflated_map.IsFreeSpace(p);
     }
   }
@@ -107,27 +103,25 @@ bool OccupancyGrid2D::LoadFromMap(const Map2D& map, const double sample_delta,
 
 bool OccupancyGrid2D::LoadFromBuffer(const bool** buffer, const size_t size_x,
                                      const size_t size_y) {
-  this->size_y_ = size_y;
-  this->size_x_ = size_x;
+  size_y_ = size_y;
+  size_x_ = size_x;
 
   // Allocate memory on the heap for the file
-  this->data_ =
-      reinterpret_cast<bool**>(std::malloc(this->size_y_ * sizeof(bool*)));
-  for (size_t idx = 0; idx < this->size_y_; ++idx) {
-    this->data_[idx] =
-        reinterpret_cast<bool*>(std::malloc(this->size_x_ * sizeof(bool)));
-    std::memcpy(&this->data_[idx], &buffer[idx], this->size_x_ * sizeof(bool));
+  data_ = reinterpret_cast<bool**>(std::malloc(size_y_ * sizeof(bool*)));
+  for (size_t idx = 0; idx < size_y_; ++idx) {
+    data_[idx] = reinterpret_cast<bool*>(std::malloc(size_x_ * sizeof(bool)));
+    std::memcpy(&data_[idx], &buffer[idx], size_x_ * sizeof(bool));
   }
-  this->heap_allocated_ = true;
+  heap_allocated_ = true;
 
   return true;
 }
 
 Graph2D OccupancyGrid2D::AsGraph() const {
   // Build a 2D array of nodes
-  std::shared_ptr<Node2D> node_grid[this->size_y_][this->size_x_];
-  for (size_t row = 0; row < this->size_y_; ++row) {
-    for (size_t col = 0; col < this->size_x_; ++col) {
+  std::shared_ptr<Node2D> node_grid[size_y_][size_x_];
+  for (size_t row = 0; row < size_y_; ++row) {
+    for (size_t col = 0; col < size_x_; ++col) {
       node_grid[row][col] =
           std::make_shared<Node2D>(Eigen::Matrix<int, 2, 1>(row, col));
     }
@@ -135,17 +129,17 @@ Graph2D OccupancyGrid2D::AsGraph() const {
 
   // Convert node grid to directed edges and add to graph
   std::vector<DirectedEdge2D> edges;
-  for (int row = 0; row < this->size_y_; ++row) {
-    for (int col = 0; col < this->size_x_; ++col) {
+  for (int row = 0; row < size_y_; ++row) {
+    for (int col = 0; col < size_x_; ++col) {
       // If current node is unreachable, pass
-      if (true == this->IsOccupied(col, row)) {
+      if (true == IsOccupied(col, row)) {
         continue;
       }
 
       constexpr double ADJACENT_COST = 1.0;
       constexpr double DIAGONAL_COST = std::sqrt(2);
-      // Else, create paths from nearby nodes into this one
-      // 8 node surrounding the current node
+      // Else, create paths from nearby nodes into this one.  There are 8 node
+      // surrounding the current node.
       if (row - 1 >= 0) {
         edges.emplace_back(node_grid[row - 1][col], node_grid[row][col],
                            ADJACENT_COST);
@@ -155,11 +149,11 @@ Graph2D OccupancyGrid2D::AsGraph() const {
                            ADJACENT_COST);
       }
 
-      if (row + 1 < this->size_y_) {
+      if (row + 1 < size_y_) {
         edges.emplace_back(node_grid[row + 1][col], node_grid[row][col],
                            ADJACENT_COST);
       }
-      if (col + 1 < this->size_x_) {
+      if (col + 1 < size_x_) {
         edges.emplace_back(node_grid[row][col + 1], node_grid[row][col],
                            ADJACENT_COST);
       }
@@ -168,15 +162,15 @@ Graph2D OccupancyGrid2D::AsGraph() const {
         edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col],
                            DIAGONAL_COST);
       }
-      if (row - 1 >= 0 && col + 1 < this->size_x_) {
+      if (row - 1 >= 0 && col + 1 < size_x_) {
         edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col],
                            DIAGONAL_COST);
       }
-      if (row + 1 < this->size_y_ && col - 1 >= 0) {
+      if (row + 1 < size_y_ && col - 1 >= 0) {
         edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col],
                            DIAGONAL_COST);
       }
-      if (row + 1 < this->size_y_ && col + 1 < this->size_x_) {
+      if (row + 1 < size_y_ && col + 1 < size_x_) {
         edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col],
                            DIAGONAL_COST);
       }
