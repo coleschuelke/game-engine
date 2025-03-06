@@ -34,9 +34,9 @@ int main(int argc, char** argv) {
   const std::vector<DirectedEdge2D> edges = graph.Edges(start_node);
   
   // Iterate through the list of edges
-  for(const DirectedEdge2D& edge: edges) {
-    const std::shared_ptr<Node2D>& source_ptr = edge.Source();
-    const std::shared_ptr<Node2D>& sink_ptr = edge.Sink();
+  for(const auto edge : edges) {
+    const auto source_ptr = edge.Source();
+    const auto sink_ptr = edge.Sink();
     const double cost = edge.Cost();
 
     // Print relevant data
@@ -53,10 +53,10 @@ int main(int argc, char** argv) {
   }
 
   // Access neighbors of a given node
-  const std::vector<std::shared_ptr<Node2D>> neighbors = graph.Neighbors(start_node);
+  const auto neighbors = graph.Neighbors(start_node);
 
   // Iterate through the list of neighbors and print
-  for(const std::shared_ptr<Node2D> neighbor: neighbors) {
+  for(const auto neighbor : neighbors) {
     std::cout 
       << "[" << neighbor->Data().transpose() << "]"
       << " is a neighbor of "
