@@ -35,8 +35,8 @@ PathInfo DepthFirstSearch2D::Run(const Graph2D& graph,
   timer.Start();
 
   // Use these data structures
-  std::stack<NodeWrapperPtr> to_explore;
-  std::vector<NodeWrapperPtr> explored;
+  std::stack<NodeWrapperPtr> nodes_to_explore;
+  std::vector<NodeWrapperPtr> explored_nodes;
 
   ///////////////////////////////////////////////////////////////////
   // YOUR WORK GOES BELOW
@@ -48,7 +48,7 @@ PathInfo DepthFirstSearch2D::Run(const Graph2D& graph,
   nw_ptr->parent = nullptr;
   nw_ptr->node_ptr = start_ptr;
   nw_ptr->cost = 0;
-  to_explore.push(nw_ptr);
+  nodes_to_explore.push(nw_ptr);
 
   // Create a PathInfo
   PathInfo path_info;

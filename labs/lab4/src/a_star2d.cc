@@ -34,7 +34,7 @@ bool NodeWrapperPtrCompare(const std::shared_ptr<NodeWrapper>& lhs,
 // EXAMPLE HEURISTIC FUNCTION
 // YOU WILL NEED TO MODIFY THIS OR WRITE YOUR OWN FUNCTION
 ///////////////////////////////////////////////////////////////////
-double Heuristic(const std::shared_ptr<Node2D>& current_ptr,
+double heuristic(const std::shared_ptr<Node2D>& current_ptr,
                  const std::shared_ptr<Node2D>& end_ptr) {
   return 0;
 }
@@ -56,9 +56,9 @@ PathInfo AStar2D::Run(const Graph2D& graph,
   std::priority_queue<
       NodeWrapperPtr, std::vector<NodeWrapperPtr>,
       std::function<bool(const NodeWrapperPtr&, const NodeWrapperPtr&)>>
-      to_explore(NodeWrapperPtrCompare);
+      nodes_to_explore(NodeWrapperPtrCompare);
 
-  std::vector<NodeWrapperPtr> explored;
+  std::vector<NodeWrapperPtr> explored_nodes;
 
   ///////////////////////////////////////////////////////////////////
   // YOUR WORK GOES BELOW
@@ -70,8 +70,8 @@ PathInfo AStar2D::Run(const Graph2D& graph,
   nw_ptr->parent = nullptr;
   nw_ptr->node_ptr = start_ptr;
   nw_ptr->cost = 0;
-  nw_ptr->heuristic = Heuristic(start_ptr, end_ptr);
-  to_explore.push(nw_ptr);
+  nw_ptr->heuristic = heuristic(start_ptr, end_ptr);
+  nodes_to_explore.push(nw_ptr);
 
   // Create a PathInfo
   PathInfo path_info;
