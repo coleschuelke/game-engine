@@ -81,7 +81,7 @@ void RunDepthFirstSearch(const Graph2D& graph,
   Gui2D gui;
   gui.LoadOccupancyGrid(occupancy_grid);
   gui.LoadPath(path_info.path);
-  gui.Display();
+  gui.Display("DFS");
 
   // Print the solution
   path_info.details.Print();
@@ -109,7 +109,7 @@ void RunDijkstra(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
   Gui2D gui;
   gui.LoadOccupancyGrid(occupancy_grid);
   gui.LoadPath(path_info.path);
-  gui.Display();
+  gui.Display("Dijkstra");
 
   // Print the solution
   path_info.details.Print();
@@ -137,7 +137,7 @@ void RunAStar(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
   Gui2D gui;
   gui.LoadOccupancyGrid(occupancy_grid);
   gui.LoadPath(path_info.path);
-  gui.Display();
+  gui.Display("AStar");
 
   // Print the solution
   path_info.details.Print();

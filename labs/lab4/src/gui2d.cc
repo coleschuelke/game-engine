@@ -146,7 +146,7 @@ bool Gui2D::LoadOccupancyGrid(const OccupancyGrid2D* occupancy_grid) {
   return true;
 }
 
-bool Gui2D::Display() {
+bool Gui2D::Display(const std::string title) {
   // Turn off the key
   gp_ << "set key off" << std::endl;
 
@@ -164,6 +164,9 @@ bool Gui2D::Display() {
 
   // Reverse y-direction to match the occupancy grid file
   gp_ << "set yrange [*:*] reverse" << std::endl;
+  // set title of window
+  gp_ << "set term qt title \"" << title << '\"' << std::endl;
+  // replot
   gp_ << "replot" << std::endl;
 
   return true;

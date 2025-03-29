@@ -29,7 +29,7 @@ namespace game_engine {
 
       bool LoadOccupancyGrid(const OccupancyGrid2D* occupancy_grid);
       bool LoadPath(const std::vector<std::shared_ptr<Node2D>>& path);
-      bool Display();
+      bool Display(const std::string title = "no title");
 
     private:
       Gnuplot gp_;
