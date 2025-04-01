@@ -10,15 +10,17 @@
 #include "polynomial_solver.h"
 
 namespace game_engine {
+
 // ExampleAutonomyProtocol is a class that demonstrates how to create a
-// trajectory for a quadcopter to follow.
+// trajectory for a quadcopter to follow. 
 class ExampleAutonomyProtocol : public AutonomyProtocol {
  public:
+  
   // This is the class constructor. It runs whenever a new object of type
   // ExampleAutonomyProtocol is created. It receives a set of input parameters
   // and uses these to initialize some other objects. In our case, we initialize
   // the ExampleAutonomyProtocol's parent class--AutonomyProtocol--as well as
-  // the occupancy grid and arena graph.
+  // the occupancy grid and arena graph. 
   ExampleAutonomyProtocol(
       const std::vector<std::string>& friendly_names,
       const std::vector<std::string>& enemy_names,
@@ -38,6 +40,7 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
                          blue_balloon_status, blue_balloon_position,
                          goal_position, wind_intensity, visualizer) {
     occupancy_grid_.LoadFromMap(map3d_, cell_size_, safety_margin_);
+    
     // Once you have built a 3D version of A*, you can run it on graph_of_arena.
     // Important hint: graph_of_arena will be large (many nodes) if cell_size is
     // small.  If you naively extend your AStar2D function to 3D, it will run
@@ -49,15 +52,14 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
     // candidate node has already been explored.  You can speed up this search
     // dramatically by making this container an std::unordered_set rather than
     // an std::vector.  See
-    // https://www.educative.io/edpresso/unordered-sets-in-cpp.
+    // https://www.educative.io/edpresso/unordered-sets-in-cpp. 
+
     graph_of_arena_ = occupancy_grid_.AsGraph();
   }
 
   std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
 
  private:
-  // Set the duration of the example trajectory.
-  static constexpr int duration_sec_ = 30;
 
   // The OccupancyGrid3D class, which has already been written for you, divides
   // the arena space into cells of a size you specify in cell_size below.  It
@@ -65,23 +67,23 @@ class ExampleAutonomyProtocol : public AutonomyProtocol {
   // translating between a cell's grid index triple and its 3d cell center
   // position, in meters.  Have a look at its header file
   // game-engine/src/environment/occupancy_grid3d.h to learn more about this
-  // class's API.
+  // class's API. 
   OccupancyGrid3D occupancy_grid_;
   Graph3D graph_of_arena_;
 
+  
   // AutonomyProtocolVisualizer is a class that supports visualizing paths,
   // curves, points, and whole trajectories in the RVIZ display of the arena to
   // aid in your algorithm development.  Have a look at
-  // autonomy_protocol_visualizer.h to see this class's API.
+  // autonomy_protocol_visualizer.h to see this class's API. 
   AutonomyProtocolVisualizer visualizer_;
   
   // The length of one side of the occupancy grid's cubic cells, in meters
   static constexpr double cell_size_ = 0.2;
-  // Length by which obstacles are inflated to provide a safety margin, in
-  // meters
+  // Length by which obstacles are inflated to provide a safety margin
   double safety_margin_ = 0.35;
   bool first_time_ = true;
   bool halt_ = false;
-  Eigen::Vector3d start_pos_;
+  Eigen::Vector3d start_pos_, halt_pos_;
 };
 }  // namespace game_engine

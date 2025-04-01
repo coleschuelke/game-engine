@@ -3,7 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/local/include/osqp",
+                "/opt/ros/noetic/include"
+
             ],
             "forcedInclude": [
                 "/home/aeronaut/Workspace/game-engine/.vscode/intellisense_eigen_fix.h"
