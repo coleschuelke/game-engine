@@ -151,9 +151,3 @@ the quadcopter to follow.
 cd game-engine/bin
 ./example_autonomy_protocol
 ```
-
-## Contributing
-### Software Patterns
-Please read the [software patterns](doc/software-patterns.md) document to
-understand the naming convention and the purpose of components in this system.
-
