@@ -29,7 +29,7 @@ git submodule update --init --recursive
 ### Build
 ```bash
 cd ~/Workspace/game-engine
-mkdir build # (do this only if the build directory hasn't already been created)
+mkdir build # do this only if the build directory hasn't already been created
 cd build
 cmake ..
 make -j
