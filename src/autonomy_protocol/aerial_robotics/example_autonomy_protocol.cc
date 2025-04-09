@@ -166,7 +166,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   double seconds_per_meter = 4;
   for (auto wp : waypoints)
   {
-    double distance = abs( (wp + current_pos).norm() );
+    double distance = abs( (wp - current_pos).norm() );
     times.push_back( distance * seconds_per_meter ); 
   }
 
