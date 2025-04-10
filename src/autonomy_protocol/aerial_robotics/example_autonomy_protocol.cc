@@ -84,10 +84,10 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
 
   // The following section is an example of how you might handle error codes
   // returned by the Mediation Layer (ML). For example, the default example
-  // autonomy protocol initially submits trajectories where the sampling time is
-  // too high --- instead of submitting at 20 ms intervals or shorter, it
-  // submits at 40 ms intervals.  The ML rejects the trajectory, returing the
-  // MediationLayerCode TimeBetweenPointsExceedsMaxTime.  Below you can see an
+  // autonomy protocol initially submits trajectories where the sampling
+  // interval is too long: Instead of submitting at 20-ms intervals or shorter,
+  // it submits at 40-ms intervals.  The ML rejects the trajectory, returing
+  // MediationLayerCode::TimeBetweenPointsExceedsMaxTime.  Below you can see an
   // example of how to handle this code. You can fill out this switch statement
   // with case statements tailored to each possible MediationLayerCode.
   //
@@ -122,15 +122,15 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
 
   // ===== Pathfinding =====
 
-  // In this section you would usually use pathfinding algorithms to traverse
-  // the graph_of_arena_ and plot a safe path to avoid any obstacles.  For now
-  // we will assume an empty arena and create a simple linear path.
+  // In this section one would typically employ pathfinding algorithms to
+  // traverse the graph_of_arena_ and plot a safe path to avoid any obstacles.
+  // For now we will assume an empty arena and create a simple linear path.
   //
   // Here we create at least one waypoint per meter from the quad to the red
   // balloon ensuring at least two waypoints, one for the current and one for
   // the goal position.
   double path_length = (red_balloon_pos - current_pos).norm();
-  double num_wp = floor(path_length) + 2; 
+  double num_wp = floor(path_length) + 2;
   std::vector<Eigen::Vector3d> waypoints;
   for (int i{}; i < num_wp; i++) {
     waypoints.push_back(current_pos +
@@ -215,16 +215,16 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
       solver.Run(times, node_equality_bounds, node_inequality_bounds,
                  segment_inequality_bounds);
 
-  // Options to configure the polynomial sampler with
+  // Declare options container for configuring the polynomial sampler
   p4::PolynomialSampler::Options sampler_options;
 
   // Change sampling interval from chrono time to a double value.
   // See the Creating a PVAYT Trajectory Vector section for more details.
-
   const double dt =
       std::chrono::duration_cast<std::chrono::duration<double>>(dt_chrono_u_)
           .count();
-  sampler_options.frequency = 1 / dt;  // Number of samples per second
+  // Number of samples per second
+  sampler_options.frequency = 1 / dt;
 
   // Sample position, velocity, and acceleration using the file-scope function
   sampler_options.derivative_order = 0;
@@ -256,7 +256,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
 
   // The best way to get good timing without diving into ROS timers is to use
   // the C++ std::chrono library. Here are some basic pointers for using the
-  // library. There are three basic types of std::chrono variables.
+  // library. There are three basic types of std::chrono variables:
   //
   // 1. The "timestamp" type. Represents an absolute time point, usually
   //   relative to epoch. Generated with std::chrono::system_clock::now().
@@ -284,7 +284,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   //   really related to anything in variable names.
   //
   //       std::chrono::milliseconds unitVar == std::chrono::milliseconds(15);
-
+  //
   // For more information, visit
   // https://cplusplus.com/reference/chrono/.
 
@@ -318,7 +318,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
             .finished());
   }
 
-  // ===== Returning a Trajectory to the Quad  =====
+  // ===== Returning a Trajectory to the ML  =====
 
   // Create an empty quad-to-trajectory map.  This map object associates a quad
   // name (expressed as a std::string) with the corresponding Trajectory object

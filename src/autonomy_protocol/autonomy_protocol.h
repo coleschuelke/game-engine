@@ -21,7 +21,7 @@
 #include "wind_intensity.h"
 
 namespace game_engine {
-// AutonomyProtocol interfaces with MediationLayer the and enables an actor
+// AutonomyProtocol interfaces with MediationLayer and enables an actor
 // to read limited game state information and dictate intended future
 // actions for specific quadcopters.
 //
