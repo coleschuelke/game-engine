@@ -6,7 +6,7 @@ your best judgement when following the instructions, adapting where necessary
 for your machine and setup.
 
 ## GitLab account
-Each team member should already have created a GitLab account.  If not, then create one.
+Each team member should create a GitLab account if he or she has not already done so.
 
 ## Create a remote GitLab repository
 Designate one of your team members to host your team's remote repository. This
@@ -17,8 +17,7 @@ your opponents to see your secrets!  Do not initialize the repository with a REA
 
 On the repository Manage/Members page, invite your team members, each one as Maintainer, to
 your repository. This allows them to view and edit the code. Also invite our
-superlative TAs Maxwell and Wenkai as Reporter so they can follow your
-progress. Their GitLab handles are @gippertexas (that's Maxwell!) and @wenkaiqin (Wenkai).
+superlative TA Jeremy as Reporter so he can follow your progress. His GitLab handle is @williamj.morrison.
 
 ## Clone `game-engine`
 In the `~/Workspace` directory, either clone a fresh copy of the original
@@ -26,7 +25,7 @@ In the `~/Workspace` directory, either clone a fresh copy of the original
 update your existing local `game-engine` repository (if one already exists at
 that location and you want to keep it).
 
-### To clone a fresh copy:
+### To clone a fresh copy
 ```bash
 cd ~/Workspace/
 git clone https://gitlab.com/radionavlab/public/game-engine.git
