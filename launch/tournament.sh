@@ -58,6 +58,7 @@ git config --global credential.helper store
 
 # remove last and create new leaderboard
 cd $CWD
+truncate -s 0 leaderboard.csv
 leaderboard=leaderboard.csv
 echo Team Name, Time to Goal, Date >> $leaderboard
 
@@ -179,7 +180,7 @@ do
 	cd $GAME_ENGINE/bin
 	./visualizer & 
     echo "Visualizer started..."
-    sleep 1
+    sleep 3
     # Run protocol
     echo "Running $TEAM_NAME's protocol"
     cd $GAME_ENGINE/bin
@@ -190,24 +191,25 @@ do
     cd $CWD
     SECONDS=0
     # while goal not eached and seconds < 300
-    while ! grep -q "Goal reached" med_layer.log && [[ "$SECONDS" -lt $PROTOCOL_TIMEOUT ]]; do
+    while ! grep -q "Goal reached at elapsed time" med_layer.log && [[ "$SECONDS" -lt $PROTOCOL_TIMEOUT ]]; do
         sleep 1
     done
     killall student_autonomy_protocol
     killall mediation_layer
     killall physics_simulator
+    killall visualizer
+    killall rviz
     killall roscore
     tm="Nan"
     cd $CWD
     if [[ "$SECONDS" -lt $PROTOCOL_TIMEOUT ]]; then
-        medout=`grep "Goal reached" med_layer.log`
-        value=${medout#*"Goal reached"}
+        medout=`grep "Goal reached at elapsed time" med_layer.log`
+        value=${medout#*"Goal reached at elapsed time"}
         value=`echo $value | grep -m 1 -Eo '[0-9]+([.][0-9]+)?'`
-        echo $value
-        tm=$value
+        tm=${value%%??}
     fi
     echo $tm
-    echo $TEAM_NAME, "Nan", $dt >> $leaderboard
+    echo $TEAM_NAME, $tm, $dt >> $leaderboard
     echo $TEAM_NAME, $tm, $dt
     cd $CWD
 done < $TEAMS
