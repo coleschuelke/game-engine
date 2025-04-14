@@ -57,6 +57,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
     first_time_ = false;
     start_pos_ = current_pos;
     halt_pos_ = red_balloon_pos;
+    visualizer_.startVisualizing("/game_engine/environment");
   }
 
   // The wind intensity will change between maps. Condition actions or
