@@ -22,7 +22,7 @@ function in one file.  But understand that the problem set before you is not
 trivial. The problem of prescribing a time-optimal trajectory through a
 cluttered environment in the presence of disturbances is difficult.
 
-### Code Mmdifications
+### Code Modifications
 You may add any additional header (*.h) or source (*.cc) files you wish to the `game-engine/src/autonomy_protocol/aerial_robotics` directory, and you may add any data members or member functions you'd like to the `StudentAutonomyProtocol` class.  But do not alter the code or add files in any directory other than `aerial_robotics`, and do not remove any of the existing functions and data members of the `StudentAutonomyProtocol` class.  
 
 Source (*.cc) files that you add to `aerial_robotics` are not compiled by default in the code building process.  You'll need to add them to the list of source files in [this](https://gitlab.com/radionavlab/public/game-engine/-/blob/master/src/autonomy_protocol/aerial_robotics/CMakeLists.txt?ref_type=heads#L9) section of `aerial_robotics/CMakeLists.txt`.  
