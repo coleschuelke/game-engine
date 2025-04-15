@@ -1,6 +1,9 @@
 # -------------------------------------------------------------------------------------
-# ---------- Day 2: There and Back Again: A Quads Tale (Tue. Apr. 15th) ---------------
+# ------------------- Day 2: Into the Unknown (Wed. Apr. 16th) ------------------------
 # -------------------------------------------------------------------------------------
+# BEWARE: The balloon locations below will not be the same ones used for evaluation!
+#         Make your scripts as robust as possible to different balloon locations and
+#         expect at least one balloon to teleport (undisclosed time and location). 
 
 # --- ros setup ---
 team_assignments:
@@ -30,22 +33,22 @@ goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/mesh
 
 # --- quad start and goal positions ---
 initial_quad_positions:
-  "zeus": "-12.6 14.3 -2.0"
-goal_position: [-12.6, 14.3, -2.0]
+  "zeus": "-15.0 19.3 -2.0"
+goal_position: [-13.6, 15.3, -3.0]
 
 # --- balloon positions ---
 red_balloon_position:  [-24.6, 19.37, -4.1]
-move_red: false 
+move_red: true 
 path_red: false
 curve_red: false
-red_balloon_position_new:  [-21.6, 17.32, -3.3]
+red_balloon_position_new:  [-16.6, 17.5, -3.3]
 red_balloon_max_move_time: 5.0
 
-blue_balloon_position: [-24.6, 19.32, -4.1]
-move_blue: false
+blue_balloon_position: [-21.6, 18.32, -4.1]
+move_blue: true
 path_blue: false
 curve_blue: false
-blue_balloon_position_new: [-21.6, 17.32, -3.3]
+blue_balloon_position_new: [-14.6, 14.52, -2.3]
 blue_balloon_max_move_time: 5.0
 
 use_seed: true
