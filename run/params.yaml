@@ -1,82 +1,72 @@
+# -------------------------------------------------------------------------------------
+# ---------- Day 2: There and Back Again: A Quads Tale (Tue. Apr. 15th) ---------------
+# -------------------------------------------------------------------------------------
+
+# --- ros setup ---
 team_assignments:
   "zeus": "blue"
-
 quad_state_topics:
   "zeus": "/zeus/state"
-
 proposed_trajectory_topics:
   "zeus": "/zeus/proposed_trajectory"
-
 updated_trajectory_topics:
   "zeus": "/zeus/updated_trajectory"
-
 visualization_trajectory_topics:
   "zeus": "/zeus/visualization_trajectory"
-
 balloon_status_topics:
   "red": "/game_engine/red_balloon_status"
   "blue": "/game_engine/blue_balloon_status"
-
 balloon_position_topics:
   "red": "/game_engine/red_balloon_position"
   "blue": "/game_engine/blue_balloon_position"
-
 goal_status_topics:
   "home": "/game_engine/home_status"
 
+# --- map and meshes --- 
 map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/arena_empty.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
-blue_balloon_position: [-26.0, 14.76, -3.08]
-red_balloon_position:  [-21.6, 15.32, -3.3]
+# --- quad start and goal positions ---
+initial_quad_positions:
+  "zeus": "-12.6 14.3 -2.0"
+goal_position: [-12.6, 14.3, -2.0]
 
-# Locations prior to final adjustment from survey of actual balloon locations for tournament 
-#blue_balloon_position: [-26.0, 14.65, -3.0]
-#red_balloon_position:  [-21.5, 15.25, -3.15]
+# --- balloon positions ---
+red_balloon_position:  [-24.6, 19.37, -4.1]
+move_red: false 
+path_red: false
+curve_red: false
+red_balloon_position_new:  [-21.6, 17.32, -3.3]
+red_balloon_max_move_time: 5.0
 
-red_balloon_position_new:  [-21.5, 15.25, -3.15]
-red_balloon_max_move_time: 15.0
+blue_balloon_position: [-24.6, 19.32, -4.1]
+move_blue: false
+path_blue: false
+curve_blue: false
+blue_balloon_position_new: [-21.6, 17.32, -3.3]
+blue_balloon_max_move_time: 5.0
 
-blue_balloon_position_new: [-26.0, 14.75, -3.0]
-blue_balloon_max_move_time: 20.0
+use_seed: true
+seed: 37
 
-# Balloon behavior controls:
+# Balloon Behaviour Booleans
 # For teleportation        move:true, path:false, curve:either   (max_move_time describes the maximum amount of time it will take before teleportation)
 # For straight line path   move:true, path:true,  curve:false    (max_move_time describes the amount of time it will take to move between two points)
 # For ellipse path         move:true, path:true,  curve:true     (max move time describes the period of the ellipse the balloon will take)
 # If move is false, balloon will remain motionless
 
-move_red: false 
-path_red: false
-curve_red: false
-
-move_blue: false
-path_blue: false
-curve_blue: false
-
-use_seed: true
-seed: 37
-
+# --- environment and options ---
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
 wind_intensity: 0
-
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
 revision_mode: 0
-
 # quad safety limits
 # 0: leisure, 1: sport, 2: extreme
 quad_safety_limits: 0
-
 # change to true if running in joy stick mode
 joy_mode: false
-
 # change to true if using the camera
 camera_mode: false
-
-goal_position: [-12.4, 13.5, -4.5]
-
-initial_quad_positions:
-  "zeus": "-12.4 18.0 -3.5"
