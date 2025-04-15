@@ -153,14 +153,14 @@ int main(int argc, char** argv) {
       std::string, Eigen::Vector3d, std::less<std::string>,
       Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>>
       initial_quad_positions;
-  double x, y, z;
+  double xQuad, yQuad, zQuad;
   std::string quad_name;
   for (const auto& kv : initial_quad_positions_string) {
     quad_name = kv.first;
     const std::string& quad_position_string = kv.second;
     std::stringstream ss(quad_position_string);
-    ss >> x >> y >> z;
-    initial_quad_positions[quad_name] = Eigen::Vector3d(x, y, z);
+    ss >> xQuad >> yQuad >> zQuad;
+    initial_quad_positions[quad_name] = Eigen::Vector3d(xQuad, yQuad, zQuad);
   }
 
   // Initialize the QuadStateWarden. The QuadStateWarden enables safe,
@@ -322,17 +322,28 @@ int main(int argc, char** argv) {
           red_balloon_position, blue_balloon_status, blue_balloon_position,
           goal_position, wind_intensity, visualizer);
 
-  Eigen::Vector3d check_initial_pos, snap_initial_pos;
-  check_initial_pos << x, y, z;
-  bool first = true;
-  // Start the autonomy protocol
+  // Start the autonomy protocol after first ensuring (1) the quad's initial
+  // position as given by the game snapshot is equal to the designated initial
+  // position, and (2) both the red and blue balloon locations are nonzero.
+  std::cout << "Initializing ... " << std::flush;
+  Eigen::Vector3d check_initial_pos, game_snapshot_initial_pos;
+  check_initial_pos << xQuad, yQuad, zQuad;
+  constexpr double epsilon_distance = 0.01;
   std::thread autonomy_protocol_thread([&]() {
-    // Check if snapshot has properly initialized
-    while (first == true) {
-      game_snapshot->Position(quad_name, snap_initial_pos);
-      if (snap_initial_pos == check_initial_pos) {
-        first = false;
+    while (true) {
+      game_snapshot->Position(quad_name, game_snapshot_initial_pos);
+      if ((game_snapshot_initial_pos - check_initial_pos).norm() <
+              epsilon_distance &&
+          red_balloon_position->norm() > epsilon_distance &&
+          blue_balloon_position->norm() > epsilon_distance) { 
+        std::cout << "done.\n" << std::flush;
         break;
+      }
+      else if (kill_program) {
+        ros::shutdown();
+        std::exit(EXIT_SUCCESS);
+      } else {
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
       }
     }
     autonomy_protocol->Run(proposed_trajectory_clients, joy_mode, camera_mode);
