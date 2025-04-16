@@ -25,7 +25,7 @@ void BuildHistoryVectors(const std::vector<double>& timestamps,
 // Creates and returns a proposed trajectory.  The proposed trajectory gets
 // submitted to the mediation_layer (ML), which responds by setting the data
 // member trajectoryCodeMap_.  See the header file
-// game-engine/src/util/trajectory_code.h for a list of possible codes.
+// game-engine/src/util/trajectory_code.h for a list of possible codes. 
 //
 // Any code other than MediationLayer::Success indicates that the ML has
 // rejected the submitted trajectory.
@@ -34,6 +34,9 @@ void BuildHistoryVectors(const std::vector<double>& timestamps,
 // will be its value the first time this function is called (before any
 // trajectories have been submitted).  Thereafter, trajectoryCodeMap_ will
 // indicate the MediationLayerCode for the most recently submitted trajectory.
+//
+// This function is nominally called every
+// AutonomyProtocol::nominal_update_period_ms_ milliseconds.
 std::unordered_map<std::string, Trajectory>
 ExampleAutonomyProtocol::UpdateTrajectories() {
   // ===== Access the Quad and Environment States =====
@@ -214,9 +217,14 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   solver_options.osqp_settings.verbose = false;
   // Set time limit for P4 solver, in seconds.  A longer time limit allows P4 to
   // expend more effort to seek a solution, a shorter limit ensures that the
-  // UpdateTrajectories() function can finish executing before it is called
-  // again.
-  solver_options.osqp_settings.time_limit = 0.1;
+  // UpdateTrajectories() function finishes executing within the
+  // AutonomyProtocol's nominal update period.  Note that it's OK for your
+  // UpdateTrajectories function to take longer than
+  // AutonomyProtocol::nominal_update_period_ms_; the quad will simply continue
+  // following the most recently accepted trajectory until your function finally
+  // submits an admissible trajectory that overwrites it.
+  solver_options.osqp_settings.time_limit =
+      AutonomyProtocol::nominal_update_period_ms_ / 2;
 
   // Invoke p4::PolynomialSolver to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);

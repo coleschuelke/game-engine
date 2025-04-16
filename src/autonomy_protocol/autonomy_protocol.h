@@ -57,6 +57,7 @@ class AutonomyProtocol {
   Eigen::Vector3d goal_position_;
   WindIntensity wind_intensity_;
   AutonomyProtocolVisualizer visualizer_;
+  int nominal_update_period_ms_{333};
 
   volatile std::atomic<bool> ok_{true};
   std::map<std::string, TrajectoryCode> trajectoryCodeMap_;
@@ -115,7 +116,18 @@ inline void AutonomyProtocol::Run(
     std::unordered_map<std::string, std::shared_ptr<TrajectoryClientNode>>
         proposed_trajectory_clients,
     bool joy_mode, bool camera_mode) {
+  if (camera_mode) {
+    // TTT: need to test with how fast camera values come in
+    nominal_update_period_ms_ = 500;
+  }
+  if (joy_mode) {
+    // A shorter update period is appropriate in this case because joy_mode's
+    // inputs are much more frequent.
+    nominal_update_period_ms_ = 100;
+  }
+
   while (ok_) {
+    const auto t_start = std::chrono::high_resolution_clock::now();
     // Request trajectory updates from the virtual function
     const std::unordered_map<std::string, Trajectory> trajectories =
         UpdateTrajectories();
@@ -132,17 +144,12 @@ inline void AutonomyProtocol::Run(
         continue;
       }
     }
-    // Default sleep time
-    int sleep_time = 200;
-    if (camera_mode) {
-      // TBD: need to test with how fast camera values come in
-      sleep_time = 200;
-    }
-    if (joy_mode) {
-      // Shorter sleep time for joy mode
-      sleep_time = 100;
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+    const auto t_end = std::chrono::high_resolution_clock::now();
+    const int duration_ms = static_cast<int>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(t_end - t_start)
+            .count());
+    const int sleep_ms = std::max(nominal_update_period_ms_ - duration_ms, 0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
   }
 }
 
