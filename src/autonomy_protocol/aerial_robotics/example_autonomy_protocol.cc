@@ -229,9 +229,11 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   // waypoints, shorten the trajectory, etc.), and then call
   // P4::PolynomialSolver again, or abandon the effort for this cycle and return
   // an empty trajectory.
-  if (path.status == p4::PolynomialSolver::Solution::infeasable) {
+  if (path.status ==
+      p4::PolynomialSolver::Solution::SolutionStatus::infeasible) {
     std::cerr << "P4 problem overly constrained or not well defined.\n";
-  } else if (path.status == p4::PolynomialSolver::Solution::inaccurate) {
+  } else if (path.status ==
+             p4::PolynomialSolver::Solution::SolutionStatus::inaccurate) {
     std::cerr << "P4 indicates an accurate solution was not found.";
   }
 
