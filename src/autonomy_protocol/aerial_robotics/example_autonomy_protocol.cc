@@ -57,7 +57,6 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
     first_time_ = false;
     start_pos_ = current_pos;
     halt_pos_ = red_balloon_pos;
-    visualizer_.startVisualizing("/game_engine/environment");
   }
 
   // The wind intensity will change between maps. Condition actions or
@@ -210,11 +209,20 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   // Polish the solution, getting the best answer possible
   solver_options.osqp_settings.polish = true;
   solver_options.osqp_settings.verbose = false;  // Suppress the printout
+  solver_options.osqp_settings.time_limit = 0.1; // set time limit for P4 solver
+  
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
   const p4::PolynomialSolver::Solution path =
       solver.Run(times, node_equality_bounds, node_inequality_bounds,
                  segment_inequality_bounds);
+
+  // check if P4 problem is feasible or if returned solution is accurate
+  if (path.status == p4::PolynomialSolver::Solution::infeasable) {
+    std::cerr << "P4 problem overly constrained or not well defined.\n";
+  } else if (path.status == p4::PolynomialSolver::Solution::inaccurate) {
+    std::cerr << "P4 indicates an accurate solution was not found.";
+  }
 
   // Declare options container for configuring the polynomial sampler
   p4::PolynomialSampler::Options sampler_options;
