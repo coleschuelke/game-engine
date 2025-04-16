@@ -52,7 +52,7 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
   const bool red_balloon_popped = red_balloon_status_->popped;
   const bool blue_balloon_popped = blue_balloon_status_->popped;
 
-  // Set some variables the first time this function is called
+  // Set some variables on the first call to this function
   if (first_time_) {
     first_time_ = false;
     start_pos_ = current_pos;
@@ -60,9 +60,9 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
     visualizer_.startVisualizing("/game_engine/environment");
   }
 
-  // The wind intensity will change between maps. Condition actions or
-  // parameters on wind intensity.  For example, consider increasing
-  // safety_margin_ with wind intensity.
+  // Wind intensity will change between maps. Condition actions or parameters on
+  // wind intensity.  For example, consider increasing safety_margin_ with wind
+  // intensity.
   switch (wind_intensity_) {
     case WindIntensity::Zero:
       // Do something zero-ish
@@ -199,29 +199,41 @@ ExampleAutonomyProtocol::UpdateTrajectories() {
 
   // The remaining operations should be familiar from lab 4.
 
-  // Options to configure the polynomial solver with
+  // Set options for polynomial solver
   p4::PolynomialSolver::Options solver_options;
   solver_options.num_dimensions = 3;    // 3D
   solver_options.polynomial_order = 8;  // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;  // Require continuity to the 4th order
   solver_options.derivative_order = 2;  // Minimize 2nd order (acceleration)
 
+  // Set settings for polynomial solver
   osqp_set_default_settings(&solver_options.osqp_settings);
   // Polish the solution, getting the best answer possible
   solver_options.osqp_settings.polish = true;
-  solver_options.osqp_settings.verbose = false;  // Suppress the printout
-  solver_options.osqp_settings.time_limit = 0.1; // set time limit for P4 solver
-  
-  // Use p4::PolynomialSolver object to solve for polynomial trajectories
+  // Suppress printout of solver information
+  solver_options.osqp_settings.verbose = false;
+  // Set time limit for P4 solver, in seconds.  A longer time limit allows P4 to
+  // expend more effort to seek a solution, a shorter limit ensures that the
+  // UpdateTrajectories() function can finish executing before it is called
+  // again.
+  solver_options.osqp_settings.time_limit = 0.1;
+
+  // Invoke p4::PolynomialSolver to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
   const p4::PolynomialSolver::Solution path =
       solver.Run(times, node_equality_bounds, node_inequality_bounds,
                  segment_inequality_bounds);
 
-  // check if P4 problem is feasible or if returned solution is accurate
-  if (path.status == p4::PolynomialSolver::Solution::infeasable) {
+  // Check whether solution was feasible and accurate.  If not, do something
+  // here to reduce the number of constraints that P4 has to meet (e.g., prune
+  // waypoints, shorten the trajectory, etc.), and then call
+  // P4::PolynomialSolver again, or abandon the effort for this cycle and return
+  // an empty trajectory.
+  if (path.status ==
+      p4::PolynomialSolver::Solution::SolutionStatus::infeasible) {
     std::cerr << "P4 problem overly constrained or not well defined.\n";
-  } else if (path.status == p4::PolynomialSolver::Solution::inaccurate) {
+  } else if (path.status ==
+             p4::PolynomialSolver::Solution::SolutionStatus::inaccurate) {
     std::cerr << "P4 indicates an accurate solution was not found.";
   }
 

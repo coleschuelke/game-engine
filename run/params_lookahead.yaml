@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------
-# --------------- Day 4: Rounding the A* Corner (Thu. Apr. 17th) ----------------------
+# --------------------- Day 4: A* is Born (Thu. Apr. 17th) ----------------------------
 # -------------------------------------------------------------------------------------
 # BEWARE: The initial and goal positions for evaluation will not be the same as
 #         they are below to prevent hard-coding.
