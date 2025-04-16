@@ -1,9 +1,8 @@
 # -------------------------------------------------------------------------------------
-# ------------------- Day 3: Into the Unknown (Wed. Apr. 16th) ------------------------
+# --------------------- Day 4: A* is Born (Thu. Apr. 17th) ----------------------------
 # -------------------------------------------------------------------------------------
-# BEWARE: The balloon locations below will not be the same ones used for evaluation!
-#         Make your scripts as robust as possible to different balloon locations and
-#         expect at least one balloon to teleport (undisclosed time and location). 
+# BEWARE: The initial and goal positions for evaluation will not be the same as
+#         they are below to prevent hard-coding.
 
 # --- ros setup ---
 team_assignments:
@@ -26,26 +25,26 @@ goal_status_topics:
   "home": "/game_engine/home_status"
 
 # --- map and meshes --- 
-map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/arena_empty.map"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/uturn.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 # --- quad start and goal positions ---
 initial_quad_positions:
-  "zeus": "-15.0 19.3 -2.0"
-goal_position: [-13.6, 15.3, -3.0]
+  "zeus": "-22.45 19.08 -2.65"
+goal_position: [-18.47,18.75,-2.65]
 
 # --- balloon positions ---
-red_balloon_position:  [-24.6, 19.37, -4.1]
-move_red: true 
+red_balloon_position:  [-12.51,17.95,-4.15]
+move_red: false 
 path_red: false
 curve_red: false
 red_balloon_position_new:  [-16.6, 17.5, -3.3]
 red_balloon_max_move_time: 5.0
 
-blue_balloon_position: [-21.6, 18.32, -4.1]
-move_blue: true
+blue_balloon_position: [-14.81,14.43,-2.15]
+move_blue: false
 path_blue: false
 curve_blue: false
 blue_balloon_position_new: [-14.6, 14.52, -2.3]
