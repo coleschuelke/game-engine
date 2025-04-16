@@ -270,6 +270,8 @@ int main(int argc, char** argv) {
 
   auto red_balloon_position = std::make_shared<Eigen::Vector3d>();
   auto blue_balloon_position = std::make_shared<Eigen::Vector3d>();
+  red_balloon_position->setZero();
+  blue_balloon_position->setZero();
 
   auto red_balloon_position_subscriber_node =
       std::make_shared<BalloonPositionSubscriberNode>(
