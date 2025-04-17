@@ -1,8 +1,9 @@
 # -------------------------------------------------------------------------------------
-# --------------------- Day 4: A* is Born (Thu. Apr. 17th) ----------------------------
+# ----------------- Day 5: Chariots of Carbon (Thu. Apr. 19th) ------------------------
 # -------------------------------------------------------------------------------------
-# BEWARE: The initial and goal positions for evaluation will not be the same as
-#         they are below to prevent hard-coding.
+# Musical theme for the day: https://www.youtube.com/watch?v=8a-HfNE3EIo
+# BEWARE: The initial/goal/balloon positions for evaluation may differ from the ones 
+#         below to prevent hard-coding.
 
 # --- ros setup ---
 team_assignments:
@@ -25,18 +26,18 @@ goal_status_topics:
   "home": "/game_engine/home_status"
 
 # --- map and meshes --- 
-map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/uturn.map"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/circus_minimus.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 # --- quad start and goal positions ---
 initial_quad_positions:
-  "zeus": "-22.45 19.08 -2.65"
+  "zeus": "-18.47 18.75 -2.65"
 goal_position: [-18.47,18.75,-2.65]
 
 # --- balloon positions ---
-red_balloon_position:  [-12.51,17.95,-4.15]
+red_balloon_position:  [-23.78,15.18,-4.15]
 move_red: false 
 path_red: false
 curve_red: false
@@ -51,7 +52,7 @@ blue_balloon_position_new: [-14.6, 14.52, -2.3]
 blue_balloon_max_move_time: 5.0
 
 use_seed: true
-seed: 37
+seed: 51
 
 # Balloon Behaviour Booleans
 # For teleportation        move:true, path:false, curve:either   (max_move_time describes the maximum amount of time it will take before teleportation)
@@ -61,7 +62,7 @@ seed: 37
 
 # --- environment and options ---
 # 0: zero, 1: mild, 2: stiff, 3: intense, 4: ludicrous
-wind_intensity: 0
+wind_intensity: 1
 # revision mode
 # 0: NONE, 1: TIME, 2: SHAPE, 3: WAYPOINT
 revision_mode: 0
