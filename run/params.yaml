@@ -1,6 +1,7 @@
 # -------------------------------------------------------------------------------------
-# ----------------- Day 6: Over the Hedge (Mon. Apr. 21st) ------------------------
+# ------------------- Day 7: Temple of Doom (Tue. Apr. 22nd) --------------------------
 # -------------------------------------------------------------------------------------
+# Musical Theme: https://www.youtube.com/watch?v=ntXJJwEk1NA
 # BEWARE: The initial/goal/balloon positions for evaluation may differ from the ones 
 #         below to prevent hard-coding.
 
@@ -25,25 +26,25 @@ goal_status_topics:
   "home": "/game_engine/home_status"
 
 # --- map and meshes --- 
-map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/house_wall.map"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/temple.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 # --- quad start and goal positions ---
 initial_quad_positions:
-  "zeus": "-11.99 18.21 -4.15"
-goal_position: [-12.36,13.73,-4.15]
+  "zeus": "-12.4 18.0 -3.5"
+goal_position: [-21.0, 14.5, -4.5]
 
 # --- balloon positions ---
-red_balloon_position:  [-24.51,18.45,-4.15]
+red_balloon_position:  [-19.0, 19.3, -3.43]
 move_red: false 
 path_red: false
 curve_red: false
 red_balloon_position_new:  [-16.6, 17.5, -3.3]
 red_balloon_max_move_time: 5.0
 
-blue_balloon_position: [-24.28,15.22,-1.65]
+blue_balloon_position: [-24.0, 14.5, -2.43]
 move_blue: false
 path_blue: false
 curve_blue: false
