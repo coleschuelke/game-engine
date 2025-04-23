@@ -1,4 +1,9 @@
-# experimentation
+# -------------------------------------------------------------------------------------
+# ------------- Day 9: Robin Hood: Quads in Tights (Thu. Apr. 24th) -------------------
+# -------------------------------------------------------------------------------------
+# Your quad has been tasked to sneak into the castles and steal the balloons!
+# BEWARE: The initial/goal/balloon positions for evaluation may differ from the ones 
+#         below to prevent hard-coding.
 
 # --- ros setup ---
 team_assignments:
