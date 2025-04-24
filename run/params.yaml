@@ -1,9 +1,7 @@
 # -------------------------------------------------------------------------------------
-# ----------- Day 8: Hoodwinked: Through the Woods (Wed. Apr. 22nd) -------------------
+# ------------- Day 9: Robin Hood: Quads in Tights (Thu. Apr. 24th) -------------------
 # -------------------------------------------------------------------------------------
-# The woods are in uproar --- the Goody Bandit is on the loose. 
-# Can Red Riding Quad traverse the forest and stop the bandit?
-# Musical Theme: https://www.youtube.com/watch?v=HUIP208nZZs (Be Prepared! Goat Bicopter!)
+# Your quad has been tasked to sneak into the castles and steal the balloons!
 # BEWARE: The initial/goal/balloon positions for evaluation may differ from the ones 
 #         below to prevent hard-coding.
 
@@ -28,29 +26,29 @@ goal_status_topics:
   "home": "/game_engine/home_status"
 
 # --- map and meshes --- 
-map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/woods.map"
+map_file_path: "/home/aeronaut/Workspace/game-engine/resources/maps/two_castles.map"
 quad_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/balloon.stl"
 goal_mesh_file_path: "file:///home/aeronaut/Workspace/game-engine/resources/meshes/torus.stl"
 
 # --- quad start and goal positions ---
 initial_quad_positions:
-  "zeus": "-11.99 18.21 -3.15"
-goal_position: [-12.36,13.73,-1.85]
+  "zeus": "-15.24 18.98 -4.55"
+goal_position: [-22.63,14.58,-4.15]
 
 # --- balloon positions ---
-red_balloon_position:  [-26.01,17.75,-4.40]
+red_balloon_position:  [-11.77,18.39,-1.65]
 move_red: false 
 path_red: false
 curve_red: false
-red_balloon_position_new:  [-16.6, 17.5, -3.3]
+red_balloon_position_new:  [-11.77,18.39,-1.65]
 red_balloon_max_move_time: 5.0
 
-blue_balloon_position: [-26.51,16.0,-4.40]
+blue_balloon_position: [-25.91,14.91,-1.65]
 move_blue: false
 path_blue: false
 curve_blue: false
-blue_balloon_position_new: [-14.6, 14.52, -2.3]
+blue_balloon_position_new: [-25.91,14.91,-1.65]
 blue_balloon_max_move_time: 5.0
 
 use_seed: true
