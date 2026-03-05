@@ -59,7 +59,7 @@ script is simplest and safest way of running the game-engine. You can run the
 script as shown below.
 
 ```bash
-cd ~/Workspace/launch
+cd ~/Workspace/game-engine/launch
 ./launchGE.sh -a launchConfigDefault.yaml
 ```
 
@@ -81,7 +81,7 @@ start ROS. If you believe there may be lingering processes running in the
 background, then run the following script to completely shutdown game-engine.
 
 ```bash
-cd ~/Workspace/launch
+cd ~/Workspace/game-engine/launch
 ./killGE.sh
 ```
 

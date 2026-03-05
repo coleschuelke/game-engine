@@ -93,13 +93,16 @@ if [ "$aioFlag" = true ] ; then
 	echo -e "Protocol to run: $prot\n"
 else
 	# get game-engine working directory
-	filepath=
+	filepath="$(dirname `pwd`)"
+	echo ${filepath}
+	CMAKEFILE=
 	while true ; do
-		read -e -r -p "Enter path to game engine (e.g., /home/user/Workspace/game-engine): " filepath
-		if [ -d "$filepath" ] ; then
+		CMAKEFILE=$filepath/src/autonomy_protocol/CMakeLists.txt
+		if [ -f $CMAKEFILE ] ; then
 			break
 		fi
-		echo "$filepath is not a directory..."
+		echo "$filepath is not a valid game-engine directory... auto dir detection failed. Enter manually:"
+		read -e -r -p "Enter path to game engine (i.e. /home/user/Workspace/game-engine): " filepath
 	done
 	# get params file
 	cd $filepath/run
@@ -124,32 +127,18 @@ if [ "$shackFlag" = false ] ; then
 		echo "success."
 		echo ""
 else
-	while ! pgrep -x "roscore" >/tmp/null_output 2>&1; do
+	while ! pgrep -x "rosmaster" >/tmp/null_output 2>&1; do
 		echo -e "\e[1;33mWARNING:\e[0m ROSCORE IS NOT STARTED."
 		read -p "PLEASE START ROSCORE IN ANOTHER TERMINAL AND PRESS [ENTER] TO CONTINUE"
 	done
 fi
-# load visualizer (optional unless in shack mode)
+# load visualizer
 cd $filepath/run
-if [[ "$shackFlag" = false && "$playbackFlag" = false ]] ; then
-	while true; do
-			read -p "Start Visualizer? [y/n] " yn
-			case $yn in
-				[Yy]* ) rosrun rviz rviz -d config.rviz > $localdir/rviz.log 2>&1 &
-				echo ""
-				sleep 2
-				break;;
-				[Nn]* ) break;;
-				* ) echo "Please answer yes or no ([y/n]).";;
-				esac
-	done
-else
-	echo -n "Launching Visualizer ... "
-	rosrun rviz rviz -d config.rviz > $localdir/rviz.log 2>&1 & echo "success."
-	echo ""
-	yn="y"
-	sleep 2
-fi
+echo -n "Launching Visualizer ... "
+rosrun rviz rviz -d config.rviz > $localdir/rviz.log 2>&1 & echo "success."
+echo ""
+yn="y"
+sleep 2
 
 #==========Repeatable Process===============#
 while true; do
@@ -213,8 +202,8 @@ while true; do
 	# Mediation Layer (when in shack mode)
 	if [ "$shackFlag" = true ] ; then
 
-		file_contents=$(cat ../run/params.yaml)
-		pos=$(echo "$file_contents" | grep -A1 "initial_quad_positions:" | grep "zeus" | sed 's/.*: "\(.*\)"/\1/')
+		file_contents=$(cat ../run/$param)
+		pos=$(echo "$file_contents" | grep -A1 "initial_quad_positions:" | grep ":" | sed 's/.*: "\(.*\)"/\1/')
 		echo -e "\e[1;33mWARNING:\e[0m Move quad to start position specified in params.yaml -> [$pos]"
 		read -p "Press [Enter] to continue."
 		echo -n "Launching Mediation Layer ... "
@@ -258,8 +247,24 @@ while true; do
 		fi
 	fi
 
-	# prompt user to restart the simulation when cancelled out
+	# output protocol time to the command line if the course was completed
+	cd $localdir
+	medout=`grep "Goal reached at elapsed time" med_layer.log`
+	value=${medout#*"Goal reached at elapsed time"}
+	value=`echo $value | grep -m 1 -Eo '[0-9]+([.][0-9]+)?'`
+	value=`echo $value | cut -d' ' -f1`
 	echo ""
+    echo "-----"
+	if [[ $value =~ ^[+-]?[0-9]+([.][0-9]+)?$ ]]; then
+		echo "$exe, ${value%%??}"
+	else
+		echo "$exe, NaN"
+	fi
+    echo "-----"
+	echo ""
+
+	# prompt user to restart the simulation when cancelled out
+	# Wait for protocol to end
 	echo "Restart to kill the Mediation layer, Physics Simulator, and protocol and re-run them."
         echo "Note: Restarting will overwrite any existing log files." 
 	while true; do

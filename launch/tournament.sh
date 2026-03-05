@@ -1,6 +1,41 @@
 #!/usr/bin/env bash
 
+#=======CLI Handling=======#
 PROTOCOL_TIMEOUT=300
+printFlag=false
+
+while getopts "vt:h" opt; do
+	case $opt in
+		v)
+			printFlag=true
+			echo -e "Running in verbose mode ...\n"
+			;;
+		t)
+            PROTOCOL_TIMEOUT=$OPTARG
+			echo -e "Setting timeout to $PROTOCOL_TIMEOUT seconds ...\n"
+            
+			;;
+		h)
+            echo -e "----------------------------------------------------------------
+TA script for pulling and running student's autonomy protocols.
+
+Usage: ./launchGE.sh [-v|t|h]
+
+Options
+   -v           Runs the script in verbose mode. You will see cmake 
+                    and compiler printouts. 
+   -t <seconds> Limits the autonomy protocol timeout to the input
+                    value (default: 300 seconds).
+   -h        	Prints usage.
+----------------------------------------------------------------"
+            exit 1
+            ;;
+		\?)		
+			echo "Invalid option: -$OPTARG" >&2
+    	    exit 1
+        	;;
+	esac
+done
 
 #==========Warning===============#
 read -p "Before running the script:
@@ -24,15 +59,16 @@ if [ ! -f "$TEAMS" ]; then
 fi
 
 # Get game-engine working directory
-GAME_ENGINE=
+GAME_ENGINE="$(dirname "$CWD")"
+echo "game-engine path: $GAME_ENGINE"
 CMAKEFILE=
 while true ; do
-    read -e -r -p "Enter path to game engine (i.e. /home/user/Workspace/game-engine): " GAME_ENGINE
     CMAKEFILE=$GAME_ENGINE/src/autonomy_protocol/CMakeLists.txt
     if [ -f $CMAKEFILE ] ; then
         break
     fi
-    echo "$GAME_ENGINE is not a valid game-engine directory..."
+    echo "$GAME_ENGINE is not a valid game-engine directory... auto dir detection failed. Enter manually:"
+    read -e -r -p "Enter path to game engine (i.e. /home/user/Workspace/game-engine): " GAME_ENGINE
 done
 
 if [ "$GAME_ENGINE" != "/" ]; then
@@ -80,12 +116,12 @@ do
     # Get team source code
     cd $CWD
     GIT_LINK=`sed -e 's/^"//' -e 's/"$//' <<<"$GIT_LINK"`
-    echo "Trying team $TEAM_NAME with repo at $GIT_LINK"
+    echo "----- Trying team $TEAM_NAME with repo at $GIT_LINK -----"
     TEAM_NAME="${TEAM_NAME// /_}"
     # -branch can also take tags and detaches the HEAD at that commit in the
     # resulting repository as of 1.8.0 
     rm -rf $TEAM_NAME > /dev/null 2>&1
-    if ! (git clone --quiet --branch release $GIT_LINK "$TEAM_NAME" > /dev/null) then
+    if ! (GIT_SSH_COMMAND="ssh -i /home/shack/.ssh/id_rsa_jerms" git clone --quiet --branch release $GIT_LINK "$TEAM_NAME" > /dev/null) then
         echo "[ERROR] Unable to read from '$GIT_LINK'"
         echo $TEAM_NAME, "Nan", $dt >> $leaderboard
         continue
@@ -119,7 +155,8 @@ do
     # Copy files over to game engine
     aerial_robotics_dir="$(dirname "$SAPcc")"
 
-    cp -R "$aerial_robotics_dir/"* "$GAME_ENGINE"/src/autonomy_protocol/aerial_robotics/
+    rm -rf "$GAME_ENGINE"/src/autonomy_protocol/aerial_robotics
+    cp -R "$aerial_robotics_dir/" "$GAME_ENGINE"/src/autonomy_protocol/aerial_robotics/
     
     echo "Copying successful!"
     # Delete repo
@@ -135,21 +172,40 @@ do
     echo "Generating makefiles..."
     cd $GAME_ENGINE
     cd build
-    if cmake .. > /dev/null 2>&1 ; then
-        echo "Cmake succeeded"
+    if [ "$printFlag" = true ]; then 
+        if cmake .. ; then
+            echo "Cmake succeeded"
+        else
+            echo "Cmake failed"
+            echo $TEAM_NAME, "Nan", $dt >> $leaderboard
+            continue
+        fi
+        echo "Compiling game engine..."
+        if make -j ; then
+            echo "make succeeded"
+        else
+            echo "make failed"
+            echo $TEAM_NAME, "Nan", $dt >> $leaderboard
+            continue
+        fi
     else
-        echo "Cmake failed"
-        echo $TEAM_NAME, "Nan", $dt >> $leaderboard
-        continue
+        if cmake .. > /dev/null 2>&1 ; then
+            echo "Cmake succeeded"
+        else
+            echo "Cmake failed"
+            echo $TEAM_NAME, "Nan", $dt >> $leaderboard
+            continue
+        fi
+        echo "Compiling game engine..."
+        if make -j > /dev/null 2>&1 ; then
+            echo "make succeeded"
+        else
+            echo "make failed"
+            echo $TEAM_NAME, "Nan", $dt >> $leaderboard
+            continue
+        fi
     fi
-    echo "Compiling game engine..."
-    if make -j > /dev/null 2>&1 ; then
-        echo "make succeeded"
-    else
-        echo "make failed"
-        echo $TEAM_NAME, "Nan", $dt >> $leaderboard
-        continue
-    fi
+    
       
     # launch roscore in background
     cd $CWD
@@ -190,7 +246,7 @@ do
     # Wait for protocol to end
     cd $CWD
     SECONDS=0
-    # while goal not eached and seconds < 300
+    # while goal not eached and seconds < PROTOCOL_TIMEOUT
     while ! grep -q "Goal reached at elapsed time" med_layer.log && [[ "$SECONDS" -lt $PROTOCOL_TIMEOUT ]]; do
         sleep 1
     done
@@ -208,9 +264,12 @@ do
         value=`echo $value | grep -m 1 -Eo '[0-9]+([.][0-9]+)?'`
         tm=${value%%??}
     fi
-    echo $tm
     echo $TEAM_NAME, $tm, $dt >> $leaderboard
+    echo ""
+    echo "----------"
     echo $TEAM_NAME, $tm, $dt
+    echo "----------"
+    echo ""
     cd $CWD
 done < $TEAMS
 

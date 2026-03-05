@@ -66,7 +66,7 @@ Visualization Manager:
         curve: true
         dot: true
         trajectory: true
-      Queue Size: 10
+      Queue Size: 30
       Value: true
     - Class: rviz/Marker
       Enabled: true
