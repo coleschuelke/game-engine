@@ -15,11 +15,11 @@ class Node {
   // Data
   const T data_;
 
-  // Required equality function so that the node may be used in std
-  // containers
+  // Required equality function so that the node may be used in STL
+  // containers.
   const std::function<bool(const T& other)> f_equals_;
 
-  // Required hash function so that the node may be used in std containers
+  // Required hash function so that the node may be used in STL containers
   const std::function<size_t()> f_hash_;
 
  public:
@@ -34,7 +34,7 @@ class Node {
   const T& Data() const { return data_; }
 
   // Equality operator. Nodes are equal if the their equality functions
-  // evaluate to true
+  // evaluate to true.
   bool operator==(const Node& other) const {
     return this->f_equals_(other.data_);
   }
@@ -44,7 +44,7 @@ class Node {
     return !this->f_equals_(other.data_);
   }
 
-  // Equals structure. Convience structure for STL containers
+  // Equals structure. Convience structure for STL containers.
   struct Equals {
     bool operator()(const Node& lhs, const Node& rhs) const {
       return lhs == rhs;
@@ -52,7 +52,7 @@ class Node {
   };
 
   // Equals structure for shared pointers. Convenience structure for STL
-  // containers
+  // containers.
   struct EqualsPointer {
     bool operator()(const std::shared_ptr<Node>& lhs,
                     const std::shared_ptr<Node>& rhs) const {
@@ -60,13 +60,13 @@ class Node {
     }
   };
 
-  // Hash structure. Convenience structure for STL containers
+  // Hash structure. Convenience structure for STL containers.
   struct Hash {
     size_t operator()(const Node& node) const { return node.f_hash_(); }
   };
 
   // Hash structure for shared pointers. Convenience structure for STL
-  // containers
+  // containers.
   struct HashPointer {
     size_t operator()(const std::shared_ptr<Node>& node_ptr) const {
       return node_ptr->f_hash_();
