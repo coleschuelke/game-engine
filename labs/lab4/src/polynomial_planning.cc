@@ -18,71 +18,72 @@ void NumWaypointExperiments();
 // MAIN FUNCTION
 // TODO: UNCOMMENT THE FUNCTIONS YOU WANT TO RUN
 ///////////////////////////////////////////////////////////////////
-int main(int argc, char** argv) {
-  Example();
+int main(int argc, char **argv)
+{
+  // Example();
   // DerivativeExperiments();
   // ArrivalTimeExperiments();
-  // NumWaypointExperiments();
+  NumWaypointExperiments();
 
   return EXIT_SUCCESS;
 }
 
 // Example function that demonstrates how to use the polynomial solver. This
 // example creates waypoints in a triangle: (0,0) -- (1,0) -- (1,1) -- (0,0)
-void Example() {
+void Example()
+{
   // Time in seconds
-  const std::vector<double> times = {0,1,2,3};
+  const std::vector<double> times = {0, 1, 2, 3};
 
   // The parameter order for p4::NodeEqualityBound is:
   // (dimension_index, node_idx, derivative_idx, value)
   const std::vector<p4::NodeEqualityBound> node_equality_bounds = {
-    // The first node must constrain position, velocity, and acceleration
-    p4::NodeEqualityBound(0,0,0,0),
-    p4::NodeEqualityBound(1,0,0,0),
-    p4::NodeEqualityBound(0,0,1,0),
-    p4::NodeEqualityBound(1,0,1,0),
-    p4::NodeEqualityBound(0,0,2,0),
-    p4::NodeEqualityBound(1,0,2,0),
+      // The first node must constrain position, velocity, and acceleration
+      p4::NodeEqualityBound(0, 0, 0, 0), // x pos
+      p4::NodeEqualityBound(1, 0, 0, 0), // y pos
+      p4::NodeEqualityBound(0, 0, 1, 0), // x velo
+      p4::NodeEqualityBound(1, 0, 1, 0), // y velo
+      p4::NodeEqualityBound(0, 0, 2, 0), // x acc
+      p4::NodeEqualityBound(1, 0, 2, 0), // y acc
 
-    // The second node constrains position
-    p4::NodeEqualityBound(0,1,0,1),
-    p4::NodeEqualityBound(1,1,0,0),
+      // The second node constrains position
+      p4::NodeEqualityBound(0, 1, 0, 1),
+      p4::NodeEqualityBound(1, 1, 0, 0),
 
-    // The third node constrains position
-    p4::NodeEqualityBound(0,2,0,1),
-    p4::NodeEqualityBound(1,2,0,1),
+      // The third node constrains position
+      p4::NodeEqualityBound(0, 2, 0, 1),
+      p4::NodeEqualityBound(1, 2, 0, 1),
 
-    // The fourth node constrains position
-    p4::NodeEqualityBound(0,3,0,0),
-    p4::NodeEqualityBound(1,3,0,0),
+      // The fourth node constrains position
+      p4::NodeEqualityBound(0, 3, 0, 0),
+      p4::NodeEqualityBound(1, 3, 0, 0),
   };
 
   // Options to configure the polynomial solver with
   p4::PolynomialSolver::Options solver_options;
-  solver_options.num_dimensions = 2;     // 2D
-  solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
-  solver_options.continuity_order = 4;   // Require continuity to the 4th order
-  solver_options.derivative_order = 2;   // Minimize the 2nd order (acceleration)
+  solver_options.num_dimensions = 2;   // 2D
+  solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
+  solver_options.continuity_order = 4; // Require continuity to the 4th order
+  solver_options.derivative_order = 2; // Minimize the 2nd order (acceleration)
 
   osqp_set_default_settings(&solver_options.osqp_settings);
-  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
-  solver_options.osqp_settings.verbose = true;     // Suppress the printout
+  solver_options.osqp_settings.polish = true;  // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = true; // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
-  const p4::PolynomialSolver::Solution path
-    = solver.Run(
-        times, 
-        node_equality_bounds, 
-        {}, 
-        {});
+  const p4::PolynomialSolver::Solution path = solver.Run(
+      times,
+      node_equality_bounds,
+      {},
+      {});
 
   // Sampling and Plotting
   { // Plot 2D position
     // Options to configure the polynomial sampler with
     p4::PolynomialSampler::Options sampler_options;
-    sampler_options.frequency = 100;             // Number of samples per second
-    sampler_options.derivative_order = 0;        // Derivative to sample (0 = pos)
+    sampler_options.frequency = 100;      // Number of samples per second
+    sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
 
     // Use this object to sample a trajectory
     p4::PolynomialSampler sampler(sampler_options);
@@ -90,10 +91,11 @@ void Example() {
 
     // Plotting tool requires vectors
     std::vector<double> t_hist, x_hist, y_hist;
-    for(size_t time_idx = 0; time_idx < samples.cols(); ++time_idx) {
-      t_hist.push_back(samples(0,time_idx));
-      x_hist.push_back(samples(1,time_idx));
-      y_hist.push_back(samples(2,time_idx));
+    for (size_t time_idx = 0; time_idx < samples.cols(); ++time_idx)
+    {
+      t_hist.push_back(samples(0, time_idx));
+      x_hist.push_back(samples(1, time_idx));
+      y_hist.push_back(samples(2, time_idx));
     }
 
     // gnu-iostream plotting library
@@ -128,45 +130,65 @@ void Example() {
   }
 }
 
-void DerivativeExperiments() {
+void DerivativeExperiments()
+{
   // Time in seconds
   // TODO: SET THE TIMES FOR THE WAYPOINTS
-  const std::vector<double> times = {};
+  const std::vector<double> times = {0, 1, 2, 3, 4};
 
   // The parameter order for p4::NodeEqualityBound is:
   // (dimension_index, node_idx, derivative_idx, value)
   const std::vector<p4::NodeEqualityBound> node_equality_bounds = {
-    ///////////////////////////////////////////////////////////////////
-    // TODO: CREATE A SQUARE TRAJECTORY
-    ///////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////
+      // TODO: CREATE A SQUARE TRAJECTORY
+      ///////////////////////////////////////////////////////////////////
+      // First Node
+      p4::NodeEqualityBound(0, 0, 0, 0),
+      p4::NodeEqualityBound(1, 0, 0, 0),
+      p4::NodeEqualityBound(0, 0, 1, 0),
+      p4::NodeEqualityBound(1, 0, 1, 0),
+      p4::NodeEqualityBound(0, 0, 2, 0),
+      p4::NodeEqualityBound(1, 0, 2, 0),
+      // Second Node
+      p4::NodeEqualityBound(0, 1, 0, 1),
+      p4::NodeEqualityBound(1, 1, 0, 0),
+      // Third Node
+      p4::NodeEqualityBound(0, 2, 0, 1),
+      p4::NodeEqualityBound(1, 2, 0, 1),
+      // Fourth Node
+      p4::NodeEqualityBound(0, 3, 0, 0),
+      p4::NodeEqualityBound(1, 3, 0, 1),
+      // Fifth Node
+      p4::NodeEqualityBound(0, 4, 0, 0),
+      p4::NodeEqualityBound(1, 4, 0, 0),
+
   };
 
   // Options to configure the polynomial solver with
   p4::PolynomialSolver::Options solver_options;
-  solver_options.num_dimensions = 2;     // 2D
-  solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
-  solver_options.continuity_order = 4;   // Require continuity to the 4th order
-  solver_options.derivative_order = 0;   // TODO: VARY THE DERIVATIVE ORDER
+  solver_options.num_dimensions = 2;   // 2D
+  solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
+  solver_options.continuity_order = 4; // Require continuity to the 4th order
+  solver_options.derivative_order = 4; // TODO: VARY THE DERIVATIVE ORDER
 
   osqp_set_default_settings(&solver_options.osqp_settings);
-  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
-  solver_options.osqp_settings.verbose = false;     // Suppress the printout
+  solver_options.osqp_settings.polish = true;   // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false; // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
-  const p4::PolynomialSolver::Solution path
-    = solver.Run(
-        times, 
-        node_equality_bounds, 
-        {}, 
-        {});
+  const p4::PolynomialSolver::Solution path = solver.Run(
+      times,
+      node_equality_bounds,
+      {},
+      {});
 
   // Sampling and Plotting
   { // Plot 2D position
     // Options to configure the polynomial sampler with
     p4::PolynomialSampler::Options sampler_options;
-    sampler_options.frequency = 100;             // Number of samples per second
-    sampler_options.derivative_order = 0;        // Derivative to sample (0 = pos)
+    sampler_options.frequency = 100;      // Number of samples per second
+    sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
 
     // Use this object to sample a trajectory
     p4::PolynomialSampler sampler(sampler_options);
@@ -174,10 +196,11 @@ void DerivativeExperiments() {
 
     // Plotting tool requires vectors
     std::vector<double> t_hist, x_hist, y_hist;
-    for(size_t time_idx = 0; time_idx < samples.cols(); ++time_idx) {
-      t_hist.push_back(samples(0,time_idx));
-      x_hist.push_back(samples(1,time_idx));
-      y_hist.push_back(samples(2,time_idx));
+    for (size_t time_idx = 0; time_idx < samples.cols(); ++time_idx)
+    {
+      t_hist.push_back(samples(0, time_idx));
+      x_hist.push_back(samples(1, time_idx));
+      y_hist.push_back(samples(2, time_idx));
     }
 
     // gnu-iostream plotting library
@@ -212,7 +235,8 @@ void DerivativeExperiments() {
   }
 }
 
-void ArrivalTimeExperiments() {
+void ArrivalTimeExperiments()
+{
   // Time in seconds
   // TODO: SET THE TIMES FOR THE WAYPOINTS
   const std::vector<double> times = {};
@@ -220,37 +244,55 @@ void ArrivalTimeExperiments() {
   // The parameter order for p4::NodeEqualityBound is:
   // (dimension_index, node_idx, derivative_idx, value)
   const std::vector<p4::NodeEqualityBound> node_equality_bounds = {
-    ///////////////////////////////////////////////////////////////////
-    // TODO: CREATE A SQUARE TRAJECTORY
-    ///////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////
+      // TODO: CREATE A SQUARE TRAJECTORY
+      ///////////////////////////////////////////////////////////////////
+      // First Node
+      p4::NodeEqualityBound(0, 0, 0, 0),
+      p4::NodeEqualityBound(1, 0, 0, 0),
+      p4::NodeEqualityBound(0, 0, 1, 0),
+      p4::NodeEqualityBound(1, 0, 1, 0),
+      p4::NodeEqualityBound(0, 0, 2, 0),
+      p4::NodeEqualityBound(1, 0, 2, 0),
+      // Second Node
+      p4::NodeEqualityBound(0, 1, 0, 1),
+      p4::NodeEqualityBound(1, 1, 0, 0),
+      // Third Node
+      p4::NodeEqualityBound(0, 2, 0, 1),
+      p4::NodeEqualityBound(1, 2, 0, 1),
+      // Fourth Node
+      p4::NodeEqualityBound(0, 3, 0, 0),
+      p4::NodeEqualityBound(1, 3, 0, 1),
+      // Fifth Node
+      p4::NodeEqualityBound(0, 4, 0, 0),
+      p4::NodeEqualityBound(1, 4, 0, 0),
   };
 
   // Options to configure the polynomial solver with
   p4::PolynomialSolver::Options solver_options;
-  solver_options.num_dimensions = 2;     // 2D
-  solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
-  solver_options.continuity_order = 4;   // Require continuity to the 4th order
-  solver_options.derivative_order = 4;   // Minimize snap
+  solver_options.num_dimensions = 2;   // 2D
+  solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
+  solver_options.continuity_order = 4; // Require continuity to the 4th order
+  solver_options.derivative_order = 4; // Minimize snap
 
   osqp_set_default_settings(&solver_options.osqp_settings);
-  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
-  solver_options.osqp_settings.verbose = false;     // Suppress the printout
+  solver_options.osqp_settings.polish = true;   // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false; // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
-  const p4::PolynomialSolver::Solution path
-    = solver.Run(
-        times, 
-        node_equality_bounds, 
-        {}, 
-        {});
+  const p4::PolynomialSolver::Solution path = solver.Run(
+      times,
+      node_equality_bounds,
+      {},
+      {});
 
   // Sampling and Plotting
   { // Plot 2D position
     // Options to configure the polynomial sampler with
     p4::PolynomialSampler::Options sampler_options;
-    sampler_options.frequency = 100;             // Number of samples per second
-    sampler_options.derivative_order = 0;        // Derivative to sample (0 = pos)
+    sampler_options.frequency = 100;      // Number of samples per second
+    sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
 
     // Use this object to sample a trajectory
     p4::PolynomialSampler sampler(sampler_options);
@@ -258,10 +300,11 @@ void ArrivalTimeExperiments() {
 
     // Plotting tool requires vectors
     std::vector<double> t_hist, x_hist, y_hist;
-    for(size_t time_idx = 0; time_idx < samples.cols(); ++time_idx) {
-      t_hist.push_back(samples(0,time_idx));
-      x_hist.push_back(samples(1,time_idx));
-      y_hist.push_back(samples(2,time_idx));
+    for (size_t time_idx = 0; time_idx < samples.cols(); ++time_idx)
+    {
+      t_hist.push_back(samples(0, time_idx));
+      x_hist.push_back(samples(1, time_idx));
+      y_hist.push_back(samples(2, time_idx));
     }
 
     // gnu-iostream plotting library
@@ -296,45 +339,67 @@ void ArrivalTimeExperiments() {
   }
 }
 
-void NumWaypointExperiments() {
+void NumWaypointExperiments()
+{
   // Time in seconds
   // TODO: SET THE TIMES FOR THE WAYPOINTS
-  const std::vector<double> times = {};
+  const size_t NUM_WAYPOINTS = 100;
+  const double TOTAL_TIME = 10;
+  const double RADIUS = 5;
+  const double step = TOTAL_TIME / NUM_WAYPOINTS;
+
+  std::vector<double> times(NUM_WAYPOINTS);
+  for (size_t i = 0; i < NUM_WAYPOINTS; ++i)
+  {
+    times[i] = i * step;
+  }
 
   // The parameter order for p4::NodeEqualityBound is:
   // (dimension_index, node_idx, derivative_idx, value)
-  const std::vector<p4::NodeEqualityBound> node_equality_bounds = {
-    ///////////////////////////////////////////////////////////////////
-    // TODO: CREATE A CIRCLE TRAJECTORY
-    ///////////////////////////////////////////////////////////////////
-  };
+  std::vector<p4::NodeEqualityBound> node_equality_bounds;
+  // Push the start node
+  node_equality_bounds.push_back(p4::NodeEqualityBound(0, 0, 0, RADIUS));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(1, 0, 0, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(0, 0, 1, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(1, 0, 1, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(0, 0, 2, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(1, 0, 2, 0));
+
+  for (size_t i = 1; i < NUM_WAYPOINTS; ++i)
+  {
+    const double angle = i * 2 * 3.14159 / (NUM_WAYPOINTS - 1);
+    const double x = RADIUS * std::cos(angle);
+    const double y = RADIUS * std::sin(angle);
+
+    node_equality_bounds.push_back(p4::NodeEqualityBound(0, i, 0, x));
+    node_equality_bounds.push_back(p4::NodeEqualityBound(1, i, 0, y));
+  }
 
   // Options to configure the polynomial solver with
   p4::PolynomialSolver::Options solver_options;
-  solver_options.num_dimensions = 2;     // 2D
-  solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
-  solver_options.continuity_order = 4;   // Require continuity to the 4th order
-  solver_options.derivative_order = 4;   // Minimize snap
+  solver_options.num_dimensions = 2;   // 2D
+  solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
+  solver_options.continuity_order = 4; // Require continuity to the 4th order
+  solver_options.derivative_order = 4; // Minimize snap
 
   osqp_set_default_settings(&solver_options.osqp_settings);
-  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
-  solver_options.osqp_settings.verbose = false;     // Suppress the printout
+  solver_options.osqp_settings.polish = true;   // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false; // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
-  const p4::PolynomialSolver::Solution path
-    = solver.Run(
-        times, 
-        node_equality_bounds, 
-        {}, 
-        {});
+  const p4::PolynomialSolver::Solution path = solver.Run(
+      times,
+      node_equality_bounds,
+      {},
+      {});
 
   // Sampling and Plotting
   { // Plot 2D position
     // Options to configure the polynomial sampler with
     p4::PolynomialSampler::Options sampler_options;
-    sampler_options.frequency = 100;             // Number of samples per second
-    sampler_options.derivative_order = 0;        // Derivative to sample (0 = pos)
+    sampler_options.frequency = 100;      // Number of samples per second
+    sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
 
     // Use this object to sample a trajectory
     p4::PolynomialSampler sampler(sampler_options);
@@ -342,10 +407,11 @@ void NumWaypointExperiments() {
 
     // Plotting tool requires vectors
     std::vector<double> t_hist, x_hist, y_hist;
-    for(size_t time_idx = 0; time_idx < samples.cols(); ++time_idx) {
-      t_hist.push_back(samples(0,time_idx));
-      x_hist.push_back(samples(1,time_idx));
-      y_hist.push_back(samples(2,time_idx));
+    for (size_t time_idx = 0; time_idx < samples.cols(); ++time_idx)
+    {
+      t_hist.push_back(samples(0, time_idx));
+      x_hist.push_back(samples(1, time_idx));
+      y_hist.push_back(samples(2, time_idx));
     }
 
     // gnu-iostream plotting library
