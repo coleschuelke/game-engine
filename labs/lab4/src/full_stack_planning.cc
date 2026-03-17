@@ -11,8 +11,10 @@
 
 using namespace game_engine;
 
-int main(int argc, char** argv) {
-  if (argc != 6) {
+int main(int argc, char **argv)
+{
+  if (argc != 6)
+  {
     std::cerr << "Usage: ./full_stack_planning occupancy_grid_file row1 col1 "
                  "row2 col2"
               << std::endl;
@@ -42,6 +44,13 @@ int main(int argc, char** argv) {
   //       and graphing utilities in previous problems to check your solution on
   //       the way.
   /////////////////////////////////////////////////////////////////////////////
+  AStar2D a_star;
+  PathInfo astar_path = a_star.Run(graph, start_ptr, end_ptr);
+  astar_path.details.Print();
+  Gui2D gui;
+  gui.LoadOccupancyGrid(&occupancy_grid);
+  gui.LoadPath(astar_path.path);
+  gui.Display("AStar");
 
   /////////////////////////////////////////////////////////////////////////////
   // RUN THE POLYNOMIAL PLANNER
