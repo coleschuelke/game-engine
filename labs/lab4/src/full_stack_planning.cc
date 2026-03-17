@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <vector>
+#include <iostream>
 
 #include "a_star2d.h"
 #include "gnuplot-iostream.h"
@@ -58,6 +59,112 @@ int main(int argc, char **argv)
   //       solve. Solve the polynomial problem, sample the solution, figure out
   //       a way to export it to Matlab.
   /////////////////////////////////////////////////////////////////////////////
+
+  // Convert the path to waypoints
+  std::vector<double> times;
+
+  std::vector<p4::NodeEqualityBound> node_equality_bounds;
+
+  // Constrain the starting velocity and acceleration
+  node_equality_bounds.push_back(p4::NodeEqualityBound(0, 0, 1, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(1, 0, 1, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(0, 0, 2, 0));
+  node_equality_bounds.push_back(p4::NodeEqualityBound(1, 0, 2, 0));
+
+  // Push each node as a waypoint at 1 second increments
+  for (size_t i = 0; i < astar_path.path.size(); ++i)
+  {
+    times.push_back(i);
+    node_equality_bounds.push_back(p4::NodeEqualityBound(0, i, 0, astar_path.path[i]->Data().y()));
+    node_equality_bounds.push_back(p4::NodeEqualityBound(1, i, 0, -1 * astar_path.path[i]->Data().x()));
+  }
+
+  // Configure the polynomial solver
+  p4::PolynomialSolver::Options solver_options;
+  solver_options.num_dimensions = 2;
+  solver_options.polynomial_order = 8;
+  solver_options.continuity_order = 4;
+  solver_options.derivative_order = 2;
+
+  osqp_set_default_settings(&solver_options.osqp_settings);
+  solver_options.osqp_settings.polish = true;
+  solver_options.osqp_settings.verbose = false;
+
+  // Create the solver
+  p4::PolynomialSolver solver(solver_options);
+  const p4::PolynomialSolver::Solution path = solver.Run(
+      times,
+      node_equality_bounds,
+      {},
+      {});
+
+  // Sample and plot
+  {
+    p4::PolynomialSampler::Options pos_sampler_options;
+    pos_sampler_options.frequency = 200;
+    pos_sampler_options.derivative_order = 0;
+    p4::PolynomialSampler::Options vel_sampler_options;
+    vel_sampler_options.frequency = 200;
+    vel_sampler_options.derivative_order = 1;
+    p4::PolynomialSampler::Options acc_sampler_options;
+    acc_sampler_options.frequency = 200;
+    acc_sampler_options.derivative_order = 2;
+
+    p4::PolynomialSampler pos_sampler(pos_sampler_options);
+    Eigen::MatrixXd pos_samples = pos_sampler.Run(times, path);
+    p4::PolynomialSampler vel_sampler(vel_sampler_options);
+    Eigen::MatrixXd vel_samples = vel_sampler.Run(times, path);
+    p4::PolynomialSampler acc_sampler(acc_sampler_options);
+    Eigen::MatrixXd acc_samples = acc_sampler.Run(times, path);
+
+    // Write the results to a csv
+    const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", "\n");
+    std::ofstream pos_file("/home/aeronaut/Workspace/results/position.csv");
+    pos_file << pos_samples.format(CSVFormat);
+    std::ofstream vel_file("/home/aeronaut/Workspace/results/velocity.csv");
+    vel_file << vel_samples.format(CSVFormat);
+    std::ofstream acc_file("/home/aeronaut/Workspace/results/acceleration.csv");
+    acc_file << acc_samples.format(CSVFormat);
+
+    // Plotting setup
+    std::vector<double> t_hist, x_hist, y_hist;
+    for (size_t time_idx = 0; time_idx < pos_samples.cols(); ++time_idx)
+    {
+      t_hist.push_back(pos_samples(0, time_idx));
+      x_hist.push_back(pos_samples(1, time_idx));
+      y_hist.push_back(pos_samples(2, time_idx));
+    }
+
+    // gnu-iostream plotting library
+    // Utilizes gnuplot commands with a nice stream interface
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
+      gp.send1d(boost::make_tuple(x_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, x_hist));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'X-Profile'" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Y-Profile'" << std::endl;
+      gp << "replot" << std::endl;
+    }
+  }
 
   return EXIT_SUCCESS;
 }
