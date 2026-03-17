@@ -111,10 +111,10 @@ void RunDijkstra(const Graph2D &graph, const OccupancyGrid2D *occupancy_grid,
   PathInfo path_info = dijkstra.Run(graph, start_node, end_node);
 
   // Display the solution
-  Gui2D gui;
-  gui.LoadOccupancyGrid(occupancy_grid);
-  gui.LoadPath(path_info.path);
-  gui.Display("Dijkstra");
+  // Gui2D gui;
+  // gui.LoadOccupancyGrid(occupancy_grid);
+  // gui.LoadPath(path_info.path);
+  // gui.Display("Dijkstra");
 
   // Print the solution
   path_info.details.Print();

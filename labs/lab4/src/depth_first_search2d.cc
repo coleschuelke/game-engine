@@ -105,6 +105,7 @@ namespace game_engine
       // Pop a node to explore
       const NodeWrapperPtr node_to_explore = nodes_to_explore.top();
       nodes_to_explore.pop();
+
       // Check for existence in explored_nodes
       if (contains(explored_nodes, node_to_explore))
       {

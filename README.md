@@ -1,4 +1,7 @@
 # Game Engine
+## Acknowldgements
+This is my own derivative of the RNL game-engine repo. It was branched in spring 2026 to document my work for Dr Humphreys' Aerial Robotics class. 
+
 ## Structure
 Game Engine has four interacting components: Mediation Layer (ML),
 Physics Simulator (PS), Visualizer (VZ), and Autonomy Protocol (AP). 

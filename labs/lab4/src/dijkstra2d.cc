@@ -48,6 +48,31 @@ namespace game_engine
       return false;
     }
 
+    void relax(std::vector<std::shared_ptr<NodeWrapper>> &nwptr_list, const std::shared_ptr<NodeWrapper> current_node, const std::shared_ptr<Node2D> new_node, const double weight)
+    {
+      for (const auto list_node_ptr : nwptr_list)
+      {
+        if (*(list_node_ptr->node_ptr) == *new_node)
+        {
+          // consider the relative costs
+          auto current_cost = list_node_ptr->cost;
+          auto potential_cost = current_node->cost + weight;
+          if (current_cost > potential_cost)
+          {
+            // Relax the node
+            list_node_ptr->parent = current_node;
+            list_node_ptr->cost = potential_cost;
+          }
+        }
+      }
+      // create a nw_ptr for the node and push it
+      auto new_nw_ptr = std::make_shared<NodeWrapper>();
+      new_nw_ptr->cost = current_node->cost + weight;
+      new_nw_ptr->parent = current_node;
+      new_nw_ptr->node_ptr = new_node;
+      nwptr_list.push_back(new_nw_ptr); // Only happens if it's not already in the list
+    }
+
     // Assemble the path from the end node
     PathInfo create_path(const std::shared_ptr<NodeWrapper> end_node, const std::vector<std::shared_ptr<NodeWrapper>> &explored, Timer timer)
     {
@@ -101,6 +126,8 @@ namespace game_engine
 
     std::vector<NodeWrapperPtr> explored_nodes;
 
+    std::vector<std::shared_ptr<NodeWrapper>> visited_nodes;
+
     ///////////////////////////////////////////////////////////////////
     // YOUR WORK GOES BELOW
     // SOME EXAMPLE CODE PROVIDED
@@ -109,8 +136,9 @@ namespace game_engine
     // Wrap the start node with the function
     NodeWrapperPtr start_nwptr = wrap_node(nullptr, start_ptr, 0);
 
-    // Push start node to nodes_to_explore
+    // Push start node to nodes_to_explore and visited nodes
     nodes_to_explore.push(start_nwptr);
+    visited_nodes.push_back(start_nwptr);
 
     // while nte not empty
     while (!nodes_to_explore.empty())
@@ -119,6 +147,12 @@ namespace game_engine
       // Pop a node to explore
       const NodeWrapperPtr node_to_explore = nodes_to_explore.top();
       nodes_to_explore.pop();
+
+      // Check for existence in explored_nodes
+      if (contains(explored_nodes, node_to_explore))
+      {
+        continue;
+      }
 
       // Check if we found the end
       if (*(node_to_explore->node_ptr) == *end_ptr) // Not the same memory location, but the same value
@@ -134,9 +168,11 @@ namespace game_engine
         const auto sink_ptr = edge.Sink();
         const auto cost = edge.Cost();
 
-        // Relax the node
-        NodeWrapperPtr new_nwptr = wrap_node(node_to_explore, sink_ptr, node_to_explore->cost + cost);
+        // Handle the relaxation
+        relax(visited_nodes, node_to_explore, sink_ptr, cost);
 
+        // Whatever happens in relaxation, keep track of where we still need to explore
+        NodeWrapperPtr new_nwptr = wrap_node(node_to_explore, sink_ptr, node_to_explore->cost + cost);
         nodes_to_explore.push(new_nwptr);
       }
     }
