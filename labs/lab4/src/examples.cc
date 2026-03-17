@@ -7,12 +7,14 @@
 // This file contains example code for reading an occupancy grid file,
 // constructing a graph, extracting data from the graph, printing node contents,
 // accessing node neighbors, and evaluating node equality.  These are key
-// operations you'll need for Lab 4.  
+// operations you'll need for Lab 4.
 
 using namespace game_engine;
 
-int main(int argc, char** argv) {
-  if(argc != 2) {
+int main(int argc, char **argv)
+{
+  if (argc != 2)
+  {
     std::cerr << "Usage: ./examples ${occupancy_grid_file}" << std::endl;
     return EXIT_FAILURE;
   }
@@ -27,14 +29,15 @@ int main(int argc, char** argv) {
 
   // Define the start and end nodes
   // Create a node at (0,0) and a node at (4,4)
-  const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2i(0,0));
-  const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2i(4,4));
+  const std::shared_ptr<Node2D> start_node = std::make_shared<Node2D>(Eigen::Vector2i(0, 0));
+  const std::shared_ptr<Node2D> end_node = std::make_shared<Node2D>(Eigen::Vector2i(4, 4));
 
   // Access all the directed edges emanating from a node
   const std::vector<DirectedEdge2D> edges = graph.Edges(start_node);
-  
+
   // Iterate through the list of edges
-  for(const auto edge : edges) {
+  for (const auto edge : edges)
+  {
     const auto source_ptr = edge.Source();
     const auto sink_ptr = edge.Sink();
     const double cost = edge.Cost();
@@ -42,31 +45,33 @@ int main(int argc, char** argv) {
     // Print relevant data
     // std::shared_ptr<Node2D>->Data() is an Eigen::Vector2i. If you want to use
     // functions/accessors other than x() and y(), google Eigen::Vector2i
-    std::cout 
-      << "DirectedEdge2D from " 
-      << "[" << source_ptr->Data().x() << ", " << source_ptr->Data().y() << "]"
-      << " to "
-      << "[" << sink_ptr->Data().x() << ", " << sink_ptr->Data().y() << "]"
-      << " with cost " 
-      << cost
-      << std::endl;
+    std::cout
+        << "DirectedEdge2D from "
+        << "[" << source_ptr->Data().x() << ", " << source_ptr->Data().y() << "]"
+        << " to "
+        << "[" << sink_ptr->Data().x() << ", " << sink_ptr->Data().y() << "]"
+        << " with cost "
+        << cost
+        << std::endl;
   }
 
   // Access neighbors of a given node
   const auto neighbors = graph.Neighbors(start_node);
 
   // Iterate through the list of neighbors and print
-  for(const auto neighbor : neighbors) {
-    std::cout 
-      << "[" << neighbor->Data().transpose() << "]"
-      << " is a neighbor of "
-      << "[" << start_node->Data().transpose() << "]"
-      << std::endl;
+  for (const auto neighbor : neighbors)
+  {
+    std::cout
+        << "[" << neighbor->Data().transpose() << "]"
+        << " is a neighbor of "
+        << "[" << start_node->Data().transpose() << "]"
+        << std::endl;
   }
 
   // Check node equality
   std::cout << "Are the start and end nodes equal?: " << (*start_node == *end_node) << std::endl;
   std::cout << "Is the start node equal to itself?: " << (*start_node == *start_node) << std::endl;
+  std::cout << "Made a change and it compiled!" << std::endl;
 
   return EXIT_SUCCESS;
 }

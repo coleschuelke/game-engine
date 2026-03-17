@@ -14,25 +14,27 @@ using namespace game_engine;
 // FUNCTION PROTOTYPES
 // DO NOT MODIFY
 ///////////////////////////////////////////////////////////////////
-void RunDepthFirstSearch(const Graph2D& graph,
-                         const OccupancyGrid2D* occupancy_grid,
-                         const std::shared_ptr<Node2D>& start_node,
-                         const std::shared_ptr<Node2D>& end_node);
+void RunDepthFirstSearch(const Graph2D &graph,
+                         const OccupancyGrid2D *occupancy_grid,
+                         const std::shared_ptr<Node2D> &start_node,
+                         const std::shared_ptr<Node2D> &end_node);
 
-void RunDijkstra(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
-                 const std::shared_ptr<Node2D>& start_node,
-                 const std::shared_ptr<Node2D>& end_node);
+void RunDijkstra(const Graph2D &graph, const OccupancyGrid2D *occupancy_grid,
+                 const std::shared_ptr<Node2D> &start_node,
+                 const std::shared_ptr<Node2D> &end_node);
 
-void RunAStar(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
-              const std::shared_ptr<Node2D>& start_node,
-              const std::shared_ptr<Node2D>& end_node);
+void RunAStar(const Graph2D &graph, const OccupancyGrid2D *occupancy_grid,
+              const std::shared_ptr<Node2D> &start_node,
+              const std::shared_ptr<Node2D> &end_node);
 
 ///////////////////////////////////////////////////////////////////
 // MAIN FUNCTION
 // DO NOT MODIFY
 ///////////////////////////////////////////////////////////////////
-int main(int argc, char** argv) {
-  if (argc != 6) {
+int main(int argc, char **argv)
+{
+  if (argc != 6)
+  {
     std::cerr
         << "Usage: ./path_planning occupancy_grid_file row1 col1 row2 col2"
         << std::endl;
@@ -65,10 +67,11 @@ int main(int argc, char** argv) {
 // HELPER FUNCTIONS
 // DO NOT MODIFY
 ///////////////////////////////////////////////////////////////////
-void RunDepthFirstSearch(const Graph2D& graph,
-                         const OccupancyGrid2D* occupancy_grid,
-                         const std::shared_ptr<Node2D>& start_node,
-                         const std::shared_ptr<Node2D>& end_node) {
+void RunDepthFirstSearch(const Graph2D &graph,
+                         const OccupancyGrid2D *occupancy_grid,
+                         const std::shared_ptr<Node2D> &start_node,
+                         const std::shared_ptr<Node2D> &end_node)
+{
   std::cout << "============================================" << std::endl;
   std::cout << "=============    RUNNING DFS   =============" << std::endl;
   std::cout << "============================================" << std::endl;
@@ -77,26 +80,28 @@ void RunDepthFirstSearch(const Graph2D& graph,
   DepthFirstSearch2D dfs;
   PathInfo path_info = dfs.Run(graph, start_node, end_node);
 
-  // Display the solution
-  Gui2D gui;
-  gui.LoadOccupancyGrid(occupancy_grid);
-  gui.LoadPath(path_info.path);
-  gui.Display("DFS");
+  // Display the solution // JUST WHILE WE DONT HAVE THE GNUPLOT STUFF
+  // Gui2D gui;
+  // gui.LoadOccupancyGrid(occupancy_grid);
+  // gui.LoadPath(path_info.path);
+  // gui.Display("DFS");
 
   // Print the solution
   path_info.details.Print();
 
   std::cout << "===== PATH =====" << std::endl;
-  for (const std::shared_ptr<Node2D>& node : path_info.path) {
+  for (const std::shared_ptr<Node2D> &node : path_info.path)
+  {
     std::cout << "[" << node->Data().transpose() << "]" << std::endl;
   }
 
   std::cout << std::endl;
 }
 
-void RunDijkstra(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
-                 const std::shared_ptr<Node2D>& start_node,
-                 const std::shared_ptr<Node2D>& end_node) {
+void RunDijkstra(const Graph2D &graph, const OccupancyGrid2D *occupancy_grid,
+                 const std::shared_ptr<Node2D> &start_node,
+                 const std::shared_ptr<Node2D> &end_node)
+{
   std::cout << "============================================" << std::endl;
   std::cout << "============= RUNNING DIJKSTRA =============" << std::endl;
   std::cout << "============================================" << std::endl;
@@ -115,16 +120,18 @@ void RunDijkstra(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
   path_info.details.Print();
 
   std::cout << "===== PATH =====" << std::endl;
-  for (const std::shared_ptr<Node2D>& node : path_info.path) {
+  for (const std::shared_ptr<Node2D> &node : path_info.path)
+  {
     std::cout << "[" << node->Data().transpose() << "]" << std::endl;
   }
 
   std::cout << std::endl;
 }
 
-void RunAStar(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
-              const std::shared_ptr<Node2D>& start_node,
-              const std::shared_ptr<Node2D>& end_node) {
+void RunAStar(const Graph2D &graph, const OccupancyGrid2D *occupancy_grid,
+              const std::shared_ptr<Node2D> &start_node,
+              const std::shared_ptr<Node2D> &end_node)
+{
   std::cout << "============================================" << std::endl;
   std::cout << "=============  RUNNING A Star  =============" << std::endl;
   std::cout << "============================================" << std::endl;
@@ -143,7 +150,8 @@ void RunAStar(const Graph2D& graph, const OccupancyGrid2D* occupancy_grid,
   path_info.details.Print();
 
   std::cout << "=====  PATH   =====" << std::endl;
-  for (const std::shared_ptr<Node2D>& node : path_info.path) {
+  for (const std::shared_ptr<Node2D> &node : path_info.path)
+  {
     std::cout << "[" << node->Data().transpose() << "]" << std::endl;
   }
 
