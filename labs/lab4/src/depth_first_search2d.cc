@@ -46,6 +46,7 @@ namespace game_engine
       path.details.num_nodes_explored = explored.size();
       std::shared_ptr<NodeWrapper>
           parent = end_node->parent;
+      path.path.push_back(end_node->node_ptr);
       while (parent != nullptr)
       {
         path.path.push_back(parent->node_ptr);
