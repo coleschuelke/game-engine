@@ -44,9 +44,10 @@ namespace game_engine
     {
       double x_dist = current_ptr->Data().x() - end_ptr->Data().x();
       double y_dist = current_ptr->Data().y() - end_ptr->Data().y();
-      double dist = std::sqrt(std::pow(x_dist, 2.0) + std::pow(y_dist, 2.0));
-      return dist;
-      // return 0;
+      // double dist = std::pow(x_dist, 2.0) + std::pow(y_dist, 2.0); // Invalid heuristic
+      double dist = std::sqrt(std::pow(x_dist, 2.0) + std::pow(y_dist, 2.0)); // Valid heuristic
+      // return dist;
+      return 0; // Equivalent to Dijkstra
     }
 
     // Check for existence in a list

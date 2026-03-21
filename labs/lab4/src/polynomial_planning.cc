@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <cstdlib>
+#include <iterator>
+#include <ostream>
 #include <vector>
 
 #include "polynomial_solver.h"
@@ -29,14 +32,14 @@ int main(int argc, char **argv)
 }
 
 // Example function that demonstrates how to use the polynomial solver. This
-// example creates waypoints in a triangle: (0,0) -- (1,0) -- (1,1) -- (0,0)
-void Example()
-{
+// example creates waypoints in a triangle: (0,0) -- (1,0) -- (1,1) -- (0,0)numway
+void Example(){
+
   // Time in seconds
   const std::vector<double> times = {0, 1, 2, 3};
 
   // The parameter order for p4::NodeEqualityBound is:
-  // (dimension_index, node_idx, derivative_idx, value)
+  // (dimension_index, node_idx, derivative_idx, value)polynom
   const std::vector<p4::NodeEqualityBound> node_equality_bounds = {
       // The first node must constrain position, velocity, and acceleration
       p4::NodeEqualityBound(0, 0, 0, 0), // x pos
@@ -343,10 +346,12 @@ void NumWaypointExperiments()
 {
   // Time in seconds
   // TODO: SET THE TIMES FOR THE WAYPOINTS
-  const size_t NUM_WAYPOINTS = 100;
+  const size_t NUM_WAYPOINTS = 50;
   const double TOTAL_TIME = 10;
   const double RADIUS = 5;
   const double step = TOTAL_TIME / NUM_WAYPOINTS;
+
+  std::cout << "Circle with " << NUM_WAYPOINTS << " waypoints" << std::endl;
 
   std::vector<double> times(NUM_WAYPOINTS);
   for (size_t i = 0; i < NUM_WAYPOINTS; ++i)
@@ -380,7 +385,7 @@ void NumWaypointExperiments()
   solver_options.num_dimensions = 2;   // 2D
   solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
   solver_options.continuity_order = 4; // Require continuity to the 4th order
-  solver_options.derivative_order = 4; // Minimize snap
+  solver_options.derivative_order = 2; // Minimize acceleration
 
   osqp_set_default_settings(&solver_options.osqp_settings);
   solver_options.osqp_settings.polish = true;   // Polish the solution, getting the best answer possible
@@ -424,6 +429,7 @@ void NumWaypointExperiments()
       gp << "set xlabel 'X'" << std::endl;
       gp << "set ylabel 'Y'" << std::endl;
       gp << "replot" << std::endl;
+      gp << "set size ratio -1" << std::endl;
     }
     {
       Gnuplot gp;
