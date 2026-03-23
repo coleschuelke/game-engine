@@ -1,7 +1,9 @@
 #include <algorithm>
+#include <cstddef>
 #include <cstdlib>
 #include <iterator>
 #include <ostream>
+#include <random>
 #include <vector>
 
 #include "polynomial_solver.h"
@@ -25,15 +27,15 @@ int main(int argc, char **argv)
 {
   // Example();
   // DerivativeExperiments();
-  // ArrivalTimeExperiments();
-  NumWaypointExperiments();
-
+  ArrivalTimeExperiments();
+  // NumWaypointExperiments();
   return EXIT_SUCCESS;
 }
 
 // Example function that demonstrates how to use the polynomial solver. This
 // example creates waypoints in a triangle: (0,0) -- (1,0) -- (1,1) -- (0,0)numway
-void Example(){
+void Example()
+{
 
   // Time in seconds
   const std::vector<double> times = {0, 1, 2, 3};
@@ -242,7 +244,7 @@ void ArrivalTimeExperiments()
 {
   // Time in seconds
   // TODO: SET THE TIMES FOR THE WAYPOINTS
-  const std::vector<double> times = {};
+  const std::vector<double> times = {0, 3.2, 6, 8.3, 11.5};
 
   // The parameter order for p4::NodeEqualityBound is:
   // (dimension_index, node_idx, derivative_idx, value)
@@ -276,7 +278,7 @@ void ArrivalTimeExperiments()
   solver_options.num_dimensions = 2;   // 2D
   solver_options.polynomial_order = 8; // Fit an 8th-order polynomial
   solver_options.continuity_order = 4; // Require continuity to the 4th order
-  solver_options.derivative_order = 4; // Minimize snap
+  solver_options.derivative_order = 2; // Minimize acceleration
 
   osqp_set_default_settings(&solver_options.osqp_settings);
   solver_options.osqp_settings.polish = true;   // Polish the solution, getting the best answer possible
@@ -293,21 +295,47 @@ void ArrivalTimeExperiments()
   // Sampling and Plotting
   { // Plot 2D position
     // Options to configure the polynomial sampler with
-    p4::PolynomialSampler::Options sampler_options;
-    sampler_options.frequency = 100;      // Number of samples per second
-    sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
+    p4::PolynomialSampler::Options pos_sampler_options;
+    pos_sampler_options.frequency = 100;      // Number of samples per second
+    pos_sampler_options.derivative_order = 0; // Derivative to sample (0 = pos)
+    p4::PolynomialSampler::Options vel_sampler_options;
+    vel_sampler_options.frequency = 100;      // Number of samples per second
+    vel_sampler_options.derivative_order = 1; // Derivative to sample (0 = pos)
+    p4::PolynomialSampler::Options acc_sampler_options;
+    acc_sampler_options.frequency = 100;      // Number of samples per second
+    acc_sampler_options.derivative_order = 2; // Derivative to sample (0 = pos)
 
     // Use this object to sample a trajectory
-    p4::PolynomialSampler sampler(sampler_options);
-    Eigen::MatrixXd samples = sampler.Run(times, path);
+    p4::PolynomialSampler pos_sampler(pos_sampler_options);
+    Eigen::MatrixXd pos_samples = pos_sampler.Run(times, path);
+    p4::PolynomialSampler vel_sampler(vel_sampler_options);
+    Eigen::MatrixXd vel_samples = vel_sampler.Run(times, path);
+    p4::PolynomialSampler acc_sampler(acc_sampler_options);
+    Eigen::MatrixXd acc_samples = acc_sampler.Run(times, path);
 
+    // Print the max values of velocity and acceleration
+    Eigen::MatrixXd vel_norms = vel_samples.middleRows(1, 2).colwise().norm();
+    Eigen::MatrixXd acc_norms = acc_samples.middleRows(1, 2).colwise().norm();
+    const double max_vel = vel_norms.maxCoeff();
+    const double max_acc = acc_norms.maxCoeff();
+
+    std::cout << "Max velocity: " << max_vel << std::endl;
+    std::cout << "Max acceleration: " << max_acc << std::endl;
     // Plotting tool requires vectors
     std::vector<double> t_hist, x_hist, y_hist;
-    for (size_t time_idx = 0; time_idx < samples.cols(); ++time_idx)
+    for (size_t time_idx = 0; time_idx < pos_samples.cols(); ++time_idx)
     {
-      t_hist.push_back(samples(0, time_idx));
-      x_hist.push_back(samples(1, time_idx));
-      y_hist.push_back(samples(2, time_idx));
+      t_hist.push_back(pos_samples(0, time_idx));
+      x_hist.push_back(pos_samples(1, time_idx));
+      y_hist.push_back(pos_samples(2, time_idx));
+    }
+    std::vector<double> t_hist_acc, x_hist_acc, y_hist_acc, acc_norm_hist;
+    for (size_t time_idx = 0; time_idx < acc_samples.cols(); ++time_idx)
+    {
+      t_hist_acc.push_back(acc_samples(0, time_idx));
+      x_hist_acc.push_back(acc_samples(1, time_idx));
+      y_hist_acc.push_back(acc_samples(2, time_idx));
+      acc_norm_hist.push_back(acc_norms(time_idx));
     }
 
     // gnu-iostream plotting library
@@ -339,9 +367,35 @@ void ArrivalTimeExperiments()
       gp << "set ylabel 'Y-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Acceleration X'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist_acc, x_hist_acc));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Acceleration Y'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist_acc, y_hist_acc));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Acceleration norm'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist_acc, acc_norm_hist));
+      gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Acceleration (m/s^2)'" << std::endl;
+      gp << "replot" << std::endl;
+    }
   }
 }
-
 void NumWaypointExperiments()
 {
   // Time in seconds
