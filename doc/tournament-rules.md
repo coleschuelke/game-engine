@@ -18,10 +18,8 @@ The scoring reflects a maxim of software design:
 3) get it working right and fast
 
 ## Number of Attempts
-Each team will have a single attempt to pop both the red and blue balloons on
-tournament day. If the instructors determine that a team's attempt failed due a
-failure of course materials (e.g., balloon gets sucked into quadcopter's motor),
-the attempt is refunded and the team is permitted to try again.
+Each team will have two attemps to pop both the red and blue balloons on
+tournament day. A secont attempt will only be allowed in the first attempt failed to pop both balloons and navigate to the destination location.
 
 ## Path Constraints for the Obstacle Course
 The following subsections introduce path constraints that teams must respect.

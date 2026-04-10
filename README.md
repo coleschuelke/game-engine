@@ -6,8 +6,8 @@ This is my own derivative of the RNL game-engine repo. It was branched in spring
 Game Engine has four interacting components: Mediation Layer (ML),
 Physics Simulator (PS), Visualizer (VZ), and Autonomy Protocol (AP). 
 
-AP maps the quadcopter's state to an intended trajectory. ML mediates the
-intended trajectories, altering them if necessary to impose boundaries,
+AP takes in the quadcopter's state and generates a desired trajectory. ML mediates the
+desired trajectories, altering them if necessary to impose boundaries,
 simulate interaction with other objects, etc.  PS forward-simulates the
 mediated trajectory, injecting disturbances and applying
 proportional-derivative control to track the trajectory, and returns the
@@ -57,8 +57,8 @@ source ~/Workspace/game-engine/build/devel/setup.zsh
 
 ## Running Game Engine Using Launch Script
 A launch script has been provided that runs the desired autonomy protocol in
-game engine, without the need for a terminal multiplexer.  Using this launch
-script is simplest and safest way of running the game-engine. You can run the
+Game Engine, without the need for a terminal multiplexer.  Using this launch
+script is simplest and safest way of running Game Engine. You can run the
 script as shown below.
 
 ```bash
@@ -74,14 +74,14 @@ computer and the name of the params file and the autonomy protocol that you wish
 to run. It should work by default, but you may need to change the game-engine
 path if game-engine is stored somewhere other than
 `/home/aeronaut/Workspace/game-engine` on your computer. You will also need to
-change the protocol value from `example_autonomy_protocol` to
+change the protocol name from `example_autonomy_protocol` to
 `student_autonomy_protocol` in order to run your AP.
 
 Note: When terminating the `launchGE.sh` script, it is important to use
-Ctrl-c. Using Ctrl-z, or any other method, may keep parts of the game-engine
-running in the background which will cause problems the next time you try to
+Ctrl-c. Using Ctrl-z or any other method may keep parts of Game Engine
+running in the background, which will cause problems the next time you try to
 start ROS. If you believe there may be lingering processes running in the
-background, then run the following script to completely shutdown game-engine.
+background, then run the following script to completely shut down Game Engine.
 
 ```bash
 cd ~/Workspace/game-engine/launch
@@ -92,7 +92,7 @@ cd ~/Workspace/game-engine/launch
 For debugging purposes, or simply to better understand how Game Engine works
 you may wish manually run each component rather than use the launch script.  For
 this, you are encouraged to use a terminal multiplexer like `tmux` and start
-each program in a separate pane. See [here](tmux/README.md) for further
+each application in a separate pane. See [here](tmux/README.md) for further
 information on `tmux`.
 
 ### ROS Core

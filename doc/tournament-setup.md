@@ -17,7 +17,7 @@ your opponents to see your secrets!  Do not initialize the repository with a REA
 
 On the repository Manage/Members page, invite your team members, each one as Maintainer, to
 your repository. This allows them to view and edit the code. Also invite our
-superlative TA Jeremy as Reporter so he can follow your progress. His GitLab handle is @williamj.morrison.
+superlative TAs Ian and Ronnie as Reporter so they can follow your progress. Their GitLab handles are @imax2001 and @ronnieogden95.
 
 ## Clone `game-engine`
 In the `~/Workspace` directory, either clone a fresh copy of the original
