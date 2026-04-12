@@ -49,8 +49,21 @@ StudentAutonomyProtocol::UpdateTrajectories() {
   if (first_time_) {
     first_time_ = false;
     start_pos_ = current_pos;
-    halt_pos_ = red_balloon_pos;
+    // May need to add something back if halt_pos_ must be set
+    halt_pos_ << 1000, 1000, 1000;
     visualizer_.startVisualizing("/game_engine/environment");
+  }
+
+  // For now, just pop the blue balloon first, then red balloon
+  // Can later impose a criteria
+  Eigen::Vector3d target_pos;
+  if (!blue_balloon_popped) {
+    target_pos = blue_balloon_pos;
+  } else if (!red_balloon_popped) {
+    target_pos = red_balloon_pos;
+  } else {
+    target_pos = start_pos_;
+    halt_pos_ = start_pos_;
   }
 
   // Wind intensity will change between maps. Condition actions or parameters on
@@ -87,7 +100,7 @@ StudentAutonomyProtocol::UpdateTrajectories() {
   //
   // For more information on handling time in C++ see the section on creating a
   // TrajectoryVector below.
-  static std::chrono::milliseconds dt_chrono_u_ = std::chrono::milliseconds(40);
+  static std::chrono::milliseconds dt_chrono_u_ = std::chrono::milliseconds(15);
   switch (trajectoryCodeMap_[quad_name].code) {
   case MediationLayerCode::Success:
     // You won't need to do anything in response to Success.
@@ -122,17 +135,17 @@ StudentAutonomyProtocol::UpdateTrajectories() {
   // Here we create at least one waypoint per meter from the quad to the red
   // balloon ensuring at least two waypoints, one for the current and one for
   // the goal position.
-  double path_length = (red_balloon_pos - current_pos).norm();
+  double path_length = (target_pos - current_pos).norm();
   double num_wp = floor(path_length) + 2;
   std::vector<Eigen::Vector3d> waypoints;
   for (int i{}; i < num_wp; i++) {
     waypoints.push_back(current_pos +
-                        i / (num_wp - 1) * (red_balloon_pos - current_pos));
+                        i / (num_wp - 1) * (target_pos - current_pos));
   }
 
   // Assign waypoint times based on distance (not optimal!)
   std::vector<double> times{};
-  double seconds_per_meter = 4;
+  double seconds_per_meter = 1; // WARN: could cause issues with acc??
   for (auto wp : waypoints) {
     double distance = abs((wp - current_pos).norm());
     times.push_back(distance * seconds_per_meter);
@@ -316,6 +329,8 @@ StudentAutonomyProtocol::UpdateTrajectories() {
 
   // The TrajectoryVector3D object holds the PVAYT points.  It is a std::vector
   // object defined in the trajectory.h file.
+  // ** I think this is just converting the sampled trajectory from relative
+  // time to absolute time
   TrajectoryVector3D trajectory_vector;
   for (size_t time_idx = 0; time_idx < x_hist.size(); ++time_idx) {
     // Chrono time at the trajectory point
@@ -357,7 +372,8 @@ StudentAutonomyProtocol::UpdateTrajectories() {
   constexpr double arrival_threshold_meters = 0.3;
   const Eigen::Vector3d dv = current_pos - halt_pos_;
 
-  if (halt_ || (dv.norm() < arrival_threshold_meters)) {
+  if (halt_ || dv.norm() < arrival_threshold_meters) { // WARN: should double
+                                                       // check what sets halt_
     halt_ = true;
     std::cerr << "\nHalting quad at position: [" << halt_pos_(0) << halt_pos_(1)
               << halt_pos_(2) << "]\n";
