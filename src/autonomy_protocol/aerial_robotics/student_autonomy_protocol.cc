@@ -62,8 +62,8 @@ StudentAutonomyProtocol::UpdateTrajectories() {
   } else if (!red_balloon_popped) {
     target_pos = red_balloon_pos;
   } else {
-    target_pos = start_pos_;
-    halt_pos_ = start_pos_;
+    target_pos = goal_position_;
+    halt_pos_ = goal_position_;
   }
 
   // Wind intensity will change between maps. Condition actions or parameters on
